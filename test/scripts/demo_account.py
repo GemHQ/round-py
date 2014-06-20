@@ -5,24 +5,23 @@ import coinop
 import time
 current_milli_time = lambda: int(round(time.time()))
 
-pb = discover(u"http://localhost:8998/",
+pb = discover(u'http://localhost:8998/',
         {'default_context': Context()})
 client = pb.spawn()
 resources = client.resources
 users = resources.users
 
-email = "matthew-{0}@bitvault.io".format(current_milli_time())
+email = 'matthew-{0}@bitvault.io'.format(current_milli_time())
 content = {'email': email, 'password': 'horriblepassword'}
 user = users.create(content)
 
 client.context.set_basic(email, 'horriblepassword')
-#user.applications().list()
 
-application = user.applications().create({'name': 'bitcoins_r_us'})
-print repr(application)
-client.context.set_token(application.api_token())
+application = user.applications.create({'name': 'bitcoins_r_us'})
 
-print application.wallets().list()
+client.context.set_token(application.api_token)
+
+application.wallets.list()
 
 
 
