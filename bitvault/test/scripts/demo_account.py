@@ -48,9 +48,10 @@ record['api_token'] = application.api_token
 
 client.context.set_token(application.api_token)
 
-application.wallets.list()
+#application.wallets.list()
 
 multi_wallet = MultiWallet.generate(["primary", "backup"])
+
 primary_seed = multi_wallet.private_seed("primary")
 primary_public_seed = multi_wallet.public_seed('primary')
 backup_public_seed = multi_wallet.public_seed('backup')
