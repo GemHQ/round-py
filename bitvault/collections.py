@@ -8,7 +8,7 @@ class Collection(object):
         self.populate()
 
     def populate(self):
-        if self.resource.list:
+        if hasattr(self.resource, 'list'):
             resources = self.resource.list()
             for resource in resources:
                 wrapper = self.wrap(resource)
@@ -28,8 +28,8 @@ class Users(Collection):
     def __init__(self, resource):
         super(Users, self).__init__(resource)
 
-    def create(**content):
-        wrap(self.resource.create(content))
+    def create(self, **content):
+        return self.wrap(self.resource.create(content))
 
     def wrap(self, resource):
         return wrappers.User(resource=resource)
@@ -39,6 +39,7 @@ class Applications(Collection):
     def create(**content):
         app = wrap(self.resource.create(content))
         self.add(app)
+        return app
 
     def wrap(self, resource):
         return wrappers.Application(resource=resource)
