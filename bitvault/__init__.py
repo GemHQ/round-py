@@ -31,13 +31,13 @@ class Context(dict):
 
     def authorizer(self, scheme, resource, action):
         if scheme == "Basic":
-            if self.basic:
+            if hasattr(self, 'basic'):
                 return self.basic
             else:
                 raise Exception("Must call set_basic(email, password) first")
             
         elif scheme == "BitVault-Token":
-            if self.api_token:
+            if hasattr(self, 'api_token'):
                 return self.api_token
             else:
                 raise Exception("Must call set_token(api_token) first")

@@ -11,13 +11,11 @@ class Wrapper(object):
 
 class User(Wrapper):
 
-    def applications(self, refresh=False):
-        if refresh or not self._applications:
-            wrapper = bitvault.collections.Applications(self.resource.applications)
-            self._applications = wrapper
-        else:
-            self._applications
-        return self.applications
+    def __init__(self, resource):
+        super(User, self).__init__(resource)
+        app_resource = self.resource.applications
+        self.applications = bitvault.collections.Applications(app_resource)
+
 
 class Application(Wrapper):
 

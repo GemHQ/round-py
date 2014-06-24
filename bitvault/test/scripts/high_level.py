@@ -10,5 +10,8 @@ current_milli_time = lambda: int(round(time.time()))
 
 email = '{0}@bitvault.io'.format(current_milli_time())
 
-print client.users.create(email=email, password='a password')
+# should we be using kwargs this way?
+user = client.users.create(email=email, password='a password')
+print user.applications
+print user.applications.refresh()
 
