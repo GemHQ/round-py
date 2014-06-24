@@ -52,12 +52,12 @@ unsigned_payment = account.payments.create({
         ]
     })
 
-transaction = Transaction.from_data(unsigned_payment)
-change_output = transaction.outputs[-1]
+#transaction = Transaction.from_data(unsigned_payment)
+#change_output = transaction.outputs[-1]
 
-multi_wallet.is_valid_output(change_output)
+#multi_wallet.is_valid_output(change_output)
 
-signatures = multi_wallet.signatures(transaction)
+#signatures = multi_wallet.signatures(transaction)
 
 
 
