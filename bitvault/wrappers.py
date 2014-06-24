@@ -19,13 +19,8 @@ class User(Wrapper):
 
 class Application(Wrapper):
 
-    def wallets(self, refresh=False):
-        if refresh or not self._wallets:
-            wrapper = bitvault.collections.Wallets(self.resource.wallets)
-            self._wallets = wrapper
-        else:
-            self._wallets
-        return self.applications
+    def wallets(self):
+        pass
 
 class Account(Wrapper):
 
