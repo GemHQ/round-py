@@ -3,6 +3,15 @@ import bitvault.test.scripts.helpers as helpers
 import yaml
 import os.path
 
+import bitvault
+
+import time
+
+
+def current_milli_time():
+    return int(round(time.time()))
+
+
 wallet_file = helpers.wallet_file()
 if os.path.isfile(wallet_file):
     with open(wallet_file, u'r') as file:
@@ -20,12 +29,6 @@ if os.path.isfile(wallet_file):
     print message
     exit(0)
 
-
-import bitvault
-
-import time
-current_milli_time = lambda: int(round(time.time()))
-
 record = {}
 
 client = bitvault.client(u'http://localhost:8998')
@@ -42,19 +45,6 @@ record[u'api_token'] = application.api_token
 
 client.context.set_token(application.api_token)
 
-#application.wallets.list()
-
-# FIXME: remove this as before?
-#multi_wallet = MultiWallet.generate(["primary", "backup"])
-#
-#primary_seed = multi_wallet.private_seed("primary")
-#primary_public_seed = multi_wallet.public_seed('primary')
-#backup_public_seed = multi_wallet.public_seed('backup')
-#
-#passphrase = "wrong pony generator brad"
-#record['passphrase'] = passphrase
-#
-#encrypted_seed = PassphraseBox.encrypt(passphrase, primary_seed)
 
 # FIXME: I took out the MultiWallet manipulations because the high-level
 # client usage script doesn't include them. Presumably the bitvault-py
