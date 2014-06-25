@@ -1,4 +1,4 @@
-# patchboard.py
+# __init__.py
 #
 # Copyright 2014 BitVault.
 

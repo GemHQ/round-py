@@ -1,3 +1,8 @@
+# client_usage.py
+#
+# Copyright 2014 BitVault.
+
+
 import time
 
 import bitvault
@@ -7,12 +12,11 @@ current_milli_time = lambda: int(round(time.time()))
 email = '{0}@bitvault.io'.format(current_milli_time())
 password = u'incredibly_secure'
 
+
 ## API discovery
 #
 # The BitVault server provides a JSON description of its API that allows
 # the client to generate all necessary resource classes at runtime.
-
-# FIXME: This is from high_level.py; why aren't we just calling authed_client?
 
 client = bitvault.client(u'http://localhost:8998')
 

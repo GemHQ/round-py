@@ -1,3 +1,8 @@
+# low_demo_account.py
+#
+# Copyright 2014 BitVault.
+
+
 import bitvault.test.scripts.helpers as helpers
 
 import yaml

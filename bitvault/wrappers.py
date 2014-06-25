@@ -1,13 +1,20 @@
+# wrappers.py
+#
+# Copyright 2014 BitVault.
+
 
 import bitvault
 
+
 class Wrapper(object):
+
     def __init__(self, resource):
         self.resource = resource
 
     def __getattr__(self, name):
         # TODO: may want to limit the delegation to specific attrs.
         return getattr(self.resource, name)
+
 
 class User(Wrapper):
 
@@ -22,6 +29,7 @@ class Application(Wrapper):
     def wallets(self):
         pass
 
+
 class Account(Wrapper):
 
     def addresses(self, refresh=False):
@@ -32,4 +40,3 @@ class Account(Wrapper):
 
     def transactions(self, refresh=False):
         pass
-

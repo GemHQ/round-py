@@ -1,3 +1,8 @@
+# demo_payment.py
+#
+# Copyright 2014 BitVault.
+
+
 import os.path
 import yaml
 

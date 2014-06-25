@@ -1,4 +1,10 @@
+# collections.py
+#
+# Copyright 2014 BitVault.
+
+
 from bitvault import wrappers
+
 
 class Collection(object):
 
@@ -27,7 +33,6 @@ class Collection(object):
         return wrapper.name
 
 
-
 class Users(Collection):
 
     def __init__(self, resource):
@@ -43,16 +48,13 @@ class Users(Collection):
 
 
 class Applications(Collection):
-    
-    def create(**content):
+
+    def create(self, **content):
         resource = self.resource.create(content)
         resource.context.set_token(content['api_token'])
-        app = wrap(resource)
+        app = self.wrap(resource)
         self.add(app)
         return app
 
     def wrap(self, resource):
         return wrappers.Application(resource=resource)
-
-
-
