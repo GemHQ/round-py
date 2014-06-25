@@ -7,8 +7,10 @@ from __future__ import print_function
 
 import pytest
 
-from fixtures import (initial_client, users, user, app)
-pytest.mark.usefixtures(initial_client, users, user, app)
+from fixtures import (initial_client, users, user, app, locked_wallet,
+                      wallet)
+pytest.mark.usefixtures(initial_client, users, user, app, locked_wallet,
+                        wallet)
 
 
 def test_initial_client_creation(initial_client):
@@ -25,3 +27,13 @@ def test_user_creation(user):
 
 def test_app_creation(app):
     assert app
+
+
+def test_locked_wallet_creation(locked_wallet):
+    assert locked_wallet
+    assert locked_wallet.is_locked()
+
+
+def test_wallet_creation(wallet):
+    assert wallet
+    assert wallet.is_unlocked()

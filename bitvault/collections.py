@@ -3,6 +3,9 @@
 # Copyright 2014 BitVault.
 
 
+from coinop.crypto.passphrasebox import PassphraseBox
+from coinop.bit.multiwallet import MultiWallet
+
 from bitvault import wrappers
 
 
@@ -40,7 +43,7 @@ class Users(Collection):
 
     def create(self, **content):
         resource = self.resource.create(content)
-        resource.context.set_basic(content['email'], content['password'])
+        resource.context.set_basic(content[u'email'], content[u'password'])
         return self.wrap(resource)
 
     def wrap(self, resource):
@@ -58,3 +61,30 @@ class Applications(Collection):
 
     def wrap(self, resource):
         return wrappers.Application(resource=resource)
+
+
+class Wallets(Collection):
+
+    # The passphrase parameter should stay out of the content dict
+    # so that there is no chance the client's passphrase will get passed
+    # to our server.
+    def create(self, passphrase, **content):
+        multi_wallet = MultiWallet.generate([u"primary", u"backup"])
+        primary_seed = multi_wallet.private_seed(u"primary")
+        primary_public_seed = multi_wallet.public_seed(u'primary')
+        backup_public_seed = multi_wallet.public_seed(u'backup')
+
+        encrypted_seed = PassphraseBox.encrypt(passphrase, primary_seed)
+
+        content[u'network'] = u'bitcoin_testnet'
+        content[u'backup_public_seed'] = backup_public_seed
+        content[u'primary_public_seed'] = primary_public_seed
+        content[u'primary_private_seed'] = encrypted_seed
+
+        resource = self.resource.create(content)
+        app = self.wrap(resource)
+        self.add(app)
+        return app
+
+    def wrap(self, resource):
+        return wrappers.Wallet(resource=resource)

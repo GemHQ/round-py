@@ -3,6 +3,9 @@
 # Copyright 2014 BitVault.
 
 
+from coinop.crypto.passphrasebox import PassphraseBox
+from coinop.bit.multiwallet import MultiWallet
+
 import bitvault
 
 
@@ -26,8 +29,37 @@ class User(Wrapper):
 
 class Application(Wrapper):
 
-    def wallets(self):
-        pass
+    def __init__(self, resource):
+        super(Application, self).__init__(resource)
+        wallets_resource = self.resource.wallets
+        self.wallets = bitvault.collections.Wallets(wallets_resource)
+
+
+class Wallet(Wrapper):
+
+    def __init__(self, resource):
+        super(Wallet, self).__init__(resource)
+
+        self.multi_wallet = None
+
+    def is_unlocked(self):
+        return not self.is_locked()
+
+    def is_locked(self):
+        return (self.multi_wallet is None)
+
+    def unlock(self, passphrase):
+
+        wallet = self.resource
+        primary_seed = PassphraseBox.decrypt(
+            passphrase,
+            wallet.primary_private_seed)
+
+        self.multi_wallet = MultiWallet(
+            private={u'primary': primary_seed},
+            public={
+                u'cosigner': wallet.cosigner_public_seed,
+                u'backup': wallet.backup_public_seed})
 
 
 class Account(Wrapper):
