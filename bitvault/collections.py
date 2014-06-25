@@ -51,7 +51,7 @@ class Applications(Collection):
 
     def create(self, **content):
         resource = self.resource.create(content)
-        resource.context.set_token(content['api_token'])
+        resource.context.set_token(resource.api_token)
         app = self.wrap(resource)
         self.add(app)
         return app
