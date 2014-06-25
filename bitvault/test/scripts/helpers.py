@@ -7,7 +7,7 @@ import sys
 from urlparse import urlparse
 
 from patchboard import discover
-from bitvault.client import Context
+from bitvault import Context
 
 
 def bitvault_url():

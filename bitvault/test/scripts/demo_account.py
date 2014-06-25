@@ -62,6 +62,7 @@ record[u'passphrase'] = passphrase
 wallet = application.wallets.create(passphrase=passphrase, name=u'my favorite')
 record[u'wallet'] = {u'url': wallet.url}
 
+exit(0)
 account = wallet.accounts.create(name=u'office supplies')
 record[u'account'] = {u'url': account.url}
 
