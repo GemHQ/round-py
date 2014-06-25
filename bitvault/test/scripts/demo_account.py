@@ -7,8 +7,8 @@ wallet_file = helpers.wallet_file()
 if os.path.isfile(wallet_file):
     with open(wallet_file, u'r') as file:
         data = yaml.load(file)
-    address = data['node']['address']
-    message = '''
+    address = data[u'node'][u'address']
+    message = u'''
     Settings from a previous run of this script are in {0}.
     If you have not already funded that wallet, you can remove the file.
     Otherwise, fund this address:
@@ -21,66 +21,64 @@ if os.path.isfile(wallet_file):
     exit(0)
 
 
-
-from coinop.crypto.passphrasebox import PassphraseBox
-from coinop.bit.multiwallet import MultiWallet
-
+import bitvault
 
 import time
 current_milli_time = lambda: int(round(time.time()))
 
 record = {}
 
-bitvault = helpers.bitvault()
-client = bitvault.spawn()
-resources = client.resources
-users = resources.users
+client = bitvault.client(u'http://localhost:8998')
+users = client.users
 
-email = 'matthew-{0}@bitvault.io'.format(current_milli_time())
-content = {'email': email, 'password': 'horriblepassword'}
-user = users.create(content)
+email = u'matthew-{0}@bitvault.io'.format(current_milli_time())
+user = users.create(email=email, password=u'horriblepassword')
 
-client.context.set_basic(email, 'horriblepassword')
+application = user.applications.create(
+    name=u'bitcoins_r_us',
+    callback_url=u'https://someapp.com/callback')
 
-application = user.applications.create({'name': 'bitcoins_r_us'})
-
-record['api_token'] = application.api_token
+record[u'api_token'] = application.api_token
 
 client.context.set_token(application.api_token)
 
 #application.wallets.list()
 
-multi_wallet = MultiWallet.generate(["primary", "backup"])
+# FIXME: remove this as before?
+#multi_wallet = MultiWallet.generate(["primary", "backup"])
+#
+#primary_seed = multi_wallet.private_seed("primary")
+#primary_public_seed = multi_wallet.public_seed('primary')
+#backup_public_seed = multi_wallet.public_seed('backup')
+#
+#passphrase = "wrong pony generator brad"
+#record['passphrase'] = passphrase
+#
+#encrypted_seed = PassphraseBox.encrypt(passphrase, primary_seed)
 
-primary_seed = multi_wallet.private_seed("primary")
-primary_public_seed = multi_wallet.public_seed('primary')
-backup_public_seed = multi_wallet.public_seed('backup')
+# FIXME: I took out the MultiWallet manipulations because the high-level
+# client usage script doesn't include them. Presumably the bitvault-py
+# wallet implementation manages that, but the ruby client does (or did)
+# manipulate MultiWallets directly so this may not be correct.
 
-passphrase = "wrong pony generator brad"
-record['passphrase'] = passphrase
+passphrase = u"wrong pony generator brad"
+record[u'passphrase'] = passphrase
 
-encrypted_seed = PassphraseBox.encrypt(passphrase, primary_seed)
+wallet = application.wallets.create(passphrase=passphrase, name=u'my favorite')
+record[u'wallet'] = {u'url': wallet.url}
 
-content = {'name': 'my favorite', 'network': 'bitcoin_testnet',
-        'backup_public_seed': backup_public_seed,
-        'primary_public_seed': primary_public_seed,
-        'primary_private_seed': encrypted_seed}
+account = wallet.accounts.create(name=u'office supplies')
+record[u'account'] = {u'url': account.url}
 
-wallet = application.wallets.create(content)
-record['wallet'] = {'url': wallet.url}
-
-account = wallet.accounts.create({'name': 'office supplies'})
-record['account'] = {'url': account.url}
-
-address = account.addresses.create()
-record['node'] = {'path': address.path, 'address': address.string}
+address = account.addresses.create
+record[u'node'] = {u'path': address.path, u'address': address.string}
 
 # save YAML record to file.
 
 with open(helpers.wallet_file(), u'w') as file:
     yaml.safe_dump(record, file)
 
-message = '''
+message = u'''
     Fund this address from a testnet faucet, so that you can make payments or transfers:
     {0}
 

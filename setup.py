@@ -9,6 +9,6 @@ setup(name='bitvault',
       license='MIT',
       packages=['bitvault'],
       install_requires=[
+          'PyYAML',
       ],
       zip_safe=False)
-
