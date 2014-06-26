@@ -19,9 +19,7 @@ def current_milli_time():
 
 
 def email():
-    addr = u'{0}@bitvault.io'.format(randint(0, 2**32 - 1))
-    print("Address:", addr)
-    return addr
+    return u'{0}@bitvault.io'.format(randint(0, 2**32 - 1))
 
 
 def password():
