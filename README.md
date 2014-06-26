@@ -1,7 +1,7 @@
 bitvault-py: A Python client for the BitVault API
 
 
-bitvault-py is still beta code but is in active development. Bug reports and
+bitvault-py is still alpha code but is in active development. Bug reports and
 patches welcome.
 
 

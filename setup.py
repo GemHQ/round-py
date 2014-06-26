@@ -10,5 +10,7 @@ setup(name='bitvault',
       packages=find_packages(),
       install_requires=[
           'PyYAML',
+          'coinop',
+          'patchboard',
       ],
       zip_safe=False)
