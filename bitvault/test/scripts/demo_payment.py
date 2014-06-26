@@ -29,17 +29,19 @@ else:
 
 api_token = data[u'api_token']
 passphrase = data[u'passphrase']
+app_url = data[u'application'][u'url']
 wallet_url = data[u'wallet'][u'url']
 account_url = data[u'account'][u'url']
 
-client = bitvault.authenticate(application={
-    u'url': u'https://someapp.com/callback',
-    u'token': api_token})
-exit(0)
+client = bitvault.authenticate(application={'url': app_url, 'token': api_token})
+
 
 # These methods don't exist in the Ruby client yet.
 wallet = client.wallet(wallet_url)
-account = client.account(account_url)
+account = wallet.accounts.find('office supplies')
+
+
+exit()
 
 faucet_address = u'mx3Az5tkWhEQHsihFr3Nmj6mRHLeqtqfNK'
 
@@ -47,8 +49,11 @@ primary_seed = PassphraseBox.decrypt(passphrase, wallet.primary_private_seed)
 
 # FIXME: imitate the Ruby client's account.pay method
 # https://github.com/BitVault/bitvault-rb/blob/new-interface/test/scripts/client_usage_improved.rb#L90
-unsigned_payment = account.payments.create(
-    outputs=[{'amount': 6000000, 'payee': {'address': faucet_address}}])
+
+payment = account.pay([
+        { 'address': faucet_address, 'amount': 6000000 }
+    ])
+
 
 #transaction = Transaction.from_data(unsigned_payment)
 #change_output = transaction.outputs[-1]
@@ -56,3 +61,4 @@ unsigned_payment = account.payments.create(
 #multi_wallet.is_valid_output(change_output)
 
 #signatures = multi_wallet.signatures(transaction)
+

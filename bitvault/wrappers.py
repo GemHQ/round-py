@@ -44,6 +44,8 @@ class Wallet(Wrapper):
         self.accounts = bitvault.collections.Accounts(accounts_resource)
 
         self.multi_wallet = None
+        ar = self.resource.accounts
+        self.accounts = bitvault.collections.Accounts(resource=ar, wallet=self)
 
     def is_unlocked(self):
         return not self.is_locked()
@@ -65,14 +67,24 @@ class Wallet(Wrapper):
                 u'backup': wallet.backup_public_seed})
 
 
+    def transfer(self, options):
+        pass
+
 class Account(Wrapper):
-    pass
 
-    #def addresses(self, refresh=False):
-    #    pass
+    def addresses(self):
+        pass
 
-    #def payments(self, refresh=False):
-    #    pass
+    def pay(self, payees):
+        # HOPEFUL
+        unsigned = foo()
+        transaction = Transaction.from_data(unsigned)
+        change_output = transaction.outputs[-1]
+        multi_wallet.is_valid_output(change_output)
+        signatures = multi_wallet.signatures(transaction)
+        signed = sign(signatures)
+        return signed
 
-    #def transactions(self, refresh=False):
-    #    pass
+    def transactions(self):
+        pass
+
