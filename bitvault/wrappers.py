@@ -40,9 +40,6 @@ class Wallet(Wrapper):
     def __init__(self, resource):
         super(Wallet, self).__init__(resource)
 
-        accounts_resource = self.resource.accounts
-        self.accounts = bitvault.collections.Accounts(accounts_resource)
-
         self.multi_wallet = None
         ar = self.resource.accounts
         self.accounts = bitvault.collections.Accounts(resource=ar, wallet=self)

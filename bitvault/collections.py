@@ -45,7 +45,7 @@ class Users(Collection):
 
     def create(self, **content):
         resource = self.resource.create(content)
-        resource.context.set_basic(content[u'email'], content[u'password'])
+        resource.context.set_user(content[u'email'], content[u'password'])
         return self.wrap(resource)
 
     def wrap(self, resource):
@@ -56,7 +56,7 @@ class Applications(Collection):
 
     def create(self, **content):
         resource = self.resource.create(content)
-        resource.context.set_token(resource.api_token)
+        resource.context.set_application(url=resource.url, token=resource.api_token)
         app = self.wrap(resource)
         self.add(app)
         return app
