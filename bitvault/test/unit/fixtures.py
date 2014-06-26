@@ -3,55 +3,15 @@
 # Copyright 2014 BitVault.
 
 
-import time
 import pytest
 
 
 import bitvault
 
-
-def bitvault_url():
-    return u"http://localhost:8998"
-
-
-def current_milli_time():
-    return int(round(time.time()))
-
-
-def email():
-    return u'{0}@bitvault.io'.format(current_milli_time())
-
-
-def password():
-    return u'incredibly_secure'
-
-
-def app_name():
-    return u'bitcoins_r_us'
-
-
-def locked_wallet_name():
-    return u'my locked wallet'
-
-
-def wallet_name():
-    return u'my favorite wallet'
-
-
-def locked_wallet_passphrase():
-    return u"a very bad passphrase"
-
-
-def wallet_passphrase():
-    return u"wrong pony generator brad"
-
-
-def callback_url():
-    return u'https://someapp.com/callback'
-
-
-def account_name():
-    return u'office supplies'
+# This is the one time this is OK--we use everything in the module
+from helpers import (bitvault_url, email, password, app_name, callback_url,
+                     locked_wallet_name, locked_wallet_passphrase,
+                     wallet_name, wallet_passphrase, account_name)
 
 
 @pytest.fixture(scope=u'session')
