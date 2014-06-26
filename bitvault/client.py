@@ -36,7 +36,7 @@ class Client(object):
         # Not memoizing here, because a wallet is not a fundamental
         # part of a session, as a user or app would be.  Ditto account,
         # below.
-        wallet_resource = self.resources.wallet(url)
+        wallet_resource = self.resources.wallet(url).get()
         return wrappers.Wallet(wallet_resource)
 
 

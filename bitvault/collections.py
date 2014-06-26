@@ -35,6 +35,8 @@ class Collection(object):
     def key_for(self, wrapper):
         return wrapper.name
 
+    def find(self, key):
+        return self.collection.get(key, None)
 
 class Users(Collection):
 
@@ -88,3 +90,13 @@ class Wallets(Collection):
 
     def wrap(self, resource):
         return wrappers.Wallet(resource=resource)
+
+class Accounts(Collection):
+
+    def __init__(self, resource, wallet):
+        super(Accounts, self).__init__(resource)
+        self.wallet = wallet
+
+    def wrap(self, resource):
+        return wrappers.Account(resource=resource)
+
