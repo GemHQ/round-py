@@ -9,7 +9,6 @@ import yaml
 import bitvault.test.scripts.helpers as helpers
 
 from coinop.crypto.passphrasebox import PassphraseBox
-from coinop.bit.multiwallet import MultiWallet
 
 import bitvault
 
@@ -33,7 +32,10 @@ passphrase = data[u'passphrase']
 wallet_url = data[u'wallet'][u'url']
 account_url = data[u'account'][u'url']
 
-client = bitvault.authed_client(api_token=api_token)
+client = bitvault.authenticate(application={
+    u'url': u'https://someapp.com/callback',
+    u'token': api_token})
+exit(0)
 
 # These methods don't exist in the Ruby client yet.
 wallet = client.wallet(wallet_url)
