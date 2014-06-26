@@ -37,9 +37,6 @@ account_url = data[u'account'][u'url']
 
 client = bitvault.authenticate(application={'url': app_url, 'token': api_token})
 
-# OR
-#client = bitvault.authenticate(user={'email': email, 'password': password})
-
 
 # These methods don't exist in the Ruby client yet.
 wallet = client.wallet(wallet_url)
