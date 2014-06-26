@@ -37,16 +37,14 @@ client = bitvault.authenticate(application={'url': app_url, 'token': api_token})
 
 wallet = client.wallet(wallet_url)
 wallet.unlock(passphrase)
-source = wallet.accounts.find('office supplies')
-destination = wallet.accounts.find('default')
+account = wallet.accounts.find('office supplies')
 
-#print source.balance
+# Amount returned is artificially limited at this time
+transactions = account.transactions(query={})
 
+for transaction in transactions.collection_list:
+    print transaction.data['hash']
 
-transfer = wallet.transfer(
-        value=4320000, source=source, destination=destination)
-
-print "Transaction hash:", transfer.hash
 
 
 

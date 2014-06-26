@@ -5,7 +5,7 @@
 
 from coinop.crypto.passphrasebox import PassphraseBox
 from coinop.bit.multiwallet import MultiWallet
-from coinop.bit.transaction import Transaction
+import coinop.bit
 
 import bitvault
 
@@ -71,7 +71,7 @@ class Wallet(Wrapper):
                 source=source_content,
                 destination=dest_content)
         unsigned = self.resource.transfers.create(content)
-        transaction = Transaction(data=unsigned.attributes)
+        transaction = coinop.bit.Transaction(data=unsigned.attributes)
         signatures = self.signatures(transaction)
 
         transaction_hash = transaction.hex_hash()
@@ -100,7 +100,7 @@ class Account(Wrapper):
         content = dict(outputs=self.outputs_from_payees(payees))
         unsigned = self.resource.payments.create(content)
 
-        transaction = Transaction(data=unsigned.attributes)
+        transaction = coinop.bit.Transaction(data=unsigned.attributes)
         signatures = self.wallet.signatures(transaction)
 
         transaction_hash = transaction.hex_hash()
@@ -120,6 +120,9 @@ class Account(Wrapper):
 
         return map(fn, payees)
 
-    def transactions(self):
-        pass
+    def transactions(self, query):
+        tr = self.resource.transactions(query)
+        return bitvault.collections.Transactions(resource=tr)
 
+class Transaction(Wrapper):
+    pass

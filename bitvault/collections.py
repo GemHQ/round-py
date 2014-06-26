@@ -107,3 +107,16 @@ class Accounts(Collection):
     def wrap(self, resource):
         return wrappers.Account(resource=resource, wallet=self.wallet)
 
+class Transactions(Collection):
+
+    def __init__(self, resource):
+        self.collection_list = []
+        super(Transactions, self).__init__(resource)
+
+    def add(self, wrapper):
+        self.collection_list.append(wrapper)
+
+    def wrap(self, resource):
+        return wrappers.Transaction(resource=resource)
+
+
