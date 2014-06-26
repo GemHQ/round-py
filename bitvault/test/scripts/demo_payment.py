@@ -44,10 +44,10 @@ faucet_address = u'mx3Az5tkWhEQHsihFr3Nmj6mRHLeqtqfNK'
 
 
 payment = account.pay([
-        { 'address': faucet_address, 'amount': 6000000 }
+        { 'address': faucet_address, 'amount': 6543000 }
     ])
 
-print 'payment status', repr(payment.status)
+print 'payment submitted', repr(payment.hash)
 
 
 

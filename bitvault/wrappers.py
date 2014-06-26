@@ -89,7 +89,6 @@ class Account(Wrapper):
 
         transaction_hash = transaction.hex_hash()
         content = dict(inputs=signatures, transaction_hash=transaction_hash)
-        #print repr(content)
         signed = unsigned.sign(content)
         return signed
 
