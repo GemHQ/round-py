@@ -5,6 +5,7 @@
 
 from coinop.crypto.passphrasebox import PassphraseBox
 from coinop.bit.multiwallet import MultiWallet
+from coinop.bit.transaction import Transaction
 
 import bitvault
 
@@ -51,7 +52,6 @@ class Wallet(Wrapper):
         return (self.multi_wallet is None)
 
     def unlock(self, passphrase):
-
         wallet = self.resource
         primary_seed = PassphraseBox.decrypt(
             passphrase,
@@ -69,18 +69,39 @@ class Wallet(Wrapper):
 
 class Account(Wrapper):
 
-    def addresses(self):
-        pass
+    def __init__(self, resource, wallet):
+        super(Account, self).__init__(resource)
+        self.wallet = wallet
+
 
     def pay(self, payees):
-        # HOPEFUL
-        unsigned = foo()
-        transaction = Transaction.from_data(unsigned)
+        multi_wallet = self.wallet.multi_wallet
+        content = dict(outputs=self.outputs_from_payees(payees))
+        unsigned = self.resource.payments.create(content)
+
+        transaction = Transaction(data=unsigned.attributes)
         change_output = transaction.outputs[-1]
-        multi_wallet.is_valid_output(change_output)
-        signatures = multi_wallet.signatures(transaction)
-        signed = sign(signatures)
+
+        if multi_wallet.is_valid_output(change_output):
+            signatures = multi_wallet.signatures(transaction)
+        else:
+            raise Exception('Problem with transaction: Invalid change address')
+
+        transaction_hash = transaction.hex_hash()
+        content = dict(inputs=signatures, transaction_hash=transaction_hash)
+        #print repr(content)
+        signed = unsigned.sign(content)
         return signed
+
+    def outputs_from_payees(self, payees):
+        def fn(payee):
+            if 'amount' in payee and 'address' in payee:
+                return dict(amount=payee['amount'],
+                        payee={'address': payee['address']})
+            else:
+                raise ValueError("Invalid payee properties")
+
+        return map(fn, payees)
 
     def transactions(self):
         pass

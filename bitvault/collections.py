@@ -95,8 +95,8 @@ class Wallets(Collection):
 class Accounts(Collection):
 
     def __init__(self, resource, wallet):
-        super(Accounts, self).__init__(resource)
         self.wallet = wallet
+        super(Accounts, self).__init__(resource)
 
     def create(self, **content):
         resource = self.resource.create(content)
@@ -105,4 +105,4 @@ class Accounts(Collection):
         return app
 
     def wrap(self, resource):
-        return wrappers.Account(resource=resource)
+        return wrappers.Account(resource=resource, wallet=self.wallet)
