@@ -88,3 +88,15 @@ class Wallets(Collection):
 
     def wrap(self, resource):
         return wrappers.Wallet(resource=resource)
+
+
+class Accounts(Collection):
+
+    def create(self, **content):
+        resource = self.resource.create(content)
+        app = self.wrap(resource)
+        self.add(app)
+        return app
+
+    def wrap(self, resource):
+        return wrappers.Account(resource=resource)

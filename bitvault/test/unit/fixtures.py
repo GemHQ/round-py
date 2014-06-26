@@ -50,6 +50,10 @@ def callback_url():
     return u'https://someapp.com/callback'
 
 
+def account_name():
+    return u'office supplies'
+
+
 @pytest.fixture(scope=u'session')
 def initial_client():
     return bitvault.client(bitvault_url())
@@ -66,15 +70,24 @@ def user(users):
 
 
 @pytest.fixture(scope=u'session')
-def app(user):
-    return user.applications.create(name=app_name(),
-                                    callback_url=callback_url())
+def apps(user):
+    return user.applications
 
 
 @pytest.fixture(scope=u'session')
-def locked_wallet(app):
-    return app.wallets.create(name=locked_wallet_name(),
-                              passphrase=locked_wallet_passphrase())
+def app(apps):
+    return apps.create(name=app_name(), callback_url=callback_url())
+
+
+@pytest.fixture(scope=u'session')
+def wallets(app):
+    return app.wallets
+
+
+@pytest.fixture(scope=u'session')
+def locked_wallet(wallets):
+    return wallets.create(name=locked_wallet_name(),
+                          passphrase=locked_wallet_passphrase())
 
 
 @pytest.fixture(scope=u'session')
@@ -83,3 +96,23 @@ def wallet(app):
                                     passphrase=wallet_passphrase())
     new_wallet.unlock(wallet_passphrase())
     return new_wallet
+
+
+@pytest.fixture(scope=u'session')
+def accounts(wallet):
+    return wallet.accounts
+
+
+@pytest.fixture(scope=u'session')
+def account(accounts):
+    return accounts.create(name=account_name())
+
+
+@pytest.fixture(scope=u'session')
+def addresses(account):
+    return account.addresses
+
+
+@pytest.fixture(scope=u'session')
+def address(addresses):
+    return addresses.create()

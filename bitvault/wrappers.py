@@ -40,6 +40,9 @@ class Wallet(Wrapper):
     def __init__(self, resource):
         super(Wallet, self).__init__(resource)
 
+        accounts_resource = self.resource.accounts
+        self.accounts = bitvault.collections.Accounts(accounts_resource)
+
         self.multi_wallet = None
 
     def is_unlocked(self):
@@ -63,12 +66,13 @@ class Wallet(Wrapper):
 
 
 class Account(Wrapper):
+    pass
 
-    def addresses(self, refresh=False):
-        pass
+    #def addresses(self, refresh=False):
+    #    pass
 
-    def payments(self, refresh=False):
-        pass
+    #def payments(self, refresh=False):
+    #    pass
 
-    def transactions(self, refresh=False):
-        pass
+    #def transactions(self, refresh=False):
+    #    pass
