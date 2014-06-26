@@ -63,9 +63,30 @@ class Wallet(Wrapper):
                 u'cosigner': wallet.cosigner_public_seed,
                 u'backup': wallet.backup_public_seed})
 
+    def transfer(self, value, source, destination):
+        source_content = dict(url=source.url)
+        dest_content = dict(url=destination.url)
 
-    def transfer(self, options):
-        pass
+        content = dict(value=value,
+                source=source_content,
+                destination=dest_content)
+        unsigned = self.resource.transfers.create(content)
+        transaction = Transaction(data=unsigned.attributes)
+        signatures = self.signatures(transaction)
+
+        transaction_hash = transaction.hex_hash()
+        content = dict(inputs=signatures, transaction_hash=transaction_hash)
+        signed = unsigned.sign(content)
+        return signed
+
+
+    def signatures(self, transaction):
+        change_output = transaction.outputs[-1]
+        if self.multi_wallet.is_valid_output(change_output):
+            return self.multi_wallet.signatures(transaction)
+        else:
+            raise Exception('Problem with transaction: Invalid change address')
+
 
 class Account(Wrapper):
 
@@ -80,18 +101,15 @@ class Account(Wrapper):
         unsigned = self.resource.payments.create(content)
 
         transaction = Transaction(data=unsigned.attributes)
-        change_output = transaction.outputs[-1]
-
-        if multi_wallet.is_valid_output(change_output):
-            signatures = multi_wallet.signatures(transaction)
-        else:
-            raise Exception('Problem with transaction: Invalid change address')
+        signatures = self.wallet.signatures(transaction)
 
         transaction_hash = transaction.hex_hash()
         content = dict(inputs=signatures, transaction_hash=transaction_hash)
         signed = unsigned.sign(content)
         return signed
 
+    # Adapter for the High Level Interface to the content required by the API
+    # schema.  We may change the API schema at some point to match.
     def outputs_from_payees(self, payees):
         def fn(payee):
             if 'amount' in payee and 'address' in payee:

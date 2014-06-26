@@ -106,3 +106,4 @@ class Accounts(Collection):
 
     def wrap(self, resource):
         return wrappers.Account(resource=resource, wallet=self.wallet)
+

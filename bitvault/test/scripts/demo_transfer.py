@@ -1,4 +1,4 @@
-# demo_payment.py
+# demo_transfer.py
 #
 # Copyright 2014 BitVault.
 
@@ -37,16 +37,18 @@ client = bitvault.authenticate(application={'url': app_url, 'token': api_token})
 
 wallet = client.wallet(wallet_url)
 wallet.unlock(passphrase)
-account = wallet.accounts.find('office supplies')
+source = wallet.accounts.find('office supplies')
+destination = wallet.accounts.find('default')
 
-faucet_address = u'mx3Az5tkWhEQHsihFr3Nmj6mRHLeqtqfNK'
+#print source.balance
 
 
-payment = account.pay([
-        { 'address': faucet_address, 'amount': 6543000 }
-    ])
+transfer = wallet.transfer(
+        value=4320000, source=source, destination=destination)
 
-print 'payment submitted', repr(payment.hash)
+print transfer.hash
+
+
 
 
 
