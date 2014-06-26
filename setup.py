@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(name='bitvault',
       version='0.1.0',
@@ -7,7 +7,7 @@ setup(name='bitvault',
       author='Dustin Laurence',
       author_email='dustin@pandastrike.com',
       license='MIT',
-      packages=['bitvault'],
+      packages=find_packages(),
       install_requires=[
           'PyYAML',
       ],
