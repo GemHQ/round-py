@@ -30,14 +30,20 @@ else:
 
 api_token = data[u'api_token']
 passphrase = data[u'passphrase']
+app_url = data[u'application'][u'url']
 wallet_url = data[u'wallet'][u'url']
 account_url = data[u'account'][u'url']
 
-client = bitvault.authed_client(api_token=api_token)
+
+client = bitvault.authenticate(application={'url': app_url, 'token': api_token})
+
 
 # These methods don't exist in the Ruby client yet.
 wallet = client.wallet(wallet_url)
 account = client.account(account_url)
+
+
+exit()
 
 faucet_address = u'mx3Az5tkWhEQHsihFr3Nmj6mRHLeqtqfNK'
 
