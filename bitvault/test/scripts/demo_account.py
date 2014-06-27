@@ -48,7 +48,7 @@ application = user.applications.create(
 
 record[u'api_token'] = application.api_token
 
-client.context.set_token(application.api_token)
+client.context.set_application(url=application.url, token=application.api_token)
 
 
 # FIXME: I took out the MultiWallet manipulations because the high-level

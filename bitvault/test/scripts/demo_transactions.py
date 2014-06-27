@@ -32,7 +32,8 @@ passphrase = data[u'passphrase']
 app_url = data[u'application'][u'url']
 wallet_url = data[u'wallet'][u'url']
 
-client = bitvault.authenticate(application={'url': app_url, 'token': api_token})
+client = bitvault.authenticate(
+        application={'url': app_url, 'token': api_token})
 
 
 wallet = client.wallet(wallet_url)
