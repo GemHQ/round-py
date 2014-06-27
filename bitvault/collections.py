@@ -83,6 +83,8 @@ class Wallets(Collection):
         content[u'primary_public_seed'] = primary_public_seed
         content[u'primary_private_seed'] = encrypted_seed
 
+        # FIXME: we're losing the backup seed.  We must make it
+        # available to the user somehow.
         resource = self.resource.create(content)
         app = self.wrap(resource)
         self.add(app)
