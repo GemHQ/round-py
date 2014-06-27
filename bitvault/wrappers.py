@@ -64,6 +64,8 @@ class Wallet(Wrapper):
                 u'backup': wallet.backup_public_seed})
 
     def transfer(self, value, source, destination):
+        if self.is_locked:
+            raise Exception('Must unlock wallet first')
         source_content = dict(url=source.url)
         dest_content = dict(url=destination.url)
 
@@ -81,6 +83,8 @@ class Wallet(Wrapper):
 
 
     def signatures(self, transaction):
+        if self.is_locked:
+            raise Exception('Must unlock wallet first')
         change_output = transaction.outputs[-1]
         if self.multi_wallet.is_valid_output(change_output):
             return self.multi_wallet.signatures(transaction)
@@ -119,6 +123,11 @@ class Account(Wrapper):
                 raise ValueError("Invalid payee properties")
 
         return map(fn, payees)
+
+    # TODO: create wrapper.  Not needed right now, because the 
+    # desired interface works with the bare Patchboard resources.
+    #def addresses(self):
+        #pass
 
     def transactions(self, query):
         tr = self.resource.transactions(query)
