@@ -69,5 +69,5 @@ class TestResourceCreation:
         assert type(addresses) == patchboard.resources.Addresses
 
     def test_address(self, address):
-        assert address
+        assert address is not None
         assert type(address) == patchboard.util.SchemaStruct
