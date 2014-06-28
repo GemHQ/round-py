@@ -19,6 +19,7 @@ password = u'incredibly_secure'
 # the client to generate all necessary resource classes at runtime.
 
 client = bitvault.client(u'http://localhost:8998')
+#client = bitvault.client(u'http://bitvault.pandastrike.com')
 
 
 ## User management

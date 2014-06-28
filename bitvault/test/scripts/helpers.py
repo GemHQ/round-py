@@ -16,6 +16,7 @@ def bitvault_url():
         return url
     except:
         return "http://localhost:8999"
+        #return "http://bitvault.pandastrike.com"
 
 
 def wallet_file():
