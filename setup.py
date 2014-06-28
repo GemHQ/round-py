@@ -7,7 +7,8 @@ setup(name='bitvault',
       author='Dustin Laurence',
       author_email='dustin@pandastrike.com',
       license='MIT',
-      packages=find_packages(),
+      packages=find_packages(exclude=[
+          u'*.tests', u'*.tests.*', u'tests.*', u'tests']),
       install_requires=[
           'PyYAML',
           'coinop',
