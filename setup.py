@@ -1,19 +1,7 @@
 from setuptools import setup, find_packages
-from setuptools.command.install import install
-import os
-
-
-class MyCommand(install):
-    """Dirty hack to install PyNaCl with pip as it doesn't work automatically
-    on some machines."""
-
-    def run(self):
-        os.system("pip install PyNaCl")
-        install.run(self)
 
 
 setup(name='bitvault',
-      cmdclass={'install': MyCommand},
       version='0.1.0',
       description='Python client for BitVault.io',
       url='http://github.com/BitVault/bitvault-py',
@@ -24,7 +12,9 @@ setup(name='bitvault',
           u'*.tests', u'*.tests.*', u'tests.*', u'tests']),
       install_requires=[
           'PyYAML',
-          'coinop',
           'patchboard',
+          # Not explicitly listed as a dependency to ensure that you
+          # install manually--see README for explanation
+          # 'coinop',
       ],
       zip_safe=False)
