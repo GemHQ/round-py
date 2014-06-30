@@ -73,7 +73,10 @@ class Wallets(DictWrapper):
     # to our server.
     def create(self, passphrase, **content):
         multi_wallet = MultiWallet.generate([u"primary", u"backup"])
+
         primary_seed = multi_wallet.private_seed(u"primary")
+        backup_seed = multi_wallet.private_seed(u"primary")
+
         primary_public_seed = multi_wallet.public_seed(u'primary')
         backup_public_seed = multi_wallet.public_seed(u'backup')
 
@@ -87,9 +90,9 @@ class Wallets(DictWrapper):
         # FIXME: we're losing the backup seed.  We must make it
         # available to the user somehow.
         resource = self.resource.create(content)
-        app = self.wrap(resource)
-        self.add(app)
-        return app
+        wallet = self.wrap(resource)
+        self.add(wallet)
+        return backup_seed, wallet
 
     def wrap(self, resource):
         return wrappers.Wallet(resource=resource)

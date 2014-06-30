@@ -46,13 +46,14 @@ def wallets(app):
 
 @pytest.fixture(scope=u'function')
 def locked_wallet(wallets):
-    return wallets.create(name=locked_wallet_name(),
+    backup_seed, wallet = wallets.create(name=locked_wallet_name(),
                           passphrase=locked_wallet_passphrase())
+    return wallet
 
 
 @pytest.fixture(scope=u'function')
 def wallet(app):
-    new_wallet = app.wallets.create(name=wallet_name(),
+    backup_seed, new_wallet = app.wallets.create(name=wallet_name(),
                                     passphrase=wallet_passphrase())
     new_wallet.unlock(wallet_passphrase())
     return new_wallet

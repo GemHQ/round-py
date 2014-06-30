@@ -60,7 +60,9 @@ client.context.set_application(url=application.url, token=application.api_token)
 passphrase = u"wrong pony generator brad"
 record[u'passphrase'] = passphrase
 
-wallet = application.wallets.create(passphrase=passphrase, name=u'my favorite')
+backup_seed, wallet = application.wallets.create(
+        passphrase=passphrase, name=u'my favorite')
+
 record[u'wallet'] = {u'url': wallet.url}
 
 account = wallet.accounts.create(name=u'office supplies')
