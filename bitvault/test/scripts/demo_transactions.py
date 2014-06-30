@@ -40,8 +40,9 @@ wallet = client.wallet(wallet_url)
 wallet.unlock(passphrase)
 account = wallet.accounts.find('office supplies')
 
+exit()
 # Amount returned is artificially limited at this time
-transactions = account.transactions(query={})
+transactions = account.transactions()
 
 for transaction in transactions.collection_list:
     print transaction.data['hash']

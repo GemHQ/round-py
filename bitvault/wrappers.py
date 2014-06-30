@@ -20,12 +20,26 @@ class Wrapper(object):
         return getattr(self.resource, name)
 
 
+class Users(object):
+
+    def __init__(self, resource):
+        super(Users, self).__init__(resource)
+
+    def create(self, **content):
+        resource = self.resource.create(content)
+        resource.context.set_user(content[u'email'], content[u'password'])
+        return self.wrap(resource)
+
+    def wrap(self, resource):
+        return wrappers.User(resource=resource)
+
+
 class User(Wrapper):
 
     def __init__(self, resource):
         super(User, self).__init__(resource)
         app_resource = self.resource.applications
-        self.applications = bitvault.collections.Applications(app_resource)
+        self.applications = bitvault.dict_wrappers.Applications(app_resource)
 
 
 class Application(Wrapper):
@@ -33,7 +47,7 @@ class Application(Wrapper):
     def __init__(self, resource):
         super(Application, self).__init__(resource)
         wallets_resource = self.resource.wallets
-        self.wallets = bitvault.collections.Wallets(wallets_resource)
+        self.wallets = bitvault.dict_wrappers.Wallets(wallets_resource)
 
 
 class Wallet(Wrapper):
@@ -43,7 +57,7 @@ class Wallet(Wrapper):
 
         self.multi_wallet = None
         ar = self.resource.accounts
-        self.accounts = bitvault.collections.Accounts(resource=ar, wallet=self)
+        self.accounts = bitvault.dict_wrappers.Accounts(resource=ar, wallet=self)
 
     def is_unlocked(self):
         return not self.is_locked()
@@ -129,9 +143,9 @@ class Account(Wrapper):
     #def addresses(self):
         #pass
 
-    def transactions(self, query):
+    def transactions(self, **query):
         tr = self.resource.transactions(query)
-        return bitvault.collections.Transactions(resource=tr)
+        return bitvault.list_wrappers.Transactions(resource=tr)
 
 class Transaction(Wrapper):
     pass

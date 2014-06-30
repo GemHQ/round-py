@@ -13,7 +13,7 @@ class Client(object):
         self.pb_client = pb_client
         self.context = self.pb_client.context
         self.resources = self.pb_client.resources
-        self.users = collections.Users(resource=self.resources.users)
+        self.users = wrappers.Users(resource=self.resources.users)
 
     @property
     def application(self):

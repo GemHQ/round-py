@@ -3,56 +3,57 @@
 # Copyright 2014 BitVault.
 
 
+import abc
+import collections
+
+print dir(collections)
+exit()
+
 from coinop.crypto.passphrasebox import PassphraseBox
 from coinop.bit.multiwallet import MultiWallet
 
 from bitvault import wrappers
 
-
-class Collection(object):
+class DictWrapper(collections.Mapping):
 
     def __init__(self, resource):
         self.resource = resource
-        self.collection = {}
+        self.data = {}
         self.populate()
+
+    def __getitem__(self, name):
+        return data.__getitem__(name)
+
+    def __iter__(self):
+        pass
+
+    def __len__(self):
+        return data.__len__()
 
     def populate(self):
         if hasattr(self.resource, 'list'):
             resources = self.resource.list()
             for resource in resources:
                 wrapper = self.wrap(resource)
-                self.add(wrapper)
+                key = self.key_for(wrapper)
+                self.collection[key] = wrapper
+
 
     def refresh(self):
-        self.collection = {}
+        self.data = {}
         self.populate()
         return(self)
 
-    def add(self, wrapper):
-        key = self.key_for(wrapper)
-        self.collection[key] = wrapper
-
+    @abc.abstractmethod
     def key_for(self, wrapper):
         return wrapper.name
 
-    def find(self, key):
-        return self.collection.get(key, None)
-
-class Users(Collection):
-
-    def __init__(self, resource):
-        super(Users, self).__init__(resource)
-
-    def create(self, **content):
-        resource = self.resource.create(content)
-        resource.context.set_user(content[u'email'], content[u'password'])
-        return self.wrap(resource)
-
+    @abc.abstractmethod
     def wrap(self, resource):
-        return wrappers.User(resource=resource)
+        pass
 
 
-class Applications(Collection):
+class Applications(DictWrapper):
 
     def create(self, **content):
         resource = self.resource.create(content)
@@ -65,7 +66,7 @@ class Applications(Collection):
         return wrappers.Application(resource=resource)
 
 
-class Wallets(Collection):
+class Wallets(DictWrapper):
 
     # The passphrase parameter should stay out of the content dict
     # so that there is no chance the client's passphrase will get passed
@@ -94,7 +95,7 @@ class Wallets(Collection):
         return wrappers.Wallet(resource=resource)
 
 
-class Accounts(Collection):
+class Accounts(DictWrapper):
 
     def __init__(self, resource, wallet):
         self.wallet = wallet
@@ -108,17 +109,4 @@ class Accounts(Collection):
 
     def wrap(self, resource):
         return wrappers.Account(resource=resource, wallet=self.wallet)
-
-class Transactions(Collection):
-
-    def __init__(self, resource):
-        self.collection_list = []
-        super(Transactions, self).__init__(resource)
-
-    def add(self, wrapper):
-        self.collection_list.append(wrapper)
-
-    def wrap(self, resource):
-        return wrappers.Transaction(resource=resource)
-
 
