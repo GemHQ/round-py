@@ -5,7 +5,7 @@
 
 import collections
 
-from bitvault import wrappers
+import wrappers
 
 
 class ListWrapper(collections.Sequence):

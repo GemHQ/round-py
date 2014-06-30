@@ -9,7 +9,7 @@ import collections
 from coinop.crypto.passphrasebox import PassphraseBox
 from coinop.bit.multiwallet import MultiWallet
 
-from bitvault import wrappers
+import wrappers
 
 
 class DictWrapper(collections.Mapping):

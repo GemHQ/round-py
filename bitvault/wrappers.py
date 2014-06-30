@@ -7,7 +7,8 @@ from coinop.crypto.passphrasebox import PassphraseBox
 from coinop.bit.multiwallet import MultiWallet
 from coinop.bit.transaction import Transaction as Tx
 
-import bitvault
+import dict_wrappers
+import list_wrappers
 
 
 class Wrapper(object):
@@ -39,7 +40,7 @@ class User(Wrapper):
     def __init__(self, resource):
         super(User, self).__init__(resource)
         app_resource = self.resource.applications
-        self.applications = bitvault.dict_wrappers.Applications(app_resource)
+        self.applications = dict_wrappers.Applications(app_resource)
 
 
 class Application(Wrapper):
@@ -47,7 +48,7 @@ class Application(Wrapper):
     def __init__(self, resource):
         super(Application, self).__init__(resource)
         wallets_resource = self.resource.wallets
-        self.wallets = bitvault.dict_wrappers.Wallets(wallets_resource)
+        self.wallets = dict_wrappers.Wallets(wallets_resource)
 
 
 class Wallet(Wrapper):
@@ -57,7 +58,7 @@ class Wallet(Wrapper):
 
         self.multi_wallet = None
         ar = self.resource.accounts
-        self.accounts = bitvault.dict_wrappers.Accounts(resource=ar, wallet=self)
+        self.accounts = dict_wrappers.Accounts(resource=ar, wallet=self)
 
     def is_unlocked(self):
         return not self.is_locked()
@@ -144,7 +145,7 @@ class Account(Wrapper):
 
     def transactions(self, **query):
         tr = self.resource.transactions(query)
-        return bitvault.list_wrappers.Transactions(resource=tr)
+        return list_wrappers.Transactions(resource=tr)
 
 
 class Transaction(Wrapper):
