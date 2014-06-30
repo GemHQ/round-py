@@ -8,8 +8,6 @@ import yaml
 
 import bitvault.test.scripts.helpers as helpers
 
-from coinop.crypto.passphrasebox import PassphraseBox
-
 import bitvault
 
 
@@ -33,7 +31,7 @@ app_url = data[u'application'][u'url']
 wallet_url = data[u'wallet'][u'url']
 
 client = bitvault.authenticate(
-        application={'url': app_url, 'token': api_token})
+    application={'url': app_url, 'token': api_token})
 
 
 wallet = client.wallet(wallet_url)
@@ -45,9 +43,3 @@ transactions = account.transactions()
 
 for transaction in transactions:
     print transaction.data['hash']
-
-
-
-
-
-

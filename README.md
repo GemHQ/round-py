@@ -30,16 +30,16 @@ Installing:
 2. *Manually* install PyNaCl to work around a bug getting PyNaCl to install
    correctly on some machines:
 
-   $ pip install PyNaCl
+   $ sudo pip install PyNaCl
 
-(if you're not using a virtual environment, you obviously need to run pip
+(if you're using a virtual environment, you obviously don't need to run pip
 with sudo)
 
 3. clone the v0.1 branch of the git repository and run setup.py:
 
     $ git clone -b v0.1 git@github.com:BitVault/bitvault-py.git
     $ cd bitvault-py
-    $ python setup.py install
+    $ sudo python setup.py install
 
-(if you're not using a virtual environment, you obviously need to run setup.py
-with sudo)
+(if you're using a virtual environment, you obviously don't need to run
+setup.py with sudo)

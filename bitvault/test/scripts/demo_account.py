@@ -61,7 +61,7 @@ passphrase = u"wrong pony generator brad"
 record[u'passphrase'] = passphrase
 
 backup_seed, wallet = application.wallets.create(
-        passphrase=passphrase, name=u'my favorite')
+    passphrase=passphrase, name=u'my favorite')
 
 record[u'wallet'] = {u'url': wallet.url}
 

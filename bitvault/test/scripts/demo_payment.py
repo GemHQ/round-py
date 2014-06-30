@@ -8,8 +8,6 @@ import yaml
 
 import bitvault.test.scripts.helpers as helpers
 
-from coinop.crypto.passphrasebox import PassphraseBox
-
 import bitvault
 
 
@@ -43,10 +41,6 @@ faucet_address = u'mx3Az5tkWhEQHsihFr3Nmj6mRHLeqtqfNK'
 
 
 payment = account.pay([
-        { 'address': faucet_address, 'amount': 6543000 }
-    ])
+    {'address': faucet_address, 'amount': 6543000}])
 
 print 'payment submitted', repr(payment.hash)
-
-
-

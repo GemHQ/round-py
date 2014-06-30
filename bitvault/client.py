@@ -4,8 +4,6 @@
 
 
 from bitvault import wrappers
-from bitvault import dict_wrappers
-from bitvault import list_wrappers
 
 
 class Client(object):
@@ -40,8 +38,6 @@ class Client(object):
         wallet_resource = self.resources.wallet(url).get()
         return wrappers.Wallet(wallet_resource)
 
-
     def account(self, url):
         account_resource = self.resources.account(url)
         return wrappers.Account(account_resource)
-

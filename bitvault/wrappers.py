@@ -5,7 +5,6 @@
 
 from coinop.crypto.passphrasebox import PassphraseBox
 from coinop.bit.multiwallet import MultiWallet
-import coinop.bit
 from coinop.bit.transaction import Transaction as Tx
 
 import bitvault
@@ -84,9 +83,10 @@ class Wallet(Wrapper):
         source_content = dict(url=source.url)
         dest_content = dict(url=destination.url)
 
-        content = dict(value=value,
-                source=source_content,
-                destination=dest_content)
+        content = dict(
+            value=value,
+            source=source_content,
+            destination=dest_content)
         unsigned = self.resource.transfers.create(content)
         transaction = Tx(data=unsigned.attributes)
         signatures = self.signatures(transaction)
@@ -95,7 +95,6 @@ class Wallet(Wrapper):
         content = dict(inputs=signatures, transaction_hash=transaction_hash)
         signed = unsigned.sign(content)
         return signed
-
 
     def signatures(self, transaction):
         if self.is_locked():
@@ -113,9 +112,7 @@ class Account(Wrapper):
         super(Account, self).__init__(resource)
         self.wallet = wallet
 
-
     def pay(self, payees):
-        multi_wallet = self.wallet.multi_wallet
         content = dict(outputs=self.outputs_from_payees(payees))
         unsigned = self.resource.payments.create(content)
 
@@ -132,14 +129,15 @@ class Account(Wrapper):
     def outputs_from_payees(self, payees):
         def fn(payee):
             if 'amount' in payee and 'address' in payee:
-                return dict(amount=payee['amount'],
-                        payee={'address': payee['address']})
+                return dict(
+                    amount=payee['amount'],
+                    payee={'address': payee['address']})
             else:
                 raise ValueError("Invalid payee properties")
 
         return map(fn, payees)
 
-    # TODO: create wrapper.  Not needed right now, because the 
+    # TODO: create wrapper.  Not needed right now, because the
     # desired interface works with the bare Patchboard resources.
     #def addresses(self):
         #pass
@@ -147,6 +145,7 @@ class Account(Wrapper):
     def transactions(self, **query):
         tr = self.resource.transactions(query)
         return bitvault.list_wrappers.Transactions(resource=tr)
+
 
 class Transaction(Wrapper):
     pass

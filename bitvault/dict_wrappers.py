@@ -11,6 +11,7 @@ from coinop.bit.multiwallet import MultiWallet
 
 from bitvault import wrappers
 
+
 class DictWrapper(collections.Mapping):
 
     def __init__(self, resource):
@@ -34,11 +35,9 @@ class DictWrapper(collections.Mapping):
                 wrapper = self.wrap(resource)
                 self.add(wrapper)
 
-
     def add(self, wrapper):
         key = self.key_for(wrapper)
         self.data[key] = wrapper
-
 
     def refresh(self):
         self.data = {}
@@ -87,8 +86,6 @@ class Wallets(DictWrapper):
         content[u'primary_public_seed'] = primary_public_seed
         content[u'primary_private_seed'] = encrypted_seed
 
-        # FIXME: we're losing the backup seed.  We must make it
-        # available to the user somehow.
         resource = self.resource.create(content)
         wallet = self.wrap(resource)
         self.add(wallet)
@@ -112,4 +109,3 @@ class Accounts(DictWrapper):
 
     def wrap(self, resource):
         return wrappers.Account(resource=resource, wallet=self.wallet)
-

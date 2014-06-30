@@ -3,10 +3,10 @@
 # Copyright 2014 BitVault.
 
 
-import abc
 import collections
 
 from bitvault import wrappers
+
 
 class ListWrapper(collections.Sequence):
 
@@ -28,7 +28,6 @@ class ListWrapper(collections.Sequence):
                 wrapper = self.wrap(resource)
                 self.data.append(wrapper)
 
-
     def refresh(self):
         self.data = []
         self.populate()
@@ -46,6 +45,3 @@ class Transactions(ListWrapper):
 
     def wrap(self, resource):
         return wrappers.Transaction(resource=resource)
-
-
-

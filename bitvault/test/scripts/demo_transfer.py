@@ -8,8 +8,6 @@ import yaml
 
 import bitvault.test.scripts.helpers as helpers
 
-from coinop.crypto.passphrasebox import PassphraseBox
-
 import bitvault
 
 
@@ -44,11 +42,6 @@ destination = wallet.accounts['default']
 
 
 transfer = wallet.transfer(
-        value=4320000, source=source, destination=destination)
+    value=4320000, source=source, destination=destination)
 
 print "Transaction hash:", transfer.hash
-
-
-
-
-
