@@ -8,7 +8,7 @@ class MyCommand(install):
     on some machines."""
 
     def run(self):
-        os.system("pip install --exists-action=i coinop")
+        os.system("pip install coinop")
         install.run(self)
 
 
@@ -25,6 +25,6 @@ setup(name='bitvault',
       install_requires=[
           'PyYAML',
           'patchboard',
-          'coinop',
+          #'coinop',
       ],
       zip_safe=False)
