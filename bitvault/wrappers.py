@@ -6,6 +6,7 @@
 from coinop.crypto.passphrasebox import PassphraseBox
 from coinop.bit.multiwallet import MultiWallet
 import coinop.bit
+from coinop.bit.transaction import Transaction as Tx
 
 import bitvault
 
@@ -23,7 +24,7 @@ class Wrapper(object):
 class Users(object):
 
     def __init__(self, resource):
-        super(Users, self).__init__(resource)
+        self.resource = resource
 
     def create(self, **content):
         resource = self.resource.create(content)
@@ -31,7 +32,7 @@ class Users(object):
         return self.wrap(resource)
 
     def wrap(self, resource):
-        return wrappers.User(resource=resource)
+        return User(resource=resource)
 
 
 class User(Wrapper):
@@ -87,7 +88,7 @@ class Wallet(Wrapper):
                 source=source_content,
                 destination=dest_content)
         unsigned = self.resource.transfers.create(content)
-        transaction = coinop.bit.Transaction(data=unsigned.attributes)
+        transaction = Tx(data=unsigned.attributes)
         signatures = self.signatures(transaction)
 
         transaction_hash = transaction.hex_hash()
@@ -97,7 +98,7 @@ class Wallet(Wrapper):
 
 
     def signatures(self, transaction):
-        if self.is_locked:
+        if self.is_locked():
             raise Exception('Must unlock wallet first')
         change_output = transaction.outputs[-1]
         if self.multi_wallet.is_valid_output(change_output):
@@ -118,7 +119,7 @@ class Account(Wrapper):
         content = dict(outputs=self.outputs_from_payees(payees))
         unsigned = self.resource.payments.create(content)
 
-        transaction = coinop.bit.Transaction(data=unsigned.attributes)
+        transaction = Tx(data=unsigned.attributes)
         signatures = self.wallet.signatures(transaction)
 
         transaction_hash = transaction.hex_hash()

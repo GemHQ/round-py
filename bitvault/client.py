@@ -3,8 +3,9 @@
 # Copyright 2014 BitVault.
 
 
-from bitvault import collections
 from bitvault import wrappers
+from bitvault import dict_wrappers
+from bitvault import list_wrappers
 
 
 class Client(object):

@@ -38,13 +38,12 @@ client = bitvault.authenticate(
 
 wallet = client.wallet(wallet_url)
 wallet.unlock(passphrase)
-account = wallet.accounts.find('office supplies')
+account = wallet.accounts['office supplies']
 
-exit()
 # Amount returned is artificially limited at this time
 transactions = account.transactions()
 
-for transaction in transactions.collection_list:
+for transaction in transactions:
     print transaction.data['hash']
 
 

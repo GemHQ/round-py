@@ -6,9 +6,6 @@
 import abc
 import collections
 
-print dir(collections)
-exit()
-
 from coinop.crypto.passphrasebox import PassphraseBox
 from coinop.bit.multiwallet import MultiWallet
 
@@ -22,21 +19,25 @@ class DictWrapper(collections.Mapping):
         self.populate()
 
     def __getitem__(self, name):
-        return data.__getitem__(name)
+        return self.data.__getitem__(name)
 
     def __iter__(self):
-        pass
+        return self.data.__iter__()
 
     def __len__(self):
-        return data.__len__()
+        return self.data.__len__()
 
     def populate(self):
         if hasattr(self.resource, 'list'):
             resources = self.resource.list()
             for resource in resources:
                 wrapper = self.wrap(resource)
-                key = self.key_for(wrapper)
-                self.collection[key] = wrapper
+                self.add(wrapper)
+
+
+    def add(self, wrapper):
+        key = self.key_for(wrapper)
+        self.data[key] = wrapper
 
 
     def refresh(self):
@@ -44,7 +45,6 @@ class DictWrapper(collections.Mapping):
         self.populate()
         return(self)
 
-    @abc.abstractmethod
     def key_for(self, wrapper):
         return wrapper.name
 

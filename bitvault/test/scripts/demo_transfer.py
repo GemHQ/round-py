@@ -37,8 +37,8 @@ client = bitvault.authenticate(application={'url': app_url, 'token': api_token})
 
 wallet = client.wallet(wallet_url)
 wallet.unlock(passphrase)
-source = wallet.accounts.find('office supplies')
-destination = wallet.accounts.find('default')
+source = wallet.accounts['office supplies']
+destination = wallet.accounts['default']
 
 #print source.balance
 

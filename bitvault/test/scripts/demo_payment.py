@@ -37,7 +37,7 @@ client = bitvault.authenticate(application={'url': app_url, 'token': api_token})
 
 wallet = client.wallet(wallet_url)
 wallet.unlock(passphrase)
-account = wallet.accounts.find('office supplies')
+account = wallet.accounts['office supplies']
 
 faucet_address = u'mx3Az5tkWhEQHsihFr3Nmj6mRHLeqtqfNK'
 
