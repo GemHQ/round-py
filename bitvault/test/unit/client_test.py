@@ -28,23 +28,21 @@ class TestResourceCreation:
 
     def test_users(self, users):
         assert users
-        assert type(users) == bitvault.collections.Users
+        assert type(users) == bitvault.wrappers.Users
 
     def test_user(self, user):
         assert user
         assert type(user) == bitvault.wrappers.User
 
     def test_apps(self, apps):
-        assert apps
-        assert type(apps) == bitvault.collections.Applications
+        assert type(apps) == bitvault.dict_wrappers.Applications
 
     def test_app(self, app):
         assert app
         assert type(app) == bitvault.wrappers.Application
 
     def test_wallets(self, wallets):
-        assert wallets
-        assert type(wallets) == bitvault.collections.Wallets
+        assert type(wallets) == bitvault.dict_wrappers.Wallets
 
     def test_locked_wallet(self, locked_wallet):
         assert locked_wallet
@@ -57,8 +55,7 @@ class TestResourceCreation:
         assert type(wallet) == bitvault.wrappers.Wallet
 
     def test_accounts(self, accounts):
-        assert accounts
-        assert type(accounts) == bitvault.collections.Accounts
+        assert type(accounts) == bitvault.dict_wrappers.Accounts
 
     def test_account(self, account):
         assert account
