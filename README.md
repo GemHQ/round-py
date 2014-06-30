@@ -35,9 +35,9 @@ Installing:
 (if you're not using a virtual environment, you obviously need to run pip
 with sudo)
 
-3. clone the v0.1.0 branch of the git repository and run setup.py:
+3. clone the v0.1 branch of the git repository and run setup.py:
 
-    $ git clone -b v0.1.0 git@github.com:BitVault/bitvault-py.git
+    $ git clone -b v0.1 git@github.com:BitVault/bitvault-py.git
     $ cd bitvault-py
     $ python setup.py install
 
