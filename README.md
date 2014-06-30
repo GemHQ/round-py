@@ -39,6 +39,8 @@ with sudo)
 
     $ git clone git@github.com:BitVault/bitvault-py.git
     $ cd bitvault-py
+    $ git checkout rc-0.1.0
+    $ git pull
     $ python setup.py install
 
 (if you're not using a virtual environment, you obviously need to run setup.py
