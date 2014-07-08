@@ -36,11 +36,11 @@ if os.path.isfile(wallet_file):
 
 record = {}
 
-client = bitvault.client(u'http://localhost:8998')
-#client = bitvault.client(u'http://bitvault.pandastrike.com')
+client = bitvault.client(helpers.bitvault_url())
 users = client.users
 
 email = u'matthew-{0}@bitvault.io'.format(current_milli_time())
+
 user = users.create(email=email, password=u'horriblepassword')
 
 application = user.applications.create(
