@@ -42,3 +42,22 @@ with sudo)
 
   (if you're using a virtual environment, you obviously don't need to run
 setup.py with sudo)
+
+### Mac OSX:
+1.  brew install libffi
+
+1.  ```bash
+$ export PKG_CONFIG_PATH=/usr/local/Cellar/libffi/3.0.13/lib/pkgconfig/
+```
+
+1.  ```bash
+$ pip install PyNaCl
+```
+
+1. clone the v0.1 branch of the git repository and run setup.py:
+
+  ```bash
+  $ git clone -b v0.1 git@github.com:BitVault/bitvault-py.git
+  $ cd bitvault-py
+  $ python setup.py install
+  ```
