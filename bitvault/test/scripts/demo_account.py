@@ -40,22 +40,21 @@ client = bitvault.client(helpers.bitvault_url())
 users = client.users
 
 email = u'matthew-{0}@bitvault.io'.format(current_milli_time())
+password = u'horriblepassword'
 
-user = users.create(email=email, password=u'horriblepassword')
+user = users.create(email=email, password=password)
+record[u'user'] = dict(email=email, password=password)
 
 application = user.applications.create(
     name=u'bitcoins_r_us',
     callback_url=u'https://someapp.com/callback')
 
 record[u'api_token'] = application.api_token
+record[u'application'] = dict(url=application.url)
 
 client.context.set_application(url=application.url, token=application.api_token)
 
 
-# FIXME: I took out the MultiWallet manipulations because the high-level
-# client usage script doesn't include them. Presumably the bitvault-py
-# wallet implementation manages that, but the ruby client does (or did)
-# manipulate MultiWallets directly so this may not be correct.
 
 passphrase = u"wrong pony generator brad"
 record[u'passphrase'] = passphrase

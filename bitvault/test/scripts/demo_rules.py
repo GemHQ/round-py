@@ -1,7 +1,3 @@
-# demo_transfer.py
-#
-# Copyright 2014 BitVault.
-
 
 import os.path
 import yaml
@@ -25,22 +21,41 @@ else:
     with open(wallet_file, u'r') as file:
         data = yaml.load(file)
 
+user = data[u'user']
 api_token = data[u'api_token']
 passphrase = data[u'passphrase']
 app_url = data[u'application'][u'url']
 wallet_url = data[u'wallet'][u'url']
 
-client = bitvault.authenticate(
-    url=helpers.bitvault_url(),
-    application={'url': app_url, 'token': api_token})
+client = bitvault.authenticate(url=helpers.bitvault_url(), user=user)
+client.context.set_application(url=app_url, token=api_token)
 
-
+application = client.application
 wallet = client.wallet(wallet_url)
-wallet.unlock(passphrase)
 account = wallet.accounts['office supplies']
 
-# Amount returned is artificially limited at this time
-transactions = account.transactions()
+try:
+    whitelist = application.rules['gem:whitelist']
+except KeyError:
+    whitelist = application.rules.add('gem:whitelist')
 
-for transaction in transactions:
-    print transaction.data['hash']
+
+address_payee = dict(
+        type='address',
+        value='mp1vqX3gEH9dTXvFL7d36FtBCQQWSGusnG',
+        memo='testnet faucet return'
+        )
+
+wallet_payee = dict(
+        type='wallet',
+        value=wallet,
+        )
+
+whitelist = whitelist.set(
+        {'faucet': address_payee}
+        )
+
+result = whitelist.delete()
+
+
+

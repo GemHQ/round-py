@@ -15,7 +15,6 @@ default_url = u"http://bitvault.pandastrike.com/"
 
 __patchboard_client = None
 
-
 def client(url=default_url):
     global __patchboard_client
 

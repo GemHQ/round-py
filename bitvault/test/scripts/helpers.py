@@ -15,8 +15,7 @@ def bitvault_url():
         _script, url = sys.argv
         return url
     except:
-        return "http://localhost:8999"
-        #return "http://bitvault.pandastrike.com"
+        return "http://api.bitvault.io"
 
 
 def wallet_file():

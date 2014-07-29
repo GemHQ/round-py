@@ -27,6 +27,7 @@ class Users(object):
         self.resource = resource
 
     def create(self, **content):
+        # content is a dict
         resource = self.resource.create(content)
         resource.context.set_user(content[u'email'], content[u'password'])
         return self.wrap(resource)
@@ -43,12 +44,31 @@ class User(Wrapper):
         self.applications = dict_wrappers.Applications(app_resource)
 
 
+class Rule(Wrapper):
+
+    def __init__(self, resource):
+        super(Rule, self).__init__(resource)
+
+    def set(self, content):
+        for name, spec in content.iteritems():
+            if spec[u'type'] in [u'wallet', u'account']:
+                resource = spec[u'value']
+                spec[u'value'] = dict(url=resource[u'url'])
+        return self.resource.set(content)
+
+    def delete(self):
+        return self.resource.delete.response.data
+
+
 class Application(Wrapper):
 
     def __init__(self, resource):
         super(Application, self).__init__(resource)
         wallets_resource = self.resource.wallets
         self.wallets = dict_wrappers.Wallets(wallets_resource)
+
+        rules_resource = self.resource.rules
+        self.rules = dict_wrappers.Rules(rules_resource)
 
 
 class Wallet(Wrapper):
@@ -57,8 +77,12 @@ class Wallet(Wrapper):
         super(Wallet, self).__init__(resource)
 
         self.multi_wallet = None
+
         ar = self.resource.accounts
         self.accounts = dict_wrappers.Accounts(resource=ar, wallet=self)
+
+        rules_resource = self.resource.rules
+        self.rules = dict_wrappers.Rules(rules_resource)
 
     def is_unlocked(self):
         return not self.is_locked()
@@ -100,6 +124,7 @@ class Wallet(Wrapper):
     def signatures(self, transaction):
         if self.is_locked():
             raise Exception('Must unlock wallet first')
+        # TODO: output.metadata['type']['change']
         change_output = transaction.outputs[-1]
         if self.multi_wallet.is_valid_output(change_output):
             return self.multi_wallet.signatures(transaction)
@@ -112,6 +137,8 @@ class Account(Wrapper):
     def __init__(self, resource, wallet):
         super(Account, self).__init__(resource)
         self.wallet = wallet
+        rules_resource = self.resource.rules
+        self.rules = dict_wrappers.Rules(rules_resource)
 
     def pay(self, payees):
         content = dict(outputs=self.outputs_from_payees(payees))
@@ -120,6 +147,7 @@ class Account(Wrapper):
         transaction = Tx(data=unsigned.attributes)
         signatures = self.wallet.signatures(transaction)
 
+        # TODO: investigate removing the txhash as a required param
         transaction_hash = transaction.hex_hash()
         content = dict(inputs=signatures, transaction_hash=transaction_hash)
         signed = unsigned.sign(content)
