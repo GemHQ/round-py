@@ -39,6 +39,7 @@ wallet = client.wallet(wallet_url)
 wallet.unlock(passphrase)
 account = wallet.accounts['office supplies']
 
+
 # Amount returned is artificially limited at this time
 transactions = account.transactions()
 

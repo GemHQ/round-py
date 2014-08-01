@@ -68,7 +68,12 @@ class Application(Wrapper):
         self.wallets = dict_wrappers.Wallets(wallets_resource)
 
         rules_resource = self.resource.rules
-        self.rules = dict_wrappers.Rules(rules_resource)
+
+    @property
+    def rules(self):
+        if not hasattr(self, '_rules'):
+            self._rules = dict_wrappers.Rules(rules_resource)
+        return self._application
 
 
 class Wallet(Wrapper):
@@ -81,8 +86,12 @@ class Wallet(Wrapper):
         ar = self.resource.accounts
         self.accounts = dict_wrappers.Accounts(resource=ar, wallet=self)
 
-        rules_resource = self.resource.rules
-        self.rules = dict_wrappers.Rules(rules_resource)
+    @property
+    def rules(self):
+        if not hasattr(self, '_rules'):
+            self._rules = dict_wrappers.Rules(rules_resource)
+        return self._application
+
 
     def is_unlocked(self):
         return not self.is_locked()
@@ -138,7 +147,13 @@ class Account(Wrapper):
         super(Account, self).__init__(resource)
         self.wallet = wallet
         rules_resource = self.resource.rules
-        self.rules = dict_wrappers.Rules(rules_resource)
+
+    @property
+    def rules(self):
+        if not hasattr(self, '_rules'):
+            self._rules = dict_wrappers.Rules(rules_resource)
+        return self._application
+
 
     def pay(self, payees):
         content = dict(outputs=self.outputs_from_payees(payees))
@@ -174,6 +189,11 @@ class Account(Wrapper):
     def transactions(self, **query):
         tr = self.resource.transactions(query)
         return list_wrappers.Transactions(resource=tr)
+
+    @property
+    def addresses(self):
+        ar = self.resource.addresses
+        return list_wrappers.Addresses(resource=ar)
 
 
 class Transaction(Wrapper):

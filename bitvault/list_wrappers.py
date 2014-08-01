@@ -45,3 +45,21 @@ class Transactions(ListWrapper):
 
     def wrap(self, resource):
         return wrappers.Transaction(resource=resource)
+
+
+class Addresses(ListWrapper):
+
+    def __init__(self, resource):
+        self.collection_list = []
+        super(Addresses, self).__init__(resource)
+
+    def add(self, address):
+        self.collection_list.append(address)
+
+    def wrap(self, address):
+        return address
+
+    def create(self):
+        address = self.resource.create()
+        self.add(address)
+        return address

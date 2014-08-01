@@ -70,6 +70,10 @@ record[u'account'] = {u'url': account.url}
 address = account.addresses.create()
 record[u'node'] = {u'path': address.path, u'address': address.string}
 
+print "List addresses for the account"
+for address in account.addresses:
+    print repr(address)
+
 # save YAML record to file.
 
 with open(helpers.wallet_file(), u'w') as file:
