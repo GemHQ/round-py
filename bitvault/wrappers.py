@@ -44,6 +44,16 @@ class User(Wrapper):
         self.applications = dict_wrappers.Applications(app_resource)
 
 
+    def update(self, **content):
+        resource = self.resource.update(content)
+
+        email = resource.attributes.get(u'email', None)
+        password = content.get(u'password', None)
+
+        resource.context.set_user(email=email, password=password)
+        return User(resource)
+
+
 class Rule(Wrapper):
 
     def __init__(self, resource):

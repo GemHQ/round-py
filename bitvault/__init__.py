@@ -66,10 +66,13 @@ class Context(dict):
                 raise Exception(u"Must call set_application(url, token) first")
 
 
-    def set_user(self, email, password):
-        self.email = email
-        self.password = password
-        string = u':'.join([email, password])
+    def set_user(self, email=None, password=None):
+        if email:
+            self.email = email
+        if password:
+            self.password = password
+
+        string = u':'.join([self.email, self.password])
         self.basic = base64.b64encode(string)
 
     def set_application(self, url, token):

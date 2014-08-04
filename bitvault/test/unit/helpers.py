@@ -11,8 +11,8 @@ from random import randint
 
 
 def bitvault_url():
-    #return u"http://localhost:8998"
-    return u"http://bitvault.pandastrike.com"
+    return u"http://localhost:8999"
+    #return u"http://api.bitvault.io"
 
 
 def current_milli_time():

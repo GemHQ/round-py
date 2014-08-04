@@ -10,6 +10,8 @@ import pytest
 import patchboard
 import bitvault
 
+from helpers import email
+
 from fixtures import (initial_client, users, user, app, apps, wallets,
                       locked_wallet, wallet, accounts, account, addresses,
                       address)
@@ -33,6 +35,13 @@ class TestResourceCreation:
     def test_user(self, user):
         assert user
         assert type(user) == bitvault.wrappers.User
+
+    def test_user_update(self, user):
+        new_email = email()
+        user = user.update(email=new_email)
+        assert user
+        assert type(user) == bitvault.wrappers.User
+        assert user.email == new_email
 
     def test_apps(self, apps):
         assert type(apps) == bitvault.dict_wrappers.Applications
@@ -62,8 +71,8 @@ class TestResourceCreation:
         assert type(account) == bitvault.wrappers.Account
 
     def test_addresses(self, addresses):
-        assert addresses
-        assert type(addresses) == patchboard.resources.Addresses
+        assert addresses is not None
+        assert type(addresses) == bitvault.list_wrappers.Addresses
 
     def test_address(self, address):
         assert address is not None
