@@ -10,7 +10,7 @@ import pytest
 import patchboard
 import bitvault
 
-from helpers import email
+from helpers import email, password
 
 from fixtures import (initial_client, users, user, app, apps, wallets,
                       locked_wallet, wallet, accounts, account, addresses,
@@ -97,3 +97,13 @@ class TestResourceCreation:
     def test_address(self, address):
         assert address is not None
         assert type(address) == patchboard.util.SchemaStruct
+
+    def test_user_auth(self, user, app):
+        auth = dict(email=user.email, password=password())
+        client = bitvault.authenticate(user=auth)
+        user = client.user 
+        assert user
+        for name, application in user.applications.iteritems():
+            assert application
+            assert type(app) == bitvault.wrappers.Application
+

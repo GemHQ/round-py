@@ -45,7 +45,6 @@ class User(Wrapper):
     def __init__(self, resource):
         super(User, self).__init__(resource)
         app_resource = self.resource.applications
-        self.applications = dict_wrappers.Applications(app_resource)
 
 
     def update(self, **content):
@@ -56,6 +55,13 @@ class User(Wrapper):
 
         resource.context.set_user(email=email, password=password)
         return User(resource)
+
+    @property
+    def applications(self):
+        if not hasattr(self, '_applications'):
+            applications_resource = self.resource.applications
+            self._applications = dict_wrappers.Applications(applications_resource)
+        return self._applications
 
 
 class Rule(Wrapper):
@@ -78,14 +84,18 @@ class Application(Wrapper, Updatable):
 
     def __init__(self, resource):
         super(Application, self).__init__(resource)
-        wallets_resource = self.resource.wallets
-        self.wallets = dict_wrappers.Wallets(wallets_resource)
 
-        rules_resource = self.resource.rules
+    @property
+    def wallets(self):
+        if not hasattr(self, '_wallets'):
+            wallets_resource = self.resource.wallets
+            self._wallets = dict_wrappers.Wallets(wallets_resource)
+        return self._wallets
 
     @property
     def rules(self):
         if not hasattr(self, '_rules'):
+            rules_resource = self.resource.rules
             self._rules = dict_wrappers.Rules(rules_resource)
         return self._application
 
@@ -103,6 +113,7 @@ class Wallet(Wrapper, Updatable):
     @property
     def rules(self):
         if not hasattr(self, '_rules'):
+            rules_resource = self.resource.rules
             self._rules = dict_wrappers.Rules(rules_resource)
         return self._application
 
@@ -166,6 +177,7 @@ class Account(Wrapper, Updatable):
     @property
     def rules(self):
         if not hasattr(self, '_rules'):
+            rules_resource = self.resource.rules
             self._rules = dict_wrappers.Rules(rules_resource)
         return self._application
 
@@ -198,11 +210,6 @@ class Account(Wrapper, Updatable):
                 raise ValueError("Invalid payee properties")
 
         return map(fn, payees)
-
-    # TODO: create wrapper.  Not needed right now, because the
-    # desired interface works with the bare Patchboard resources.
-    #def addresses(self):
-        #pass
 
     def transactions(self, **query):
         tr = self.resource.transactions(query)
