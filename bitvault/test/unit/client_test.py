@@ -50,6 +50,12 @@ class TestResourceCreation:
         assert app
         assert type(app) == bitvault.wrappers.Application
 
+    def test_app_update(self, app):
+        app = app.update(name="wrenches")
+        assert app
+        assert type(app) == bitvault.wrappers.Application
+        assert app.name == "wrenches"
+
     def test_wallets(self, wallets):
         assert type(wallets) == bitvault.dict_wrappers.Wallets
 
@@ -63,12 +69,26 @@ class TestResourceCreation:
         assert wallet.is_unlocked()
         assert type(wallet) == bitvault.wrappers.Wallet
 
+    #def test_wallet_update(self, wallet):
+        #wallet = wallet.update(name="support")
+        #assert wallet
+        #assert type(wallet) == bitvault.wrappers.Wallet
+        #assert wallet.name == "support"
+
+
     def test_accounts(self, accounts):
         assert type(accounts) == bitvault.dict_wrappers.Accounts
 
     def test_account(self, account):
         assert account
         assert type(account) == bitvault.wrappers.Account
+
+    def test_account_update(self, account):
+        account = account.update(name="staples")
+        assert account
+        assert type(account) == bitvault.wrappers.Account
+        assert account.name == "staples"
+
 
     def test_addresses(self, addresses):
         assert addresses is not None

@@ -10,6 +10,11 @@ from coinop.bit.transaction import Transaction as Tx
 import dict_wrappers
 import list_wrappers
 
+class Updatable(object):
+
+    def update(self, **content):
+        return self.__class__(self.resource.update(content))
+
 
 class Wrapper(object):
 
@@ -27,7 +32,6 @@ class Users(object):
         self.resource = resource
 
     def create(self, **content):
-        # content is a dict
         resource = self.resource.create(content)
         resource.context.set_user(content[u'email'], content[u'password'])
         return self.wrap(resource)
@@ -70,7 +74,7 @@ class Rule(Wrapper):
         return self.resource.delete.response.data
 
 
-class Application(Wrapper):
+class Application(Wrapper, Updatable):
 
     def __init__(self, resource):
         super(Application, self).__init__(resource)
@@ -86,7 +90,7 @@ class Application(Wrapper):
         return self._application
 
 
-class Wallet(Wrapper):
+class Wallet(Wrapper, Updatable):
 
     def __init__(self, resource):
         super(Wallet, self).__init__(resource)
@@ -121,6 +125,7 @@ class Wallet(Wrapper):
                 u'cosigner': wallet.cosigner_public_seed,
                 u'backup': wallet.backup_public_seed})
 
+
     def transfer(self, value, source, destination):
         if self.is_locked:
             raise Exception('Must unlock wallet first')
@@ -151,7 +156,7 @@ class Wallet(Wrapper):
             raise Exception('Problem with transaction: Invalid change address')
 
 
-class Account(Wrapper):
+class Account(Wrapper, Updatable):
 
     def __init__(self, resource, wallet):
         super(Account, self).__init__(resource)
@@ -164,6 +169,9 @@ class Account(Wrapper):
             self._rules = dict_wrappers.Rules(rules_resource)
         return self._application
 
+
+    def update(self, **content):
+        return self.__class__(self.resource.update(content), wallet=self.wallet)
 
     def pay(self, payees):
         content = dict(outputs=self.outputs_from_payees(payees))
