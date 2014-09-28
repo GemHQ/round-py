@@ -1,14 +1,10 @@
-# demo_payment.py
-#
-# Copyright 2014 BitVault.
-
 
 import os.path
 import yaml
 
-import bitvault.test.scripts.helpers as helpers
+import round.test.scripts.helpers as helpers
 
-import bitvault
+import round
 
 
 wallet_file = helpers.wallet_file()
@@ -25,22 +21,41 @@ else:
     with open(wallet_file, u'r') as file:
         data = yaml.load(file)
 
+user = data[u'user']
 api_token = data[u'api_token']
 passphrase = data[u'passphrase']
 app_url = data[u'application'][u'url']
 wallet_url = data[u'wallet'][u'url']
 
-client = bitvault.authenticate(application={'url': app_url, 'token': api_token})
+client = round.authenticate(url=helpers.round_url(), user=user)
+client.context.set_application(url=app_url, token=api_token)
 
-
+application = client.application
 wallet = client.wallet(wallet_url)
-wallet.unlock(passphrase)
 account = wallet.accounts['office supplies']
 
-faucet_address = u'mx3Az5tkWhEQHsihFr3Nmj6mRHLeqtqfNK'
+try:
+    whitelist = application.rules['gem:whitelist']
+except KeyError:
+    whitelist = application.rules.add('gem:whitelist')
 
 
-payment = account.pay([
-    {'address': faucet_address, 'amount': 6543000}])
+address_payee = dict(
+        type='address',
+        value='mp1vqX3gEH9dTXvFL7d36FtBCQQWSGusnG',
+        memo='testnet faucet return'
+        )
 
-print 'payment submitted', repr(payment.hash)
+wallet_payee = dict(
+        type='wallet',
+        value=wallet,
+        )
+
+whitelist = whitelist.set(
+        {'faucet': address_payee}
+        )
+
+result = whitelist.delete()
+
+
+

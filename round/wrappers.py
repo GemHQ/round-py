@@ -1,6 +1,6 @@
 # wrappers.py
 #
-# Copyright 2014 BitVault.
+# Copyright 2014 BitVault, Inc. dba Gem
 
 
 from coinop.crypto.passphrasebox import PassphraseBox

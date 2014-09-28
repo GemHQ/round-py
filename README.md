@@ -1,11 +1,11 @@
-# bitvault-py: A Python client for the BitVault API
+# round-py: A Python client for the Gem API
 
 
-`bitvault-py` is still alpha code but is in active development. Bug reports and
+`round-py` is still alpha code but is in active development. Bug reports and
 patches welcome.
 
 
-## Installing bitvault-py:
+## Installing round-py:
 
 ### Ubuntu:
 
@@ -21,7 +21,7 @@ patches welcome.
 
 #### Installing:
 
-1. Ask us to add you to the bitvault-py github repo (https://github.com/BitVault/bitvault-py). While you wait impatiently, continue with the following.
+1. Ask us to add you to the round-py github repo (https://github.com/BitVault/round-py). While you wait impatiently, continue with the following.
 
 1. *Manually* install PyNaCl to work around a bug getting PyNaCl to install correctly on some machines:
 
@@ -35,8 +35,8 @@ with sudo)
 1. clone the v0.1 branch of the git repository and run setup.py:
 
   ```bash
-  $ git clone -b v0.1 git@github.com:BitVault/bitvault-py.git
-  $ cd bitvault-py
+  $ git clone -b v0.1 git@github.com:BitVault/round-py.git
+  $ cd round-py
   $ sudo python setup.py install
   ```
 
@@ -57,7 +57,7 @@ $ pip install PyNaCl
 1. clone the v0.1 branch of the git repository and run setup.py:
 
   ```bash
-  $ git clone -b v0.1 git@github.com:BitVault/bitvault-py.git
-  $ cd bitvault-py
+  $ git clone -b v0.1 git@github.com:BitVault/round-py.git
+  $ cd round-py
   $ python setup.py install
   ```

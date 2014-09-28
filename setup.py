@@ -1,10 +1,10 @@
 from setuptools import setup, find_packages
 
 
-setup(name='bitvault',
+setup(name='round',
       version='0.1.0',
-      description='Python client for BitVault.io',
-      url='http://github.com/BitVault/bitvault-py',
+      description='Python client for Gem.co',
+      url='http://github.com/BitVault/round-py',
       author='Dustin Laurence',
       author_email='dustin@pandastrike.com',
       license='MIT',

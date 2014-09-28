@@ -1,14 +1,14 @@
 # demo_transfer.py
 #
-# Copyright 2014 BitVault.
+# Copyright 2014 BitVault, Inc. dba Gem
 
 
 import os.path
 import yaml
 
-import bitvault.test.scripts.helpers as helpers
+import round.test.scripts.helpers as helpers
 
-import bitvault
+import round
 
 
 wallet_file = helpers.wallet_file()
@@ -30,18 +30,18 @@ passphrase = data[u'passphrase']
 app_url = data[u'application'][u'url']
 wallet_url = data[u'wallet'][u'url']
 
-client = bitvault.authenticate(
-    url=helpers.bitvault_url(),
-    application={'url': app_url, 'token': api_token})
+client = round.authenticate(application={'url': app_url, 'token': api_token})
 
 
 wallet = client.wallet(wallet_url)
 wallet.unlock(passphrase)
-account = wallet.accounts['office supplies']
+source = wallet.accounts['office supplies']
+destination = wallet.accounts['default']
+
+#print source.balance
 
 
-# Amount returned is artificially limited at this time
-transactions = account.transactions()
+transfer = wallet.transfer(
+    value=4320000, source=source, destination=destination)
 
-for transaction in transactions:
-    print transaction.data['hash']
+print "Transaction hash:", transfer.hash

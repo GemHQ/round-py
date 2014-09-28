@@ -1,9 +1,9 @@
 # low_demo_account.py
 #
-# Copyright 2014 BitVault.
+# Copyright 2014 BitVault, Inc. dba Gem
 
 
-import bitvault.test.scripts.helpers as helpers
+import round.test.scripts.helpers as helpers
 
 import yaml
 import os.path
@@ -36,12 +36,12 @@ current_milli_time = lambda: int(round(time.time()))
 
 record = {}
 
-bitvault = helpers.bitvault()
-client = bitvault.spawn()
+round = helpers.round()
+client = round.spawn()
 resources = client.resources
 users = resources.users
 
-email = 'matthew-{0}@bitvault.io'.format(current_milli_time())
+email = 'matthew-{0}@gem.co'.format(current_milli_time())
 content = {'email': email, 'password': 'horriblepassword'}
 user = users.create(content)
 

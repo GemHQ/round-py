@@ -1,6 +1,6 @@
 # __init__.py
 #
-# Copyright 2014 BitVault.
+# Copyright 2014 BitVault, Inc. dba Gem Inc. dba Gem
 
 
 import base64
@@ -10,7 +10,7 @@ import patchboard
 from .client import Client
 
 
-default_url = u"http://bitvault.pandastrike.com/"
+default_url = u"http://round.pandastrike.com/"
 
 
 __patchboard_client = None
@@ -59,7 +59,7 @@ class Context(dict):
             else:
                 raise Exception(u"Must call set_user(email, password) first")
 
-        elif scheme == u"BitVault-Token":
+        elif scheme == u"Gem-Token":
             if hasattr(self, u'api_token'):
                 return self.api_token
             else:

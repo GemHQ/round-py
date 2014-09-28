@@ -1,27 +1,27 @@
 # scripts/helpers.py
 #
-# Copyright 2014 BitVault.
+# Copyright 2014 BitVault, Inc. dba Gem
 
 
 import sys
 from urlparse import urlparse
 
 from patchboard import discover
-from bitvault import Context
+from round import Context
 
 
-def bitvault_url():
+def round_url():
     try:
         _script, url = sys.argv
         return url
     except:
-        return "http://api.bitvault.io"
+        return "http://api.gem.co"
 
 
 def wallet_file():
-    p = urlparse(bitvault_url())
+    p = urlparse(round_url())
     return "demo-{0}.yaml".format(p.hostname)
 
 
-def bitvault():
-    return discover(bitvault_url(), {'default_context': Context()})
+def round():
+    return discover(round_url(), {'default_context': Context()})

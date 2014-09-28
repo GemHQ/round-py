@@ -1,9 +1,9 @@
 # client.py
 #
-# Copyright 2014 BitVault.
+# Copyright 2014 BitVault, Inc. dba Gem
 
 
-from bitvault import wrappers
+from round import wrappers
 
 
 class Client(object):

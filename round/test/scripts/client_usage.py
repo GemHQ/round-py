@@ -1,15 +1,15 @@
 # client_usage.py
 #
-# Copyright 2014 BitVault.
+# Copyright 2014 BitVault, Inc. dba Gem
 
 
 import time
 
-import bitvault
+import round
 
 
 current_milli_time = lambda: int(round(time.time()))
-email = '{0}@bitvault.io'.format(current_milli_time())
+email = '{0}@gem.co'.format(current_milli_time())
 password = u'incredibly_secure'
 
 
@@ -18,8 +18,8 @@ password = u'incredibly_secure'
 # The BitVault server provides a JSON description of its API that allows
 # the client to generate all necessary resource classes at runtime.
 
-client = bitvault.client(u'http://localhost:8998')
-#client = bitvault.client(u'http://bitvault.pandastrike.com')
+client = round.client(u'http://localhost:8998')
+#client = round.client(u'http://round.pandastrike.com')
 
 
 ## User management
@@ -33,7 +33,7 @@ client = bitvault.client(u'http://localhost:8998')
 client.users.create(email=email, password=password)
 
 # Get an authenticated client representing the new user
-client = bitvault.authed_client(email=email, password=password)
+client = round.authed_client(email=email, password=password)
 user = client.user
 
 
@@ -51,7 +51,7 @@ user.applications.refresh()
 
 ## Create an application.
 #
-# The optional callback_url attribute specifies a URL where BitVault
+# The optional callback_url attribute specifies a URL where Gem
 # can POST event information such as confirmed transactions.
 
 app = user.applications.create(

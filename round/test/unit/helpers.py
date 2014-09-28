@@ -1,6 +1,6 @@
 # unit/helpers.py
 #
-# Copyright 2014 BitVault.
+# Copyright 2014 BitVault, Inc. dba Gem
 #
 # Broken out of fixtures.py so that in the future they can be used in the
 # tests as well.
@@ -10,9 +10,9 @@ import time
 from random import randint
 
 
-def bitvault_url():
+def round_url():
     return u"http://localhost:8999"
-    #return u"http://api.bitvault.io"
+    #return u"http://api.gem.co"
 
 
 def current_milli_time():
@@ -20,7 +20,7 @@ def current_milli_time():
 
 
 def email():
-    return u'{0}@bitvault.io'.format(randint(0, 2**32 - 1))
+    return u'{0}@gem.co'.format(randint(0, 2**32 - 1))
 
 
 def password():

@@ -1,7 +1,7 @@
 import os.path
 import yaml
 
-import bitvault.test.scripts.helpers as helpers
+import round.test.scripts.helpers as helpers
 
 from coinop.crypto.passphrasebox import PassphraseBox
 from coinop.bit.multiwallet import MultiWallet
@@ -26,8 +26,8 @@ passphrase = data['passphrase']
 wallet_url = data['wallet']['url']
 account_url = data['account']['url']
 
-bitvault = helpers.bitvault()
-client = bitvault.spawn()
+round = helpers.round()
+client = round.spawn()
 client.context.set_token(api_token)
 resources = client.resources
 

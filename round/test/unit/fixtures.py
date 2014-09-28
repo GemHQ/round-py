@@ -1,22 +1,22 @@
 # unit/fixtures.py
 #
-# Copyright 2014 BitVault.
+# Copyright 2014 BitVault, Inc. dba Gem
 
 
 import pytest
 
 
-import bitvault
+import round
 
 # This is the one time this is OK--we use everything in the module
-from helpers import (bitvault_url, email, password, app_name, callback_url,
+from helpers import (round_url, email, password, app_name, callback_url,
                      locked_wallet_name, locked_wallet_passphrase,
                      wallet_name, wallet_passphrase, account_name)
 
 
 @pytest.fixture(scope=u'function')
 def initial_client():
-    return bitvault.client(bitvault_url())
+    return round.client(round_url())
 
 
 @pytest.fixture(scope=u'function')

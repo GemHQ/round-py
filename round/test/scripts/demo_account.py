@@ -1,14 +1,14 @@
 # demo_account.py
 #
-# Copyright 2014 BitVault.
+# Copyright 2014 BitVault, Inc. dba Gem
 
 
-import bitvault.test.scripts.helpers as helpers
+import round.test.scripts.helpers as helpers
 
 import yaml
 import os.path
 
-import bitvault
+import round
 
 import time
 
@@ -36,10 +36,10 @@ if os.path.isfile(wallet_file):
 
 record = {}
 
-client = bitvault.client(helpers.bitvault_url())
+client = round.client(helpers.round_url())
 users = client.users
 
-email = u'matthew-{0}@bitvault.io'.format(current_milli_time())
+email = u'matthew-{0}@gem.co'.format(current_milli_time())
 password = u'horriblepassword'
 
 user = users.create(email=email, password=password)
