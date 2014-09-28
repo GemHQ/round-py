@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # wrappers.py
 #
 # Copyright 2014 BitVault, Inc. dba Gem
@@ -26,26 +27,18 @@ class Wrapper(object):
         return getattr(self.resource, name)
 
 
-class Users(object):
-
-    def __init__(self, resource):
-        self.resource = resource
+class Developers(object):
 
     def create(self, **content):
         resource = self.resource.create(content)
-        resource.context.set_user(content[u'email'], content[u'password'])
+        resource.context.set_developer(content[u'email'], content[u'password'])
         return self.wrap(resource)
 
     def wrap(self, resource):
-        return User(resource=resource)
+        return Developer(resource=resource)
 
 
-class User(Wrapper):
-
-    def __init__(self, resource):
-        super(User, self).__init__(resource)
-        app_resource = self.resource.applications
-
+class Developer(Wrapper):
 
     def update(self, **content):
         resource = self.resource.update(content)
@@ -53,7 +46,21 @@ class User(Wrapper):
         email = resource.attributes.get(u'email', None)
         password = content.get(u'password', None)
 
-        resource.context.set_user(email=email, password=password)
+        resource.context.set_developer(email=email, password=password)
+        return Developer(resource)
+
+    @property
+    def applications(self):
+        if not hasattr(self, '_applications'):
+            applications_resource = self.resource.applications
+            self._applications = dict_wrappers.Applications(applications_resource)
+        return self._applications
+
+
+class User(Wrapper, Updateable):
+
+    def update(self, **content):
+        resource = self.resource.update(content)
         return User(resource)
 
     @property
@@ -65,9 +72,6 @@ class User(Wrapper):
 
 
 class Rule(Wrapper):
-
-    def __init__(self, resource):
-        super(Rule, self).__init__(resource)
 
     def set(self, content):
         for name, spec in content.iteritems():
@@ -82,15 +86,12 @@ class Rule(Wrapper):
 
 class Application(Wrapper, Updatable):
 
-    def __init__(self, resource):
-        super(Application, self).__init__(resource)
-
     @property
-    def wallets(self):
-        if not hasattr(self, '_wallets'):
-            wallets_resource = self.resource.wallets
-            self._wallets = dict_wrappers.Wallets(wallets_resource)
-        return self._wallets
+    def users(self):
+        if not hasattr(self, '_users'):
+            users_resource = self.resource.users
+            self._users = dict_wrappers.Users(users_resource)
+        return self._users
 
     @property
     def rules(self):
@@ -118,28 +119,27 @@ class Wallet(Wrapper, Updatable):
         return self._application
 
 
-    def is_unlocked(self):
-        return not self.is_locked()
+    # def is_unlocked(self):
+    #     return not self.is_locked()
 
-    def is_locked(self):
-        return (self.multi_wallet is None)
+    # def is_locked(self):
+    #     return (self.multi_wallet is None)
 
-    def unlock(self, passphrase):
-        wallet = self.resource
-        primary_seed = PassphraseBox.decrypt(
-            passphrase,
-            wallet.primary_private_seed)
+    # def unlock(self, passphrase):
+    #     wallet = self.resource
+    #     primary_seed = PassphraseBox.decrypt(
+    #         passphrase,
+    #         wallet.primary_private_seed)
 
-        self.multi_wallet = MultiWallet(
-            private={u'primary': primary_seed},
-            public={
-                u'cosigner': wallet.cosigner_public_seed,
-                u'backup': wallet.backup_public_seed})
+    #     self.multi_wallet = MultiWallet(
+    #         private={u'primary': primary_seed},
+    #         public={
+    #             u'cosigner': wallet.cosigner_public_seed,
+    #             u'backup': wallet.backup_public_seed})
 
 
+    # Transfers are just payments.
     def transfer(self, value, source, destination):
-        if self.is_locked:
-            raise Exception('Must unlock wallet first')
         source_content = dict(url=source.url)
         dest_content = dict(url=destination.url)
 
@@ -147,7 +147,7 @@ class Wallet(Wrapper, Updatable):
             value=value,
             source=source_content,
             destination=dest_content)
-        unsigned = self.resource.transfers.create(content)
+        unsigned = self.resource.payments.create(content)
         transaction = Tx(data=unsigned.attributes)
         signatures = self.signatures(transaction)
 
@@ -157,8 +157,6 @@ class Wallet(Wrapper, Updatable):
         return signed
 
     def signatures(self, transaction):
-        if self.is_locked():
-            raise Exception('Must unlock wallet first')
         # TODO: output.metadata['type']['change']
         change_output = transaction.outputs[-1]
         if self.multi_wallet.is_valid_output(change_output):

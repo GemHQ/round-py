@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # client.py
 #
 # Copyright 2014 BitVault, Inc. dba Gem
@@ -23,13 +24,13 @@ class Client(object):
         return self._application
 
     @property
-    def user(self):
+    def developer(self):
         # TODO: test this actually works
-        if not hasattr(self, '_user'):
+        if not hasattr(self, '_developer'):
             email = self.context.email
-            user_resource = self.resources.login({'email': email}).get()
-            self._user = wrappers.User(user_resource)
-        return self._user
+            developer_resource = self.resources.login({'email': email}).get()
+            self._developer = wrappers.Developer(developer_resource)
+        return self._developer
 
     def wallet(self, url):
         # Not memoizing here, because a wallet is not a fundamental

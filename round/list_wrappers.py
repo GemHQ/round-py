@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # collections.py
 #
 # Copyright 2014 BitVault, Inc. dba Gem
@@ -22,7 +23,7 @@ class ListWrapper(collections.Sequence):
         return self.data.__len__()
 
     def populate(self):
-        if hasattr(self.resource, 'list'):
+        if hasattr(self.resource, u'list'):
             resources = self.resource.list()
             for resource in resources:
                 wrapper = self.wrap(resource)

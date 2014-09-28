@@ -1,4 +1,5 @@
-# collections.py
+# -*- coding: utf-8 -*-
+# dict_wrappers.py
 #
 # Copyright 2014 BitVault, Inc. dba Gem
 
@@ -31,7 +32,7 @@ class DictWrapper(collections.Mapping):
     def populate(self):
         # TODO: checking for 'list' is probably unnecessary
         # after the refactor into dict wrapper
-        if hasattr(self.resource, 'list'):
+        if hasattr(self.resource, u'list'):
             resources = self.resource.list()
             for resource in resources:
                 wrapper = self.wrap(resource)
@@ -96,16 +97,28 @@ class Applications(DictWrapper):
         return wrappers.Application(resource=resource)
 
 
+class Users(DictWrapper):
+
+    def create(self, **content):
+        resource = self.resource.create(content)
+        user = self.wrap(resource)
+        self.add(user)
+        return user
+
+    def wrap(self, resource):
+        return wrappers.User(resource=resource)
+
+
 class Wallets(DictWrapper):
 
     # The passphrase parameter should stay out of the content dict
     # so that there is no chance the client's passphrase will get passed
     # to our server.
     def create(self, passphrase, **content):
-        multi_wallet = MultiWallet.generate([u"primary", u"backup"])
+        multi_wallet = MultiWallet.generate([u'primary', u'backup'])
 
-        primary_seed = multi_wallet.private_seed(u"primary")
-        backup_seed = multi_wallet.private_seed(u"primary")
+        primary_seed = multi_wallet.private_seed(u'primary')
+        backup_seed = multi_wallet.private_seed(u'backup')
 
         primary_public_seed = multi_wallet.public_seed(u'primary')
         backup_public_seed = multi_wallet.public_seed(u'backup')
@@ -134,9 +147,9 @@ class Accounts(DictWrapper):
 
     def create(self, **content):
         resource = self.resource.create(content)
-        app = self.wrap(resource)
-        self.add(app)
-        return app
+        acc = self.wrap(resource)
+        self.add(acc)
+        return acc
 
     def wrap(self, resource):
         return wrappers.Account(resource=resource, wallet=self.wallet)

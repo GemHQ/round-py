@@ -98,10 +98,10 @@ class TestResourceCreation:
         assert address is not None
         assert type(address) == patchboard.util.SchemaStruct
 
-    def test_user_auth(self, user, app):
+    def test_basic_auth(self, user, app):
         auth = dict(email=user.email, password=password())
-        client = round.authenticate(user=auth)
-        user = client.user 
+        client = round.authenticate(developer=auth)
+        user = client.user
         assert user
         for name, application in user.applications.iteritems():
             assert application

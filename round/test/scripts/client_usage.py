@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # client_usage.py
 #
 # Copyright 2014 BitVault, Inc. dba Gem
@@ -24,17 +25,17 @@ client = round.client(u'http://localhost:8998')
 
 ## User management
 #
-# The create action returns a User Resource which has:
+# The create action returns a Developer Resource which has:
 #
 # * action methods (get, update, reset)
 # * attributes (email, first_name, etc.)
 # * associated resources (applications)
 
-client.users.create(email=email, password=password)
+client.developers.create(email=email, password=password)
 
-# Get an authenticated client representing the new user
+# Get an authenticated client representing the new developer
 client = round.authed_client(email=email, password=password)
-user = client.user
+developer = client.developer
 
 
 ## Application management
@@ -45,8 +46,8 @@ user = client.user
 # server. The cached version will be used if it is already loaded. A refresh can
 # be triggered by passing it as an option to the action.
 
-user.applications
-user.applications.refresh()
+developer.applications
+developer.applications.refresh()
 
 
 ## Create an application.
@@ -54,35 +55,36 @@ user.applications.refresh()
 # The optional callback_url attribute specifies a URL where Gem
 # can POST event information such as confirmed transactions.
 
-app = user.applications.create(
+app = developer.applications.create(
     name=u'bitcoin_app',
     callback_url=u'https://someapp.com/callback')
 
 
+## Users
+#
+# Users are associated with the Application that creates them, as well as any
+# others they authorize.
+
+user = app.users.create(
+    email=u'someuser-{}@email.com'.format(current_milli_time()),
+    first_name=u'someuser',
+    last_name=u'jones')
+
 ## Wallets
 #
-# Wallets belong to applications, not directly to users. They require
-# a passphrase to be provided on creation.
-
-wallet = app.wallets.create(passphrase=u'very insecure', name=u'my funds')
+#
+wallet = user.wallets.create(passphrase=u'very insecure', name=u'my funds')
 
 
-# An application's wallet collection is enumerable
+# An users' wallet collection is enumerable
 
-for wallet in app.wallets.values():
-    print(wallet)
+ for wallet in app.wallets.values():
+     print(wallet)
 
 
 # And acts as a hash with names as keys
 
 wallet = app.wallets[u'my funds']
-
-
-# The passphrase is required to unlock the wallet before you can
-# perform any transactions with it.
-
-wallet.unlock(u'very insecure')
-
 
 ## Accounts
 #
