@@ -16,7 +16,7 @@ patches welcome.
 * Git and a python extension build environment. You probably have most or all of this on your machine already, but the  following should do it on a bare Debian/Ubuntu system (package names correct on Ubuntu 13.10 and 14.04 at least):
 
   ```bash
-  $ sudo apt-get install gcc make libpython-all-dev libffi-dev python-dev python-pip git
+  $ sudo apt-get install gcc make libffi-dev python-dev python-pip git
   ```
 
 #### Installing:
@@ -40,7 +40,6 @@ setup.py with sudo)
 ### Mac OSX:
 
 1.  Install Xcode Command Line Tools
-
 ```bash
 xcode-select --install
 ```
