@@ -1,8 +1,34 @@
-from setuptools import setup, find_packages
+# -*- coding: utf-8 -*-
 
+from setuptools import setup, find_packages
+from setuptools.command.test import test as TestCommand
+
+class PyTest(TestCommand):
+    user_options = [('pytest-args=', 'a', "Arguments to pass to py.test")]
+
+    def initialize_options(self):
+        TestCommand.initialize_options(self)
+        self.pytest_args = []
+
+    def finalize_options(self):
+        TestCommand.finalize_options(self)
+        self.test_args = []
+        self.test_suite = True
+
+    def run(self):
+        errno = 0
+        if u"host" not in self.pytest_args:
+            pass
+            #import sys,subprocess
+            #errno = subprocess.call([sys.executable, "patchboard/tests/scripts/play.py"])
+            #if errno > 0:
+            #    raise SystemExit(errno)
+        import pytest
+        errno = max(errno, pytest.main(self.pytest_args))
+        raise SystemExit(errno)
 
 setup(name='round',
-      version='0.1.0',
+      version='0.1.1',
       description='Python client for Gem.co',
       url='http://github.com/BitVault/round-py',
       author='Dustin Laurence',
@@ -13,6 +39,11 @@ setup(name='round',
       install_requires=[
           'PyYAML',
           'patchboard',
+          'PyNaCl',
           'coinop',
       ],
+      tests_require=[
+        'pytest',
+        ],
+      cmdclass = {'test': PyTest},
       zip_safe=False)
