@@ -13,7 +13,7 @@ class Client(object):
         self.pb_client = pb_client
         self.context = self.pb_client.context
         self.resources = self.pb_client.resources
-        self.users = wrappers.Users(resource=self.resources.users)
+        self.developers = wrappers.Developers(resource=self.resources.developers)
 
     @property
     def application(self):
@@ -25,11 +25,13 @@ class Client(object):
 
     @property
     def developer(self):
-        # TODO: test this actually works
         if not hasattr(self, '_developer'):
-            email = self.context.email
-            developer_resource = self.resources.login({'email': email}).get()
-            self._developer = wrappers.Developer(developer_resource)
+            try:
+                dev_resource = self.resources.developers.get()
+                self._developer = wrappers.Developer(dev_resource)
+            except Exception as e:
+                raise Exception(u"Must call client.context.set_developer(email, password) first")
+
         return self._developer
 
     def wallet(self, url):

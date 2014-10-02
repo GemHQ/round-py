@@ -20,18 +20,18 @@ def initial_client():
 
 
 @pytest.fixture(scope=u'function')
-def users(initial_client):
-    return initial_client.users
+def developers(initial_client):
+    return initial_client.developers
 
 
 @pytest.fixture(scope=u'function')
-def user(users):
-    return users.create(email=email(), password=password())
+def developer(developers):
+    return developers.create(email=email(), password=password())
 
 
 @pytest.fixture(scope=u'function')
-def apps(user):
-    return user.applications
+def apps(developer):
+    return developer.applications
 
 
 @pytest.fixture(scope=u'function')
@@ -40,24 +40,25 @@ def app(apps):
 
 
 @pytest.fixture(scope=u'function')
-def wallets(app):
-    return app.wallets
+def user(app):
+    return app.users.create(first_name="James", last_name="Jameson")
 
 
 @pytest.fixture(scope=u'function')
-def locked_wallet(wallets):
-    backup_seed, wallet = wallets.create(
-        name=locked_wallet_name(),
-        passphrase=locked_wallet_passphrase())
-    return wallet
+def users(app):
+    return app.users
 
 
 @pytest.fixture(scope=u'function')
-def wallet(app):
-    backup_seed, new_wallet = app.wallets.create(
+def wallets(user):
+    return user.wallets
+
+
+@pytest.fixture(scope=u'function')
+def wallet(user):
+    backup_seed, new_wallet = user.wallets.create(
         name=wallet_name(),
         passphrase=wallet_passphrase())
-    new_wallet.unlock(wallet_passphrase())
     return new_wallet
 
 

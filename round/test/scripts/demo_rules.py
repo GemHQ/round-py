@@ -27,7 +27,7 @@ passphrase = data[u'passphrase']
 app_url = data[u'application'][u'url']
 wallet_url = data[u'wallet'][u'url']
 
-client = round.authenticate(url=helpers.round_url(), user=user)
+client = round.authenticate(url=helpers.round_url(), developer=user)
 client.context.set_application(url=app_url, token=api_token)
 
 application = client.application

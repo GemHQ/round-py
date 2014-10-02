@@ -30,8 +30,6 @@ class DictWrapper(collections.Mapping):
         return self.data.__len__()
 
     def populate(self):
-        # TODO: checking for 'list' is probably unnecessary
-        # after the refactor into dict wrapper
         if hasattr(self.resource, u'list'):
             resources = self.resource.list()
             for resource in resources:

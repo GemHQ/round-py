@@ -12,11 +12,11 @@ import round
 
 from helpers import email, password
 
-from fixtures import (initial_client, users, user, app, apps, wallets,
-                      locked_wallet, wallet, accounts, account, addresses,
+from fixtures import (initial_client, developers, developer, app, apps, users,
+                      user, wallets, wallet, accounts, account, addresses,
                       address)
-pytest.mark.usefixtures(initial_client, users, user, app, apps, wallets,
-                        locked_wallet, wallet, accounts, account, addresses,
+pytest.mark.usefixtures(initial_client, developers, developer, app, apps, users,
+                        user, wallets, wallet, accounts, account, addresses,
                         address)
 
 
@@ -28,20 +28,20 @@ class TestResourceCreation:
         # hides the round.client module
         #assert isinstance(initial_client, round.client.Client)
 
-    def test_users(self, users):
-        assert users
-        assert type(users) == round.wrappers.Users
+    def test_developers(self, developers):
+        assert developers
+        assert type(developers) == round.wrappers.Developers
 
-    def test_user(self, user):
-        assert user
-        assert type(user) == round.wrappers.User
+    def test_developer(self, developer):
+        assert developer
+        assert type(developer) == round.wrappers.Developer
 
-    def test_user_update(self, user):
+    def test_developer_update(self, developer):
         new_email = email()
-        user = user.update(email=new_email)
-        assert user
-        assert type(user) == round.wrappers.User
-        assert user.email == new_email
+        developer = developer.update(email=new_email)
+        assert developer
+        assert type(developer) == round.wrappers.Developer
+        assert developer.email == new_email
 
     def test_apps(self, apps):
         assert type(apps) == round.dict_wrappers.Applications
@@ -56,25 +56,34 @@ class TestResourceCreation:
         assert type(app) == round.wrappers.Application
         assert app.name == "wrenches"
 
+    def test_users(self, users):
+        assert type(users) == round.dict_wrappers.Users
+
+    def test_user(self, user):
+        assert(user)
+        assert type(user) == round.wrappers.User
+
+    def test_user_update(self, user):
+        new_name = {"first_name": "John", "last_name": "Johnson"}
+        user = user.update(**new_name)
+        assert user
+        assert type(user) == round.wrappers.User
+        for (key, value) in new_name.items():
+            assert user[key] == value
+
     def test_wallets(self, wallets):
         assert type(wallets) == round.dict_wrappers.Wallets
-
-    def test_locked_wallet(self, locked_wallet):
-        assert locked_wallet
-        assert locked_wallet.is_locked()
-        assert type(locked_wallet) == round.wrappers.Wallet
 
     def test_wallet(self, wallet):
         assert wallet
         assert wallet.is_unlocked()
         assert type(wallet) == round.wrappers.Wallet
 
-    #def test_wallet_update(self, wallet):
-        #wallet = wallet.update(name="support")
-        #assert wallet
-        #assert type(wallet) == round.wrappers.Wallet
-        #assert wallet.name == "support"
-
+    def test_wallet_update(self, wallet):
+        wallet = wallet.update(name="support")
+        assert wallet
+        assert type(wallet) == round.wrappers.Wallet
+        assert wallet.name == "support"
 
     def test_accounts(self, accounts):
         assert type(accounts) == round.dict_wrappers.Accounts
@@ -98,12 +107,12 @@ class TestResourceCreation:
         assert address is not None
         assert type(address) == patchboard.util.SchemaStruct
 
-    def test_basic_auth(self, user, app):
-        auth = dict(email=user.email, password=password())
+    def test_basic_auth(self, developer, app):
+        auth = dict(email=developer.email, password=password())
         client = round.authenticate(developer=auth)
-        user = client.user
-        assert user
-        for name, application in user.applications.iteritems():
+        developer = client.developer
+        assert developer
+        for name, application in developer.applications.iteritems():
             assert application
             assert type(app) == round.wrappers.Application
 

@@ -37,15 +37,15 @@ if os.path.isfile(wallet_file):
 record = {}
 
 client = round.client(helpers.round_url())
-users = client.users
+developers = client.developers
 
 email = u'matthew-{0}@gem.co'.format(current_milli_time())
 password = u'horriblepassword'
 
-user = users.create(email=email, password=password)
+developer = developers.create(email=email, password=password)
 record[u'user'] = dict(email=email, password=password)
 
-application = user.applications.create(
+application = developer.applications.create(
     name=u'bitcoins_r_us',
     callback_url=u'https://someapp.com/callback')
 

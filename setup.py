@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import sys
 from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
 
@@ -28,7 +28,7 @@ class PyTest(TestCommand):
         raise SystemExit(errno)
 
 setup(name='round',
-      version='0.1.1',
+      version='0.5.0',
       description='Python client for Gem.co',
       url='http://github.com/BitVault/round-py',
       author='Dustin Laurence',
@@ -46,4 +46,5 @@ setup(name='round',
         'pytest',
         ],
       cmdclass = {'test': PyTest},
-      zip_safe=False)
+      zip_safe=False
+      )

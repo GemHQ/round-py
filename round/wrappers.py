@@ -29,6 +29,9 @@ class Wrapper(object):
 
 class Developers(object):
 
+    def __init__(self, resource):
+        self.resource = resource
+
     def create(self, **content):
         resource = self.resource.create(content)
         resource.context.set_developer(content[u'email'], content[u'password'])
@@ -57,7 +60,7 @@ class Developer(Wrapper):
         return self._applications
 
 
-class User(Wrapper, Updateable):
+class User(Wrapper, Updatable):
 
     def update(self, **content):
         resource = self.resource.update(content)
@@ -69,6 +72,13 @@ class User(Wrapper, Updateable):
             applications_resource = self.resource.applications
             self._applications = dict_wrappers.Applications(applications_resource)
         return self._applications
+
+    @property
+    def wallets(self):
+        if not hasattr(self, '_wallets'):
+            wallets_resource = self.resource.wallets
+            self._wallets = dict_wrappers.Wallets(wallets_resource)
+        return self._wallets
 
 
 class Rule(Wrapper):
