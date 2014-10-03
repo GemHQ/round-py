@@ -51,40 +51,48 @@ def _authenticate_application(api_url, application):
 
 class Context(dict):
 
+    def __init__(self):
+        self.schemes = {
+            u'Basic':
+                {u'usage':
+                     u"client.context.authorize('Basic', email, password)\n"},
+            u'Gem-Application':
+                {u'usage':
+                     u"client.context.authorize('Gem-Application', url, api_token)\n"}
+            }
+
     def authorizer(self, schemes, resource, action):
-        options = []
-        if u"Basic" in schemes:
-            if hasattr(self, u'basic'):
-                return u"Basic", self.basic
-            else:
-                options.append(u"set_developer(email, password)")
+        for scheme in schemes:
+            if u'credential' in self.schemes[scheme]:
+                return scheme, self.schemes[scheme][u'credential']
 
-        if u"Gem-Application" in schemes:
-            if hasattr(self, u'api_token'):
-                return u"Gem-Application", self.api_token
-            else:
-                options.append(u"set_application(url, api_token)")
+        error_message = u""
+        for scheme in schemes:
+            error_message.append(self.schemes[scheme][u'usage']);
 
-        if schemes:
-            message = u""
-            for o in options:
-                message += o + u"\n"
-            raise Exception(
-                u"You must authenticate with one of:\n{}".format(message))
+        raise Exception(
+            u"You must first authorize your client\n{}".format(error_message))
+
+    def authorize(self, scheme, **params):
+
+        if u'Basic' == scheme:
+            if u'email' in params and u'password' in params:
+                self.email = params[u'email']
+                self.password = params[u'password']
+                self.schemes[scheme][u'credential'] = base64.b64encode(
+                    u':'.join([self.email, self.password]))
+
         else:
-            return None, None
+            if u'url' in params:
+                self.application_url = params[u'url']
+            if u'api_token' in params:
+                self.api_token = params[u'api_token']
 
-    def set_developer(self, email=None, password=None):
-        if email:
-            self.email = email
-        if password:
-            self.password = password
-
-        string = u':'.join([self.email, self.password])
-        self.basic = base64.b64encode(string)
-
-    def set_application(self, url, api_token):
-        self.application_url = url
-        self.api_token = api_token
+            self.schemes[scheme][u'credential'] = format_auth_params(params)
 
 
+    def format_auth_params(params):
+        parts = []
+        for (key, value) in params.items():
+            parts.append('{}="{}"'.format(key, value))
+        return ",".join(parts)
