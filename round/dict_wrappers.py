@@ -85,8 +85,10 @@ class Applications(DictWrapper):
 
     def create(self, **content):
         resource = self.resource.create(content)
-        # FIXME:  probably need to imitate what the Ruby client is doing here.
-        resource.context.set_application(url=resource.url, token=resource.api_token)
+        if u'instance_id' in content:
+            resource.context.authorize(u'Gem-Application',
+                                       api_token=resource.api_token,
+                                       instance_id=content[u'instance_id'])
         app = self.wrap(resource)
         self.add(app)
         return app
@@ -105,6 +107,9 @@ class Users(DictWrapper):
 
     def wrap(self, resource):
         return wrappers.User(resource=resource)
+
+    def key_for(self, wrapper):
+        return wrapper.email
 
 
 class Wallets(DictWrapper):

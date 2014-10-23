@@ -52,7 +52,7 @@ application = developer.applications.create(
 record[u'api_token'] = application.api_token
 record[u'application'] = dict(url=application.url)
 
-client.context.set_application(url=application.url, token=application.api_token)
+client.context.authorize(u'Gem-Application', url=application.url, token=application.api_token)
 
 
 

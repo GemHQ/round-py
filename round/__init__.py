@@ -1,16 +1,26 @@
+# -*- coding: utf-8 -*-
 # __init__.py
 #
 # Copyright 2014 BitVault, Inc. dba Gem
 
 
 import base64
-
+import json
 import patchboard
+
+from pprint import pprint as pp
+from datetime import date
+
+# TODO: PSS when ruby can handle it.
+from Crypto.PublicKey import RSA
+from Crypto.Hash import SHA256
+from Crypto.Signature import PKCS1_v1_5
 
 from .client import Client
 
 
-default_url = u"http://api.gem.co/"
+#default_url = u"http://api.gem.co/"
+default_url = u"http://localhost:8998"
 
 __patchboard_client = None
 
@@ -24,75 +34,125 @@ def client(url=default_url):
 
 
 def authenticate(**kwargs):
-    url = kwargs.get('url', default_url)
-    if 'application' in kwargs:
-        return _authenticate_application(url, kwargs['application'])
-    elif 'developer' in kwargs:
-        return _authenticate_basic(url, kwargs['developer'])
-        pass
+    url = kwargs.get(u'url', default_url)
+    if u'developer' in kwargs:
+        return _authenticate_developer(url, kwargs[u'developer'])
+    elif u'application' in kwargs:
+        return _authenticate_application(url, kwargs[u'application'])
+    elif u'device' in kwargs:
+        return _authenticate_device(url, kwargs[u'device'])
+    elif u'otp' in kwargs:
+        return _authenticate_otp(url, kwargs[u'otp'])
     else:
-        raise ValueError(u'Supply either user or application authentication')
+        raise ValueError(u"Supported authentication schemes are:\n{}".format(
+            pp(client().schemes)))
 
-def _authenticate_basic(api_url, developer):
-    if 'email' in developer and 'password' in developer:
+def _authenticate_developer(api_url, developer):
+    if 'email' in developer and 'privkey' in developer:
         _client = client(api_url)
-        _client.context.set_developer(**developer)
-        return _client
+        _client.context.authorize(u'Gem-Developer', **developer)
     else:
-        raise ValueError(u'Must provide email and password')
+        raise ValueError(u'Must provide email and privkey')
+    return _client
 
 def _authenticate_application(api_url, application):
-    if 'url' in application and 'api_token' in application:
+    if 'api_token' in application and 'instance_id' in application:
         _client = client(api_url)
-        _client.context.set_application(**application)
-        return _client
+        _client.context.authorize(u'Gem-Application', **application)
     else:
-        raise ValueError(u'Must provide application url and token')
+        raise ValueError(u'Must provide api_token and instance_id')
+    return _client
+
+def _authenticate_device(api_url, device):
+    if ('api_token' in device and
+        'user_token' in device and
+        'device_id' in device):
+        _client = client(api_url)
+        _client.context.authorize(u'Gem-Device', **otp)
+    else:
+        raise ValueError(u'Must provide api_token, user_token, and device_id')
+    return _client
+
+def _authenticate_otp(api_url, otp):
+    if 'url' in otp and 'api_token' in otp and 'key' in otp and 'secret' in otp:
+        _client = client(api_url)
+        _client.context.authorize(u'Gem-OOB-OTP', **otp)
+    else:
+        raise ValueError(u'Must provide api_token, otp_key, and otp_secret')
+    return _client
+
 
 class Context(dict):
 
     def __init__(self):
         self.schemes = {
-            u'Basic':
+            u'Gem-Developer':
                 {u'usage':
-                     u"client.context.authorize('Basic', email, password)\n"},
+                     u"round.authenticate(developer={email:email, privkey:pem_or_der_encoded_rsa_private_key} [, url=api_url])"},
             u'Gem-Application':
                 {u'usage':
-                     u"client.context.authorize('Gem-Application', url, api_token)\n"}
-            }
+                     u"round.authenticate(application={api_token:token, instance_id:instance_id} [, url=api_url])"},
+            u'Gem-Device':
+                {u'usage':
+                     u"round.authenticate(device={api_token=token, user_token=token, device_id=device_id} [, url=api_url])"},
+            u'Gem-OOB-OTP':
+                {u'usage':
+                     u"round.authenticate(otp={api_token=token, key=otp_key, secret=otp_secret} [, url=api_url])"}
+        }
 
-    def authorizer(self, schemes, resource, action):
+    def authorizer(self, schemes, resource, action, request_args):
+        if not schemes:
+            return u'', u''
         for scheme in schemes:
-            if u'credential' in self.schemes[scheme]:
-                return scheme, self.schemes[scheme][u'credential']
+            if scheme in self.schemes and u'credential' in self.schemes[scheme]:
+                if scheme == u'Gem-Developer':
+                    return scheme, '{}, signature="{}"'.format(
+                        self.schemes[scheme][u'credential'],
+                        self.dev_signature(request_args[u'body']))
+                else:
+                    return self.schemes[scheme][u'credential']
 
         error_message = u""
         for scheme in schemes:
-            error_message.append(self.schemes[scheme][u'usage']);
+            if scheme in self.schemes:
+                error_message += self.schemes[scheme][u'usage'] + "\n"
 
         raise Exception(
-            u"You must first authorize your client\n{}".format(error_message))
+            u"You must first authenticate your client\n{}".format(error_message))
 
     def authorize(self, scheme, **params):
+        if scheme not in self.schemes:
+            return
 
-        if u'Basic' == scheme:
-            if u'email' in params and u'password' in params:
-                self.email = params[u'email']
-                self.password = params[u'password']
-                self.schemes[scheme][u'credential'] = base64.b64encode(
-                    u':'.join([self.email, self.password]))
+        for field in [u'api_token',
+                      u'user_token', u'device_id',
+                      u'instance_id',
+                      u'email', u'privkey']:
+            if field in params:
+                setattr(self, field, params[field])
+                if field == u'privkey':
+                    del params[u'privkey']
 
-        else:
-            if u'url' in params:
-                self.application_url = params[u'url']
-            if u'api_token' in params:
-                self.api_token = params[u'api_token']
-
-            self.schemes[scheme][u'credential'] = format_auth_params(params)
+        self.schemes[scheme][u'credential'] = Context.format_auth_params(params)
 
 
+    def dev_signature(self, request_body):
+        try:
+            body = json.loads(request_body) if request_body else {}
+            key = RSA.importKey(self.privkey)
+            signer = PKCS1_v1_5.new(key)
+            pp(body)
+            content = u'{}-{}'.format(json.dumps(body, separators=(',',':')), date.today().strftime('%Y/%m/%d'))
+            pp(content)
+            digest = SHA256.new(content)
+            return base64.urlsafe_b64encode(signer.sign(digest))
+        except Exception as e:
+            pp(e)
+            raise Exception(u"You must provide a valid RSA private key.")
+
+    @staticmethod
     def format_auth_params(params):
         parts = []
         for (key, value) in params.items():
             parts.append('{}="{}"'.format(key, value))
-        return ",".join(parts)
+        return ", ".join(parts)

@@ -28,7 +28,7 @@ app_url = data[u'application'][u'url']
 wallet_url = data[u'wallet'][u'url']
 
 client = round.authenticate(url=helpers.round_url(), developer=user)
-client.context.set_application(url=app_url, token=api_token)
+client.context.authorize(u'Gem-Application', url=app_url, token=api_token)
 
 application = client.application
 wallet = client.wallet(wallet_url)

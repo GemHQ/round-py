@@ -33,8 +33,12 @@ class Developers(object):
         self.resource = resource
 
     def create(self, **content):
+        priv = content[u'privkey'] if u'privkey' in content else None
         resource = self.resource.create(content)
-        resource.context.set_developer(content[u'email'], content[u'password'])
+        if priv:
+            resource.context.authorize(u'Gem-Developer',
+                                       email=content[u'email'],
+                                       privkey=priv)
         return self.wrap(resource)
 
     def wrap(self, resource):
@@ -47,9 +51,12 @@ class Developer(Wrapper):
         resource = self.resource.update(content)
 
         email = resource.attributes.get(u'email', None)
-        password = content.get(u'password', None)
+        priv = content.get(u'privkey', None)
 
-        resource.context.set_developer(email=email, password=password)
+        if priv:
+            resource.context.authorize(u'Gem-Developer',
+                                       email=email,
+                                       privkey=priv)
         return Developer(resource)
 
     @property
@@ -98,18 +105,27 @@ class Application(Wrapper, Updatable):
 
     @property
     def users(self):
-        if not hasattr(self, '_users'):
+        if not hasattr(self, u'_users'):
             users_resource = self.resource.users
             self._users = dict_wrappers.Users(users_resource)
         return self._users
 
     @property
     def rules(self):
-        if not hasattr(self, '_rules'):
+        if not hasattr(self, u'_rules'):
             rules_resource = self.resource.rules
             self._rules = dict_wrappers.Rules(rules_resource)
         return self._application
 
+    def authorize_instance(self, **content):
+        if (not hasattr(self, u'_application_instance') or
+            not self._application_instance):
+            self._application_instance = self.resource.authorize_instance(content)
+            if self._application_instance:
+                self.context.authorize(u'Gem-Application',
+                                       api_token=self.api_token,
+                                       instance_id=self._instance_id)
+        return self._application_instance
 
 class Wallet(Wrapper, Updatable):
 

@@ -16,23 +16,34 @@ class Client(object):
         self.developers = wrappers.Developers(resource=self.resources.developers)
 
     @property
-    def application(self):
-        if not hasattr(self, '_application'):
-            au = self.context.application_url
-            ar = self.resources.application(au).get()
-            self._application = wrappers.Application(ar)
-        return self._application
-
-    @property
     def developer(self):
         if not hasattr(self, '_developer'):
             try:
                 dev_resource = self.resources.developers.get()
                 self._developer = wrappers.Developer(dev_resource)
-            except Exception as e:
-                raise Exception(u"Must call client.context.set_developer(email, password) first")
-
+            except:
+                raise Exception(u"Must call client.authenticate(developer={email:email, privkey=rsa_private_key}) first")
         return self._developer
+
+    @property
+    def application(self):
+        if not hasattr(self, '_application'):
+            try:
+                app_resource = self.resources.application().get()
+                self._application = wrappers.Application(app_resource)
+            except Exception as e:
+                raise Exception(u"Must call client.authenticate using device or application authentication first")
+        return self._application
+
+    @property
+    def user(self):
+        if not hasattr(self, '_user'):
+            try:
+                user_resource = self.resources.user().get()
+                self._user = wrappers.User(user_resource)
+            except:
+                raise Exception(u"Must call client.authenticate(device={api_token: token, user_token: token, device_id: device_id}) first")
+        return self._user
 
     def wallet(self, url):
         # Not memoizing here, because a wallet is not a fundamental
