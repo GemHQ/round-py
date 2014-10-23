@@ -56,21 +56,24 @@ def _authenticate_developer(api_url, developer):
     return _client
 
 def _authenticate_application(api_url, application):
-    if 'api_token' in application and 'instance_id' in application:
+    if ('app_url' in application and
+        'api_token' in application and
+        'instance_id' in application):
         _client = client(api_url)
         _client.context.authorize(u'Gem-Application', **application)
     else:
-        raise ValueError(u'Must provide api_token and instance_id')
+        raise ValueError(u'Must provide app_url, api_token and instance_id')
     return _client
 
 def _authenticate_device(api_url, device):
-    if ('api_token' in device and
+    if ('app_url' in device and
+        'api_token' in device and
         'user_token' in device and
         'device_id' in device):
         _client = client(api_url)
         _client.context.authorize(u'Gem-Device', **otp)
     else:
-        raise ValueError(u'Must provide api_token, user_token, and device_id')
+        raise ValueError(u'Must provide app_url, api_token, user_token, and device_id')
     return _client
 
 def _authenticate_otp(api_url, otp):
@@ -88,16 +91,16 @@ class Context(dict):
         self.schemes = {
             u'Gem-Developer':
                 {u'usage':
-                     u"round.authenticate(developer={email:email, privkey:pem_or_der_encoded_rsa_private_key} [, url=api_url])"},
+                     u"round.authenticate(developer={'email':email, 'privkey':pem_or_der_encoded_rsa_private_key} [, 'api_url':api_url]})"},
             u'Gem-Application':
                 {u'usage':
-                     u"round.authenticate(application={api_token:token, instance_id:instance_id} [, url=api_url])"},
+                     u"round.authenticate(application={'app_url':app_url, 'api_token':token, 'instance_id':instance_id [, 'api_url':api_url]})"},
             u'Gem-Device':
                 {u'usage':
-                     u"round.authenticate(device={api_token=token, user_token=token, device_id=device_id} [, url=api_url])"},
+                     u"round.authenticate(device={'app_url':app_url, 'api_token':token, 'user_token':token, 'device_id':device_id [, 'api_url':api_url]})"},
             u'Gem-OOB-OTP':
                 {u'usage':
-                     u"round.authenticate(otp={api_token=token, key=otp_key, secret=otp_secret} [, url=api_url])"}
+                     u"round.authenticate(otp={'api_token':token, 'key':otp_key, 'secret':otp_secret [, 'api_url':api_url]})"}
         }
 
     def authorizer(self, schemes, resource, action, request_args):
@@ -106,11 +109,11 @@ class Context(dict):
         for scheme in schemes:
             if scheme in self.schemes and u'credential' in self.schemes[scheme]:
                 if scheme == u'Gem-Developer':
-                    return scheme, '{}, signature="{}"'.format(
+                    return scheme, u'{}, signature="{}"'.format(
                         self.schemes[scheme][u'credential'],
                         self.dev_signature(request_args[u'body']))
                 else:
-                    return self.schemes[scheme][u'credential']
+                    return scheme, self.schemes[scheme][u'credential']
 
         error_message = u""
         for scheme in schemes:
@@ -124,14 +127,14 @@ class Context(dict):
         if scheme not in self.schemes:
             return
 
-        for field in [u'api_token',
+        for field in [u'app_url', u'api_token',
                       u'user_token', u'device_id',
                       u'instance_id',
                       u'email', u'privkey']:
             if field in params:
                 setattr(self, field, params[field])
-                if field == u'privkey':
-                    del params[u'privkey']
+                if field == u'privkey' or field == u'app_url':
+                    del params[field]
 
         self.schemes[scheme][u'credential'] = Context.format_auth_params(params)
 
@@ -141,9 +144,7 @@ class Context(dict):
             body = json.loads(request_body) if request_body else {}
             key = RSA.importKey(self.privkey)
             signer = PKCS1_v1_5.new(key)
-            pp(body)
             content = u'{}-{}'.format(json.dumps(body, separators=(',',':')), date.today().strftime('%Y/%m/%d'))
-            pp(content)
             digest = SHA256.new(content)
             return base64.urlsafe_b64encode(signer.sign(digest))
         except Exception as e:
