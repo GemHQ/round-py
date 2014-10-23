@@ -117,7 +117,8 @@ class Wallets(DictWrapper):
     # The passphrase parameter should stay out of the content dict
     # so that there is no chance the client's passphrase will get passed
     # to our server.
-    def create(self, passphrase, **content):
+    @staticmethod
+    def generate(passphrase, **content):
         multi_wallet = MultiWallet.generate([u'primary', u'backup'])
 
         primary_seed = multi_wallet.private_seed(u'primary')
@@ -132,11 +133,13 @@ class Wallets(DictWrapper):
         content[u'backup_public_seed'] = backup_public_seed
         content[u'primary_public_seed'] = primary_public_seed
         content[u'primary_private_seed'] = encrypted_seed
+        return backup_seed, content
 
+    def create(self, **content):
         resource = self.resource.create(content)
         wallet = self.wrap(resource)
         self.add(wallet)
-        return backup_seed, wallet
+        return wallet
 
     def wrap(self, resource):
         return wrappers.Wallet(resource=resource)
