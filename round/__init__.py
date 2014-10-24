@@ -20,7 +20,7 @@ from .client import Client
 
 
 #default_url = u"http://api.gem.co/"
-default_url = u"http://localhost:8998"
+default_url = u"http://localhost:8999"
 
 __patchboard_client = None
 
@@ -68,12 +68,13 @@ def _authenticate_application(api_url, application):
 def _authenticate_device(api_url, device):
     if ('app_url' in device and
         'api_token' in device and
+        'user_url' in device and
         'user_token' in device and
         'device_id' in device):
         _client = client(api_url)
-        _client.context.authorize(u'Gem-Device', **otp)
+        _client.context.authorize(u'Gem-Device', **device)
     else:
-        raise ValueError(u'Must provide app_url, api_token, user_token, and device_id')
+        raise ValueError(u'Must provide app_url, api_token, user_url, user_token, and device_id')
     return _client
 
 def _authenticate_otp(api_url, otp):
@@ -97,10 +98,12 @@ class Context(dict):
                      u"round.authenticate(application={'app_url':app_url, 'api_token':token, 'instance_id':instance_id [, 'api_url':api_url]})"},
             u'Gem-Device':
                 {u'usage':
-                     u"round.authenticate(device={'app_url':app_url, 'api_token':token, 'user_token':token, 'device_id':device_id [, 'api_url':api_url]})"},
+                     u"round.authenticate(device={'app_url':app_url, 'api_token':token, 'user_url':user_url, 'user_token':token, 'device_id':device_id [, 'api_url':api_url]})"},
             u'Gem-OOB-OTP':
                 {u'usage':
-                     u"round.authenticate(otp={'api_token':token, 'key':otp_key, 'secret':otp_secret [, 'api_url':api_url]})"}
+                     u"round.authenticate(otp={'api_token':token, 'key':otp_key, 'secret':otp_secret [, 'api_url':api_url]})",
+                 u'credential':
+                     u'data=none'}
         }
 
     def authorizer(self, schemes, resource, action, request_args):
@@ -128,12 +131,13 @@ class Context(dict):
             return
 
         for field in [u'app_url', u'api_token',
-                      u'user_token', u'device_id',
-                      u'instance_id',
+                      u'user_url', u'user_token',
+                      u'device_id', u'instance_id',
+                      u'key', u'secret',
                       u'email', u'privkey']:
             if field in params:
                 setattr(self, field, params[field])
-                if field == u'privkey' or field == u'app_url':
+                if field in [u'privkey', u'app_url', u'user_url']:
                     del params[field]
 
         self.schemes[scheme][u'credential'] = Context.format_auth_params(params)

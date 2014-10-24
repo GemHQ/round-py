@@ -7,6 +7,7 @@
 from coinop.crypto.passphrasebox import PassphraseBox
 from coinop.bit.multiwallet import MultiWallet
 from coinop.bit.transaction import Transaction as Tx
+from patchboard.response import ResponseError
 
 import dict_wrappers
 import list_wrappers
@@ -86,6 +87,16 @@ class User(Wrapper, Updatable):
             wallets_resource = self.resource.wallets
             self._wallets = dict_wrappers.Wallets(wallets_resource)
         return self._wallets
+
+    def authorize_device(self, **content):
+        try:
+            reply = User(self.resource.authorize_device(content))
+        except ResponseError as e:
+            try:
+                reply = e.headers[u'WWW-Authenticate']
+            except:
+                raise e
+        return reply
 
 
 class Rule(Wrapper):

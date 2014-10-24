@@ -28,8 +28,7 @@ class Client(object):
     def application(self):
         if not hasattr(self, '_application'):
             try:
-                app_url = self.context.app_url
-                app_resource = self.resources.application(app_url).get()
+                app_resource = self.resources.application(self.context.app_url).get()
                 self._application = wrappers.Application(app_resource)
             except Exception as e:
                 raise Exception(u"Instantiate a client using round.authenticate with device or application authentication first")
@@ -39,10 +38,10 @@ class Client(object):
     def user(self):
         if not hasattr(self, '_user'):
             try:
-                user_resource = self.resources.user().get()
+                user_resource = self.resources.user(self.context.user_url).get()
                 self._user = wrappers.User(user_resource)
             except:
-                raise Exception(u"Instantiate a client using round.authenticate(device={api_token: token, user_token: token, device_id: device_id})")
+                raise Exception(u"Instantiate a client using round.authenticate(device={app_url: app_url, api_token: token, user_url:user_url, user_token: token, device_id: device_id})")
         return self._user
 
     def wallet(self, url):
