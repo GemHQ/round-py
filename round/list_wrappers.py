@@ -22,6 +22,9 @@ class ListWrapper(collections.Sequence):
     def __len__(self):
         return self.data.__len__()
 
+    def __repr__(self):
+        return repr(self.data)
+
     def populate(self):
         if hasattr(self.resource, u'list'):
             resources = self.resource.list()
