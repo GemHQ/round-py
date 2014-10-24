@@ -27,6 +27,13 @@ class Wrapper(object):
         # TODO: may want to limit the delegation to specific attrs.
         return getattr(self.resource, name)
 
+    def __str__(self):
+        return str(self.attributes)
+
+    def refresh(self):
+        self.resource = self.resource.get()
+        return self
+
 
 class Developers(object):
 
@@ -207,14 +214,15 @@ class Account(Wrapper, Updatable):
     def __init__(self, resource, wallet):
         super(Account, self).__init__(resource)
         self.wallet = wallet
-        rules_resource = self.resource.rules
-
-    @property
-    def rules(self):
-        if not hasattr(self, '_rules'):
-            rules_resource = self.resource.rules
-            self._rules = dict_wrappers.Rules(rules_resource)
-        return self._application
+    # Account-level rules not implemented in API.
+    #    rules_resource = self.resource.rules
+    #
+    # @property
+    # def rules(self):
+    #     if not hasattr(self, '_rules'):
+    #         rules_resource = self.resource.rules
+    #         self._rules = dict_wrappers.Rules(rules_resource)
+    #     return self._application
 
 
     def update(self, **content):
