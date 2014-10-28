@@ -35,8 +35,8 @@ with sudo)
 1. clone the v0.1 branch of the git repository and run setup.py:
 
   ```bash
-  $ git clone -b v0.1 git@github.com:BitVault/bitvault-py.git
-  $ cd bitvault-py
+  $ git clone -b v0.1 git@github.com:GemHQ/round-py.git
+  $ cd round-py
   $ sudo python setup.py install
   ```
 
@@ -57,7 +57,7 @@ $ pip install PyNaCl
 1. clone the v0.1 branch of the git repository and run setup.py:
 
   ```bash
-  $ git clone -b v0.1 git@github.com:BitVault/bitvault-py.git
-  $ cd bitvault-py
+  $ git clone -b v0.1 git@github.com:GemHQ/round-py.git
+  $ cd round-py
   $ python setup.py install
   ```
