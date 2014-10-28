@@ -11,6 +11,7 @@ from coinop.crypto.passphrasebox import PassphraseBox
 from coinop.bit.multiwallet import MultiWallet
 
 import wrappers
+from .config import *
 
 
 class DictWrapper(collections.Mapping):
@@ -122,7 +123,8 @@ class Wallets(DictWrapper):
     # to our server.
     @staticmethod
     def generate(passphrase, **content):
-        multi_wallet = MultiWallet.generate([u'primary', u'backup'])
+        network = NETWORK_MAP[content.get(u'network', DEFAULT_NETWORK)]
+        multi_wallet = MultiWallet.generate([u'primary', u'backup'], network=network)
 
         primary_seed = multi_wallet.private_seed(u'primary')
         backup_seed = multi_wallet.private_seed(u'backup')
@@ -132,7 +134,7 @@ class Wallets(DictWrapper):
 
         encrypted_seed = PassphraseBox.encrypt(passphrase, primary_seed)
 
-        content[u'network'] = u'bitcoin_testnet'
+        content[u'network'] = GEM_NETWORK[network]
         content[u'backup_public_seed'] = backup_public_seed
         content[u'primary_public_seed'] = primary_public_seed
         content[u'primary_private_seed'] = encrypted_seed

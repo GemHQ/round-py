@@ -3,13 +3,17 @@
 #
 # Copyright 2014 BitVault, Inc. dba Gem
 
-from round import wrappers
+import bitcoin
+import wrappers
+from .config import *
 
 
 class Client(object):
 
-    def __init__(self, pb_client):
+    def __init__(self, pb_client, network=DEFAULT_NETWORK):
         self.pb_client = pb_client
+        self.network = NETWORK_MAP[network]
+        bitcoin.SelectParams(network)
         self.context = self.pb_client.context
         self.resources = self.pb_client.resources
         self.developers = wrappers.Developers(resource=self.resources.developers)
