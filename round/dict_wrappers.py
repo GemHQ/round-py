@@ -123,7 +123,7 @@ class Wallets(DictWrapper):
     # to our server.
     @staticmethod
     def generate(passphrase, **content):
-        network = NETWORK_MAP[content.get(u'network', DEFAULT_NETWORK)]
+        network = GEM_NETWORK[content.get(u'network', DEFAULT_NETWORK)]
         multi_wallet = MultiWallet.generate([u'primary', u'backup'], network=network)
 
         primary_seed = multi_wallet.private_seed(u'primary')

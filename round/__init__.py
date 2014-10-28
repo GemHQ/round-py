@@ -31,7 +31,7 @@ def client(url=DEFAULT_URL, network=DEFAULT_NETWORK):
 
 
 def authenticate(**kwargs):
-    url = kwargs.get(u'url', default_url)
+    url = kwargs.get(u'url', DEFAULT_URL)
     network = kwargs.get(u'network', DEFAULT_NETWORK)
     if u'developer' in kwargs:
         return _authenticate_developer(url, kwargs[u'developer'])

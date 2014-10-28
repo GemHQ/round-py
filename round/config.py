@@ -7,5 +7,8 @@ NETWORK_MAP = {u'testnet': u'testnet',
                u'mainnet': u'mainnet',
                u'bitcoin': u'mainnet',
                u'bitcoin_mainnet': u'mainnet'}
-GEM_NETWORK = {u'testnet': u'bitcoin_testnet',
-               u'mainnet': u'bitcoin'}
+GEM_NETWORK = {u'mainnet': u'bitcoin',
+               u'bitcoin': u'bitcoin',
+               u'testnet': u'bitcoin_testnet',
+               u'testnet3': u'bitcoin_testnet',
+               u'bitcoin_testnet': u'bitcoin_testnet'}
