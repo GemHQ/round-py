@@ -30,7 +30,7 @@ class PyTest(TestCommand):
 setup(name='round',
       version='0.5.0',
       description='Python client for Gem.co',
-      url='http://github.com/BitVault/round-py',
+      url='http://github.com/GemHQ/round-py',
       author='Dustin Laurence <dustin@gem.co>, Matt Smith <matt@gem.co>',
       author_email='developers@gem.co',
       license='MIT',
