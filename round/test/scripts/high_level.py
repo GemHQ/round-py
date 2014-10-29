@@ -1,6 +1,6 @@
 import round
 
-url = u'http://localhost:8998'
+url = u'https://api-develop.gem.co'
 #url = u'http://round.pandastrike.com'
 client = round.client(url)
 

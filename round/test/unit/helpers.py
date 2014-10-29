@@ -11,7 +11,7 @@ from random import randint
 
 
 def round_url():
-    return u"http://localhost:8998"
+    return u"https://api-develop.gem.co"
     #return u"http://api.gem.co"
 
 

@@ -19,8 +19,7 @@ password = u'incredibly_secure'
 # The BitVault server provides a JSON description of its API that allows
 # the client to generate all necessary resource classes at runtime.
 
-client = round.client(u'http://localhost:8998')
-#client = round.client(u'http://round.pandastrike.com')
+client = round.client(u'https://api-develop.gem.co')
 
 
 ## User management
