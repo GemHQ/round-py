@@ -4,6 +4,7 @@
 # Copyright 2014 BitVault, Inc. dba Gem
 
 from pprint import pprint as pp
+from .config import *
 from coinop.crypto.passphrasebox import PassphraseBox
 from coinop.bit.multiwallet import MultiWallet
 from coinop.bit.transaction import Transaction as Tx
@@ -162,14 +163,14 @@ class Wallet(Wrapper, Updatable):
             self._rules = dict_wrappers.Rules(rules_resource)
         return self._application
 
-
     def is_unlocked(self):
         return not self.is_locked()
 
     def is_locked(self):
         return (self.multi_wallet is None)
 
-    def unlock(self, passphrase):
+    def unlock(self, passphrase, network=None):
+        network = network if network else self.resource.network
         wallet = self.resource
         primary_seed = PassphraseBox.decrypt(
             passphrase,
@@ -179,28 +180,11 @@ class Wallet(Wrapper, Updatable):
             private={u'primary': primary_seed},
             public={
                 u'cosigner': wallet.cosigner_public_seed,
-                u'backup': wallet.backup_public_seed})
-
-    # def transfer(self, value, source, destination):
-    #     source_content = dict(url=source.url)
-    #     dest_content = dict(url=destination.url)
-
-    #     content = dict(
-    #         value=value,
-    #         source=source_content,
-    #         destination=dest_content)
-    #     unsigned = source.resource.payments.create(content)
-    #     transaction = Tx(data=unsigned.attributes)
-    #     signatures = self.signatures(transaction)
-
-    #     transaction_hash = transaction.hex_hash()
-    #     content = dict(inputs=signatures, transaction_hash=transaction_hash)
-    #     signed = unsigned.sign(content)
-    #     return signed
+                u'backup': wallet.backup_public_seed},
+            network=NETWORK_MAP[network])
 
     def signatures(self, transaction):
         # TODO: output.metadata['type']['change']
-        pp(transaction)
         change_output = transaction.outputs[-1]
         if self.multi_wallet.is_valid_output(change_output):
             return self.multi_wallet.signatures(transaction)

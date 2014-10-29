@@ -122,8 +122,7 @@ class Wallets(DictWrapper):
     # so that there is no chance the client's passphrase will get passed
     # to our server.
     @staticmethod
-    def generate(passphrase, **content):
-        network = GEM_NETWORK[content.get(u'network', DEFAULT_NETWORK)]
+    def generate(passphrase, network=DEFAULT_NETWORK, **content):
         multi_wallet = MultiWallet.generate([u'primary', u'backup'], network=network)
 
         primary_seed = multi_wallet.private_seed(u'primary')
