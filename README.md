@@ -21,7 +21,7 @@ patches welcome.
 
 #### Installing:
 
-1. Ask us to add you to the round-py github repo (https://github.com/BitVault/round-py).
+1. Ask us to add you to the round-py github repo (https://github.com/GemHQ/round-py). While you wait impatiently, continue with the following.
 
 
 ### Linux
@@ -29,7 +29,7 @@ patches welcome.
 1. Clone the git repository and run setup.py:
 
   ```bash
-  $ git clone git@github.com:BitVault/round-py.git
+  $ git clone git@github.com:GemHQ/round-py.git
   $ cd round-py
   $ sudo python setup.py install
   ```
@@ -55,7 +55,7 @@ $ export PKG_CONFIG_PATH=/usr/local/Cellar/libffi/3.0.13/lib/pkgconfig/
 1. clone the git repository and run setup.py:
 
   ```bash
-  $ git clone git@github.com:BitVault/round-py.git
+  $ git clone git@github.com:GemHQ/round-py.git
   $ cd round-py
   $ python setup.py install
   ```
