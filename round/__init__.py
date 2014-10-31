@@ -80,7 +80,7 @@ def _authenticate_otp(api_url, otp, network=DEFAULT_NETWORK):
         _client = client(api_url, network)
         _client.context.authorize(u'Gem-OOB-OTP', **otp)
     else:
-        raise ValueError(u'Must provide api_token, otp_key, and otp_secret')
+        raise ValueError(u'Must provide api_token, key, and secret')
     return _client
 
 
