@@ -25,7 +25,6 @@ class Wrapper(object):
         self.resource = resource
 
     def __getattr__(self, name):
-        # TODO: may want to limit the delegation to specific attrs.
         return getattr(self.resource, name)
 
     def __str__(self):

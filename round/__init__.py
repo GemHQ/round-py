@@ -76,7 +76,9 @@ def _authenticate_device(api_url, device, network=DEFAULT_NETWORK):
     return _client
 
 def _authenticate_otp(api_url, otp, network=DEFAULT_NETWORK):
-    if 'url' in otp and 'api_token' in otp and 'key' in otp and 'secret' in otp:
+    if ('api_token' in otp and
+        'key' in otp and
+        'secret' in otp):
         _client = client(api_url, network)
         _client.context.authorize(u'Gem-OOB-OTP', **otp)
     else:

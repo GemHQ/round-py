@@ -5,6 +5,7 @@
 
 import bitcoin
 import wrappers
+import dict_wrappers
 from .config import *
 
 
@@ -17,6 +18,7 @@ class Client(object):
         self.context = self.pb_client.context
         self.resources = self.pb_client.resources
         self.developers = wrappers.Developers(resource=self.resources.developers)
+        self.users = dict_wrappers.Users(resource=self.resources.users)
 
     @property
     def developer(self):
