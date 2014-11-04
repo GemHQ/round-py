@@ -92,16 +92,20 @@ class Context(dict):
         self.schemes = {
             u'Gem-Developer':
                 {u'usage':
-                     u"round.authenticate(developer={'email':email, 'privkey':pem_or_der_encoded_rsa_private_key} [, 'api_url':api_url]})"},
+                     u"round.authenticate(developer={'email':email, 'privkey':pem_or_der_encoded_rsa_private_key} [, 'api_url':api_url]})",
+                 u'params': [u'email', u'privkey']},
             u'Gem-Application':
                 {u'usage':
-                     u"round.authenticate(application={'app_url':app_url, 'api_token':token, 'instance_id':instance_id [, 'api_url':api_url]})"},
+                     u"round.authenticate(application={'app_url':app_url, 'api_token':token, 'instance_id':instance_id [, 'api_url':api_url]})",
+                 u'params': [u'app_url', u'api_token', u'instance_id']},
             u'Gem-Device':
                 {u'usage':
-                     u"round.authenticate(device={'app_url':app_url, 'api_token':token, 'user_url':user_url, 'user_token':token, 'device_id':device_id [, 'api_url':api_url]})"},
+                     u"round.authenticate(device={'app_url':app_url, 'api_token':token, 'user_url':user_url, 'user_token':token, 'device_id':device_id [, 'api_url':api_url]})",
+                 u'params': [u'app_url', u'api_token', u'user_url', u'user_token', u'device_id']},
             u'Gem-OOB-OTP':
                 {u'usage':
                      u"round.authenticate(otp={'api_token':token, 'key':otp_key, 'secret':otp_secret [, 'api_url':api_url]})",
+                 u'params': [u'key', u'secret', u'api_token'],
                  u'credential':
                      u'data=none'}
         }
@@ -130,12 +134,8 @@ class Context(dict):
         if scheme not in self.schemes:
             return
 
-        for field in [u'app_url', u'api_token',
-                      u'user_url', u'user_token',
-                      u'device_id', u'instance_id',
-                      u'key', u'secret',
-                      u'email', u'privkey']:
-            if field in params:
+        for field in params:
+            if field in scheme['params']:
                 setattr(self, field, params[field])
                 if field in [u'privkey', u'app_url', u'user_url']:
                     del params[field]
