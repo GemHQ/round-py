@@ -97,7 +97,15 @@ class User(Wrapper, Updatable):
 
     def authorize_device(self, **content):
         try:
-            reply = User(self.resource.authorize_device(content))
+            reply = self.resource.authorize_device(content)
+            # Doesn't require the app_url, since that is only for the
+            # client.application convenience method.
+            self.resource.context.authorize(scheme='Gem-Device',
+                                            api_token=self.resource.context.api_token,
+                                            user_url=self.url,
+                                            user_token=self.auth_token,
+                                            device_id=content['device_id'])
+            return self
         except ResponseError as e:
             try:
                 reply = e.headers[u'WWW-Authenticate']
