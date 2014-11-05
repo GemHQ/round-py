@@ -134,8 +134,8 @@ class Context(dict):
         if scheme not in self.schemes:
             return
 
-        for field in params:
-            if field in self.schemes[scheme]['params']:
+        for field in self.schemes[scheme]['params']:
+            if field in params:
                 setattr(self, field, params[field])
                 if field in [u'privkey', u'app_url', u'user_url']:
                     del params[field]
