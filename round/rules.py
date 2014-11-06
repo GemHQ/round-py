@@ -7,7 +7,7 @@ import collections
 
 from .config import *
 
-from wrappers import *
+from .wrappers import *
 
 
 class Rules(collections.Mapping):

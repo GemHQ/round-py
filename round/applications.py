@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
-# users.py
+# applications.py
 #
 # Copyright 2014 BitVault, Inc. dba Gem
 
 from .config import *
 
-from wrappers import *
-from users, rules import *
+from .wrappers import *
+import users
+import rules
 
 
 class Applications(DictWrapper):
@@ -31,16 +32,16 @@ class Application(Wrapper, Updatable):
     def users(self):
         if not hasattr(self, u'_users'):
             users_resource = self.resource.users
-            self._users = Users(users_resource,
-                                self.client)
+            self._users = users.Users(users_resource,
+                                      self.client)
         return self._users
 
     @property
     def rules(self):
         if not hasattr(self, u'_rules'):
             rules_resource = self.resource.rules
-            self._rules = Rules(rules_resource,
-                                self.client)
+            self._rules = rules.Rules(rules_resource,
+                                      self.client)
         return self._rules
 
     def authorize_instance(self, **content):

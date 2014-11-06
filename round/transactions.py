@@ -5,7 +5,7 @@
 
 from .config import *
 
-from wrappers import *
+from .wrappers import *
 
 
 class Transactions(ListWrapper):

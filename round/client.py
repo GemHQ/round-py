@@ -4,12 +4,17 @@
 # Copyright 2014 BitVault, Inc. dba Gem
 
 import bitcoin
-import wrappers
-import dict_wrappers
+
+from .config import *
+from wrappers import *
+from developers import Developer, Developers
+from users import User, Users
+from applications import Application, Applications
+from wallets import Wallet, Wallets
+from accounts import Account, Accounts
 
 from pprint import pprint as pp
 
-from .config import *
 
 class Client(object):
 
@@ -19,10 +24,8 @@ class Client(object):
         bitcoin.SelectParams(network)
         self.context = self.pb_client.context
         self.resources = self.pb_client.resources
-        self.developers = wrappers.Developers(self.resources.developers,
-                                              self)
-        self.users = dict_wrappers.Users(self.resources.users,
-                                         self)
+        self.developers = Developers(self.resources.developers, self)
+        self.users = Users(self.resources.users, self)
 
     def authenticate(self, **kwargs):
         added = []
@@ -68,13 +71,13 @@ class Client(object):
 
         return self.application if fetch else True
 
-    def authenticate_device(self, app_url, api_token, user_url, user_token, device_id,
-                            override=False, fetch=True):
+    def authenticate_device(self, api_token, user_url, user_token, device_id,
+                            app_url=None, override=False, fetch=True):
         if ('credential' in self.context.schemes[u'Gem-Device'] and
             not override):
             raise ValueError(u"This object already has Gem-Device authentication. To overwrite it call authenticate_device with override=True.")
 
-        if (not app_url or not api_token or not user_url or
+        if (not api_token or not user_url or
             not user_token or not device_id or
             not self.context.authorize(u'Gem-Device',
                                        app_url=app_url,
@@ -107,7 +110,7 @@ class Client(object):
         if not hasattr(self, '_developer'):
             try:
                 dev_resource = self.resources.developers.get()
-                self._developer = wrappers.Developer(dev_resource, self)
+                self._developer = Developer(dev_resource, self)
             except Exception as e:
                 raise Exception(
                     u"Authenticate this client with {} first".format(
@@ -120,7 +123,7 @@ class Client(object):
         if not hasattr(self, '_application'):
             try:
                 app_resource = self.resources.application(self.context.app_url).get()
-                self._application = wrappers.Application(app_resource, self)
+                self._application = Application(app_resource, self)
             except Exception as e:
                 raise Exception(
                     u"Authenticate this client with {} first".format(
@@ -133,7 +136,7 @@ class Client(object):
         if not hasattr(self, '_user'):
             try:
                 user_resource = self.resources.user(self.context.user_url).get()
-                self._user = wrappers.User(user_resource, self)
+                self._user = User(user_resource, self)
             except Exception as e:
                 raise Exception(
                     u"Authenticate this client with {} first".format(
@@ -146,8 +149,8 @@ class Client(object):
         # part of a session, as a user or app would be.  Ditto account,
         # below.
         wallet_resource = self.resources.wallet(url).get()
-        return wrappers.Wallet(wallet_resource, self)
+        return Wallet(wallet_resource, self)
 
     def account(self, url):
         account_resource = self.resources.account(url)
-        return wrappers.Account(account_resource, self)
+        return Account(account_resource, self)

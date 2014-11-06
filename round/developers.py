@@ -5,8 +5,8 @@
 
 from .config import *
 
-from wrappers import *
-from applications import Applications
+from .wrappers import *
+import Applications as apps
 
 
 class Developers(object):
@@ -45,6 +45,6 @@ class Developer(Wrapper):
     def applications(self):
         if not hasattr(self, '_applications'):
             apps_resource = self.resource.applications
-            self._applications = Applications(apps_resource,
-                                              self.client)
+            self._applications = apps.Applications(apps_resource,
+                                                   self.client)
         return self._applications

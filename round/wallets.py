@@ -8,8 +8,9 @@ from .config import *
 from coinop.crypto.passphrasebox import PassphraseBox
 from coinop.bit.multiwallet import MultiWallet
 
-from wrappers import *
-
+from .wrappers import *
+from .accounts import Account, Accounts
+from .rules import Rule, Rules
 
 class Wallets(DictWrapper):
 

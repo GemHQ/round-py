@@ -5,10 +5,10 @@
 
 from .config import *
 
-from wrappers import *
+from .wrappers import *
 
-from transactions import Transaction as Tx
-from addresses import *
+import transactions as txs
+import addresses
 
 
 class Accounts(DictWrapper):
@@ -52,7 +52,7 @@ class Account(Wrapper, Updatable):
         content = dict(outputs=self.outputs_from_payees(payees))
         unsigned = self.resource.payments.create(content)
 
-        transaction = Tx(data=unsigned.attributes)
+        transaction = txs.Transaction(data=unsigned.attributes)
         signatures = self.wallet.signatures(transaction)
 
         # TODO: investigate removing the txhash as a required param
@@ -76,9 +76,9 @@ class Account(Wrapper, Updatable):
 
     def transactions(self, **query):
         transaction_resource = self.resource.transactions(query)
-        return Transactions(transaction_resource, self.client)
+        return txs.Transactions(transaction_resource, self.client)
 
     @property
     def addresses(self):
         address_resource = self.resource.addresses
-        return Addresses(address_resource, self.client)
+        return addresses.Addresses(address_resource, self.client)
