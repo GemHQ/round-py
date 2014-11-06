@@ -30,81 +30,25 @@ def client(url=DEFAULT_URL, network=DEFAULT_NETWORK):
     return Client(__patchboard_client.spawn(), network)
 
 
-def authenticate(**kwargs):
-    url = kwargs.get(u'url', DEFAULT_URL)
-    network = kwargs.get(u'network', DEFAULT_NETWORK)
-    if u'developer' in kwargs:
-        return _authenticate_developer(url, kwargs[u'developer'])
-    elif u'application' in kwargs:
-        return _authenticate_application(url, kwargs[u'application'])
-    elif u'device' in kwargs:
-        return _authenticate_device(url, kwargs[u'device'])
-    elif u'otp' in kwargs:
-        return _authenticate_otp(url, kwargs[u'otp'])
-    else:
-        raise ValueError(u"Supported authentication schemes are:\n{}".format(
-            pp(client().schemes)))
-
-def _authenticate_developer(api_url, developer, network=DEFAULT_NETWORK):
-    if 'email' in developer and 'privkey' in developer:
-        _client = client(api_url, network)
-        _client.context.authorize(u'Gem-Developer', **developer)
-    else:
-        raise ValueError(u'Must provide email and privkey')
-    return _client
-
-def _authenticate_application(api_url, application, network=DEFAULT_NETWORK):
-    if ('app_url' in application and
-        'api_token' in application and
-        'instance_id' in application):
-        _client = client(api_url, network)
-        _client.context.authorize(u'Gem-Application', **application)
-    else:
-        raise ValueError(u'Must provide app_url, api_token and instance_id')
-    return _client
-
-def _authenticate_device(api_url, device, network=DEFAULT_NETWORK):
-    if ('app_url' in device and
-        'api_token' in device and
-        'user_url' in device and
-        'user_token' in device and
-        'device_id' in device):
-        _client = client(api_url, network)
-        _client.context.authorize(u'Gem-Device', **device)
-    else:
-        raise ValueError(u'Must provide app_url, api_token, user_url, user_token, and device_id')
-    return _client
-
-def _authenticate_otp(api_url, otp, network=DEFAULT_NETWORK):
-    if ('api_token' in otp and
-        'key' in otp and
-        'secret' in otp):
-        _client = client(api_url, network)
-        _client.context.authorize(u'Gem-OOB-OTP', **otp)
-    else:
-        raise ValueError(u'Must provide api_token, key, and secret')
-    return _client
-
-
 class Context(dict):
 
     def __init__(self):
         self.schemes = {
             u'Gem-Developer':
                 {u'usage':
-                     u"round.authenticate(developer={'email':email, 'privkey':pem_or_der_encoded_rsa_private_key} [, 'api_url':api_url]})",
+                     u"client.authenticate_developer(email=email, privkey=pem_or_der_encoded_rsa_private_key)",
                  u'params': [u'email', u'privkey']},
             u'Gem-Application':
                 {u'usage':
-                     u"round.authenticate(application={'app_url':app_url, 'api_token':token, 'instance_id':instance_id [, 'api_url':api_url]})",
+                     u"client.authenticate_application(app_url=app_url, api_token=token, instance_id=instance_id)",
                  u'params': [u'app_url', u'api_token', u'instance_id']},
             u'Gem-Device':
                 {u'usage':
-                     u"round.authenticate(device={'app_url':app_url, 'api_token':token, 'user_url':user_url, 'user_token':token, 'device_id':device_id [, 'api_url':api_url]})",
+                     u"client.authenticate_device(app_url=app_url, api_token=token, user_url=user_url, user_token=token, device_id=device_id)",
                  u'params': [u'app_url', u'api_token', u'user_url', u'user_token', u'device_id']},
             u'Gem-OOB-OTP':
                 {u'usage':
-                     u"round.authenticate(otp={'api_token':token, 'key':otp_key, 'secret':otp_secret [, 'api_url':api_url]})",
+                     u"client.authenticate_otp(api_token=token, key=otp_key, secret=otp_secret)",
                  u'params': [u'key', u'secret', u'api_token'],
                  u'credential':
                      u'data=none'}
@@ -132,7 +76,7 @@ class Context(dict):
 
     def authorize(self, scheme, **params):
         if scheme not in self.schemes:
-            return
+            return False
 
         for field in self.schemes[scheme]['params']:
             if field in params:
