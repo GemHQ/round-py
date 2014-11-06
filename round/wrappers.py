@@ -16,13 +16,15 @@ import list_wrappers
 class Updatable(object):
 
     def update(self, **content):
-        return self.__class__(self.resource.update(content))
+        return self.__class__(self.resource.update(content),
+                              self.client)
 
 
 class Wrapper(object):
 
-    def __init__(self, resource):
+    def __init__(self, resource, client):
         self.resource = resource
+        self.client = client
 
     def __getattr__(self, name):
         return getattr(self.resource, name)
@@ -37,8 +39,9 @@ class Wrapper(object):
 
 class Developers(object):
 
-    def __init__(self, resource):
+    def __init__(self, resource, client):
         self.resource = resource
+        self.client = client
 
     def create(self, **content):
         priv = content[u'privkey'] if u'privkey' in content else None
@@ -50,7 +53,7 @@ class Developers(object):
         return self.wrap(resource)
 
     def wrap(self, resource):
-        return Developer(resource=resource)
+        return Developer(resource, self.client)
 
 
 class Developer(Wrapper):
@@ -61,17 +64,17 @@ class Developer(Wrapper):
         email = resource.attributes.get(u'email', None)
         priv = content.get(u'privkey', None)
 
-        if priv:
-            resource.context.authorize(u'Gem-Developer',
-                                       email=email,
-                                       privkey=priv)
-        return Developer(resource)
+        resource.context.authorize(u'Gem-Developer',
+                                   email=email,
+                                   privkey=priv)
+        return Developer(resource, self.client)
 
     @property
     def applications(self):
         if not hasattr(self, '_applications'):
-            applications_resource = self.resource.applications
-            self._applications = dict_wrappers.Applications(applications_resource)
+            apps_resource = self.resource.applications
+            self._applications = dict_wrappers.Applications(apps_resource,
+                                                            self.client)
         return self._applications
 
 
@@ -79,20 +82,22 @@ class User(Wrapper, Updatable):
 
     def update(self, **content):
         resource = self.resource.update(content)
-        return User(resource)
+        return User(resource, self.client)
 
     @property
     def applications(self):
         if not hasattr(self, '_applications'):
-            applications_resource = self.resource.applications
-            self._applications = dict_wrappers.Applications(applications_resource)
+            apps_resource = self.resource.applications
+            self._applications = dict_wrappers.Applications(apps_resource,
+                                                            self.client)
         return self._applications
 
     @property
     def wallets(self):
         if not hasattr(self, '_wallets'):
             wallets_resource = self.resource.wallets
-            self._wallets = dict_wrappers.Wallets(wallets_resource)
+            self._wallets = dict_wrappers.Wallets(wallets_resource,
+                                                  self.client)
         return self._wallets
 
     def authorize_device(self, **content):
@@ -101,9 +106,9 @@ class User(Wrapper, Updatable):
             # Doesn't require the app_url, since that is only for the
             # client.application convenience method.
             self.resource.context.authorize(scheme='Gem-Device',
-                                            api_token=self.resource.context.api_token,
+                                            api_token=self.context.api_token,
                                             user_url=self.url,
-                                            user_token=self.auth_token,
+                                            user_token=self.user_token,
                                             device_id=content['device_id'])
             return self
         except ResponseError as e:
@@ -133,15 +138,17 @@ class Application(Wrapper, Updatable):
     def users(self):
         if not hasattr(self, u'_users'):
             users_resource = self.resource.users
-            self._users = dict_wrappers.Users(users_resource)
+            self._users = dict_wrappers.Users(users_resource,
+                                              self.client)
         return self._users
 
     @property
     def rules(self):
         if not hasattr(self, u'_rules'):
             rules_resource = self.resource.rules
-            self._rules = dict_wrappers.Rules(rules_resource)
-        return self._application
+            self._rules = dict_wrappers.Rules(rules_resource,
+                                              self.client)
+        return self._rules
 
     def authorize_instance(self, **content):
         if (not hasattr(self, u'_application_instance') or
@@ -155,19 +162,22 @@ class Application(Wrapper, Updatable):
 
 class Wallet(Wrapper, Updatable):
 
-    def __init__(self, resource):
-        super(Wallet, self).__init__(resource)
+    def __init__(self, resource, client):
+        super(Wallet, self).__init__(resource, client)
 
         self.multi_wallet = None
 
-        ar = self.resource.accounts
-        self.accounts = dict_wrappers.Accounts(resource=ar, wallet=self)
+        account_resource = self.resource.accounts
+        self.accounts = dict_wrappers.Accounts(resource=account_resource,
+                                               client=self.client,
+                                               wallet=self)
 
     @property
     def rules(self):
         if not hasattr(self, '_rules'):
             rules_resource = self.resource.rules
-            self._rules = dict_wrappers.Rules(rules_resource)
+            self._rules = dict_wrappers.Rules(rules_resource,
+                                              self.client)
         return self._application
 
     def is_unlocked(self):
@@ -201,8 +211,8 @@ class Wallet(Wrapper, Updatable):
 
 class Account(Wrapper, Updatable):
 
-    def __init__(self, resource, wallet):
-        super(Account, self).__init__(resource)
+    def __init__(self, resource, client, wallet):
+        super(Account, self).__init__(resource, client)
         self.wallet = wallet
     # Account-level rules not implemented in API.
     #    rules_resource = self.resource.rules
@@ -216,7 +226,9 @@ class Account(Wrapper, Updatable):
 
 
     def update(self, **content):
-        return self.__class__(self.resource.update(content), wallet=self.wallet)
+        return self.__class__(self.resource.update(content),
+                              self.client,
+                              wallet=self.wallet)
 
     def pay(self, payees):
         content = dict(outputs=self.outputs_from_payees(payees))
@@ -245,13 +257,13 @@ class Account(Wrapper, Updatable):
         return map(fn, payees)
 
     def transactions(self, **query):
-        tr = self.resource.transactions(query)
-        return list_wrappers.Transactions(resource=tr)
+        transaction_resource = self.resource.transactions(query)
+        return list_wrappers.Transactions(transaction_resource, self.client)
 
     @property
     def addresses(self):
-        ar = self.resource.addresses
-        return list_wrappers.Addresses(resource=ar)
+        address_resource = self.resource.addresses
+        return list_wrappers.Addresses(address_resource, self.client)
 
 
 class Transaction(Wrapper):

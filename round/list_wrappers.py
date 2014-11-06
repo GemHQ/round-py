@@ -11,8 +11,9 @@ import wrappers
 
 class ListWrapper(collections.Sequence):
 
-    def __init__(self, resource):
+    def __init__(self, resource, client):
         self.resource = resource
+        self.client = client
         self.data = []
         self.populate()
 
@@ -40,22 +41,22 @@ class ListWrapper(collections.Sequence):
 
 class Transactions(ListWrapper):
 
-    def __init__(self, resource):
+    def __init__(self, resource, client):
         self.collection_list = []
-        super(Transactions, self).__init__(resource)
+        super(Transactions, self).__init__(resource, client)
 
     def add(self, wrapper):
         self.collection_list.append(wrapper)
 
     def wrap(self, resource):
-        return wrappers.Transaction(resource=resource)
+        return wrappers.Transaction(resource, self.client)
 
 
 class Addresses(ListWrapper):
 
-    def __init__(self, resource):
+    def __init__(self, resource, client):
         self.collection_list = []
-        super(Addresses, self).__init__(resource)
+        super(Addresses, self).__init__(resource, client)
 
     def add(self, address):
         self.collection_list.append(address)

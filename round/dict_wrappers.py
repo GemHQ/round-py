@@ -16,8 +16,9 @@ from .config import *
 
 class DictWrapper(collections.Mapping):
 
-    def __init__(self, resource):
+    def __init__(self, resource, client):
         self.resource = resource
+        self.client = client
         self.data = {}
         self.populate()
 
@@ -58,8 +59,9 @@ class DictWrapper(collections.Mapping):
 
 class Rules(collections.Mapping):
 
-    def __init__(self, resource):
+    def __init__(self, resource, client):
         self.resource = resource
+        self.client = client
         self.refresh()
 
     def __getitem__(self, name):
@@ -79,7 +81,7 @@ class Rules(collections.Mapping):
         return self
 
     def wrap(self, resource):
-        return wrappers.Rule(resource=resource)
+        return wrappers.Rule(resource, self.client)
 
     def add(self, name):
         return self.wrap(self.resource.add(dict(name=name)))
@@ -98,7 +100,7 @@ class Applications(DictWrapper):
         return app
 
     def wrap(self, resource):
-        return wrappers.Application(resource=resource)
+        return wrappers.Application(resource, self.client)
 
 
 class Users(DictWrapper):
@@ -110,7 +112,7 @@ class Users(DictWrapper):
         return user
 
     def wrap(self, resource):
-        return wrappers.User(resource=resource)
+        return wrappers.User(resource, self.client)
 
     def key_for(self, wrapper):
         return wrapper.email
@@ -146,14 +148,14 @@ class Wallets(DictWrapper):
         return wallet
 
     def wrap(self, resource):
-        return wrappers.Wallet(resource=resource)
+        return wrappers.Wallet(resource, self.client)
 
 
 class Accounts(DictWrapper):
 
-    def __init__(self, resource, wallet):
+    def __init__(self, resource, client, wallet):
         self.wallet = wallet
-        super(Accounts, self).__init__(resource)
+        super(Accounts, self).__init__(resource, client)
 
     def create(self, **content):
         resource = self.resource.create(content)
@@ -162,4 +164,4 @@ class Accounts(DictWrapper):
         return acc
 
     def wrap(self, resource):
-        return wrappers.Account(resource=resource, wallet=self.wallet)
+        return wrappers.Account(resource, self.client, self.wallet)

@@ -19,8 +19,10 @@ class Client(object):
         bitcoin.SelectParams(network)
         self.context = self.pb_client.context
         self.resources = self.pb_client.resources
-        self.developers = wrappers.Developers(resource=self.resources.developers)
-        self.users = dict_wrappers.Users(resource=self.resources.users)
+        self.developers = wrappers.Developers(self.resources.developers,
+                                              self)
+        self.users = dict_wrappers.Users(self.resources.users,
+                                         self)
 
     def authenticate(self, **kwargs):
         added = []
@@ -35,33 +37,39 @@ class Client(object):
         if not added:
             raise ValueError(u"Supported authentication schemes are:\n{}".format(
                 pp(client().schemes)))
+        return added
 
-    def authenticate_developer(self, email, privkey, override=False):
+    def authenticate_developer(self, email, privkey,
+                               override=False, fetch=True):
         if ('credential' in self.context.schemes[u'Gem-Developer'] and
             not override):
             raise ValueError(u"This object already has Gem-Developer authentication. To overwrite it call authenticate_developer with override=True.")
 
         if (not email or not privkey or
             not self.context.authorize(u'Gem-Developer', email=email, privkey=privkey)):
-            raise ValueError(self.context.schemes[u'Gem-Developer']['usage'])
+            raise ValueError("Usage: {}".format(
+                self.context.schemes[u'Gem-Developer']['usage']))
 
-        return True
+        return self.developer if fetch else True
 
-    def authenticate_application(self, app_url, api_token, instance_id):
+    def authenticate_application(self, app_url, api_token, instance_id,
+                                 override=False, fetch=True):
         if ('credential' in self.context.schemes[u'Gem-Application'] and
             not override):
             raise ValueError(u"This object already has Gem-Application authentication. To overwrite it call authenticate_application with override=True.")
 
         if (not app_url or not api_token or not instance_id or
             not self.context.authorize(u'Gem-Application',
-                                       app_url=app_url
+                                       app_url=app_url,
                                        api_token=api_token,
                                        instance_id=instance_id)):
-            raise ValueError(u'Must provide app_url, api_token and instance_id')
+            raise ValueError("Usage: {}".format(
+                self.context.schemes[u'Gem-Application']['usage']))
 
-        return True
+        return self.application if fetch else True
 
-    def authenticate_device(app_url, api_token, user_url, user_token, device_id):
+    def authenticate_device(self, app_url, api_token, user_url, user_token, device_id,
+                            override=False, fetch=True):
         if ('credential' in self.context.schemes[u'Gem-Device'] and
             not override):
             raise ValueError(u"This object already has Gem-Device authentication. To overwrite it call authenticate_device with override=True.")
@@ -74,11 +82,12 @@ class Client(object):
                                        user_url=user_url,
                                        user_token=user_token,
                                        device_id=device_id)):
-            raise ValueError(u'Must provide app_url, api_token, user_url, user_token, and device_id')
+            raise ValueError("Usage: {}".format(
+                self.context.schemes[u'Gem-Device']['usage']))
 
-        return True
+        return self.user if fetch else True
 
-    def authenticate_otp(api_token, key, secret):
+    def authenticate_otp(self, api_token, key, secret, override=True):
         if ('credential' in self.context.schemes[u'Gem-OOB-OTP'] and
             not override):
             raise ValueError(u"This object already has Gem-OOB-OTP authentication. To overwrite it call authenticate_otp with override=True.")
@@ -88,7 +97,8 @@ class Client(object):
                                        api_token=api_token,
                                        key=key,
                                        secret=secret)):
-            raise ValueError(u'Must provide api_token, key, and secret')
+            raise ValueError("Usage: {}".format(
+                self.context.schemes[u'Gem-OOB-OTP']['usage']))
 
         return True
 
@@ -97,7 +107,7 @@ class Client(object):
         if not hasattr(self, '_developer'):
             try:
                 dev_resource = self.resources.developers.get()
-                self._developer = wrappers.Developer(dev_resource)
+                self._developer = wrappers.Developer(dev_resource, self)
             except Exception as e:
                 raise Exception(
                     u"Authenticate this client with {} first".format(
@@ -110,7 +120,7 @@ class Client(object):
         if not hasattr(self, '_application'):
             try:
                 app_resource = self.resources.application(self.context.app_url).get()
-                self._application = wrappers.Application(app_resource)
+                self._application = wrappers.Application(app_resource, self)
             except Exception as e:
                 raise Exception(
                     u"Authenticate this client with {} first".format(
@@ -123,7 +133,7 @@ class Client(object):
         if not hasattr(self, '_user'):
             try:
                 user_resource = self.resources.user(self.context.user_url).get()
-                self._user = wrappers.User(user_resource)
+                self._user = wrappers.User(user_resource, self)
             except Exception as e:
                 raise Exception(
                     u"Authenticate this client with {} first".format(
@@ -136,8 +146,8 @@ class Client(object):
         # part of a session, as a user or app would be.  Ditto account,
         # below.
         wallet_resource = self.resources.wallet(url).get()
-        return wrappers.Wallet(wallet_resource)
+        return wrappers.Wallet(wallet_resource, self)
 
     def account(self, url):
         account_resource = self.resources.account(url)
-        return wrappers.Account(account_resource)
+        return wrappers.Account(account_resource, self)

@@ -85,6 +85,7 @@ class Context(dict):
                     del params[field]
 
         self.schemes[scheme][u'credential'] = Context.format_auth_params(params)
+        return self.schemes[scheme][u'credential']
 
 
     def dev_signature(self, request_body):
