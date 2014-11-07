@@ -46,22 +46,33 @@ class User(Wrapper, Updatable):
                                             self.client)
         return self._wallets
 
-    def authorize_device(self, **content):
+    def begin_device_authorization(self, name, device_id):
         try:
-            reply = self.resource.authorize_device(content)
-            # Doesn't require the app_url, since that is only for the
-            # client.application convenience method.
-            appurl = self.context.app_url if hasattr(self.context, 'app_url') else None
-            self.client.authenticate_device(
-                api_token=self.context.api_token,
-                user_url=self.url,
-                user_token=self.user_token,
-                device_id=content['device_id'],
-                app_url=appurl)
-            return self
+            del self.context.schemes[u'Gem-OOB-OTP']['credential']
+            self.current_device_name = name
+            self.current_device_id = device_id
+            reply = self.resource.authorize_device(name=name, device_id=device_id)
         except ResponseError as e:
             try:
-                reply = e.headers[u'WWW-Authenticate']
+                reply = {'message': 'Device authorization requested'}
+                self.current_otp_key = reply['Gem-OOB-OTP']['key']
+            return self
             except:
                 raise e
         return reply
+
+    def complete_device_authorization(self, app_url, api_token, secret):
+        try:
+            self.client.authenticate_otp(api_token=api_token,
+                                         key=self.current_otp_key,
+                                         secret=secret)
+
+            r = self.resource.authorize_device(name=self.current_device_name,
+                                               device_id=self.current_device_id)
+
+            self.client.authenticate_device(app_url=app_url,
+                                            api_token=api_token,
+                                            user_url=r.url,
+                                            user_token=r.user_token,
+                                            device_id=self.current_device_id)
+            return User(r, self.client)
