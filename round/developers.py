@@ -6,7 +6,7 @@
 from .config import *
 
 from .wrappers import *
-import Applications as apps
+import applications as apps
 
 
 class Developers(object):
