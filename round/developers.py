@@ -13,6 +13,7 @@ class Developers(object):
 
     def __init__(self, resource, client):
         self.resource = resource
+        self.context = client.context
         self.client = client
 
     def create(self, **content):

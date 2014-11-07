@@ -12,28 +12,28 @@ from .wrappers import *
 from .accounts import Account, Accounts
 from .rules import Rule, Rules
 
+# The passphrase parameter should stay out of the content dict
+# so that there is no chance the client's passphrase will get passed
+# to our server.
+def generate(passphrase, network=DEFAULT_NETWORK, **content):
+    multi_wallet = MultiWallet.generate([u'primary', u'backup'], network=network)
+
+    primary_seed = multi_wallet.private_seed(u'primary')
+    backup_seed = multi_wallet.private_seed(u'backup')
+
+    primary_public_seed = multi_wallet.public_seed(u'primary')
+    backup_public_seed = multi_wallet.public_seed(u'backup')
+
+    encrypted_seed = PassphraseBox.encrypt(passphrase, primary_seed)
+
+    content[u'network'] = GEM_NETWORK[network]
+    content[u'backup_public_seed'] = backup_public_seed
+    content[u'primary_public_seed'] = primary_public_seed
+    content[u'primary_private_seed'] = encrypted_seed
+    return backup_seed, content
+
+
 class Wallets(DictWrapper):
-
-    # The passphrase parameter should stay out of the content dict
-    # so that there is no chance the client's passphrase will get passed
-    # to our server.
-    @staticmethod
-    def generate(passphrase, network=DEFAULT_NETWORK, **content):
-        multi_wallet = MultiWallet.generate([u'primary', u'backup'], network=network)
-
-        primary_seed = multi_wallet.private_seed(u'primary')
-        backup_seed = multi_wallet.private_seed(u'backup')
-
-        primary_public_seed = multi_wallet.public_seed(u'primary')
-        backup_public_seed = multi_wallet.public_seed(u'backup')
-
-        encrypted_seed = PassphraseBox.encrypt(passphrase, primary_seed)
-
-        content[u'network'] = GEM_NETWORK[network]
-        content[u'backup_public_seed'] = backup_public_seed
-        content[u'primary_public_seed'] = primary_public_seed
-        content[u'primary_private_seed'] = encrypted_seed
-        return backup_seed, content
 
     def create(self, **content):
         resource = self.resource.create(content)

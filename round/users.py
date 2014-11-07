@@ -51,11 +51,13 @@ class User(Wrapper, Updatable):
             reply = self.resource.authorize_device(content)
             # Doesn't require the app_url, since that is only for the
             # client.application convenience method.
+            appurl = self.context.app_url if hasattr(self.context, 'app_url') else None
             self.client.authenticate_device(
-                api_token=self.resource.context.api_token,
+                api_token=self.context.api_token,
                 user_url=self.url,
                 user_token=self.user_token,
-                device_id=content['device_id'])
+                device_id=content['device_id'],
+                app_url=appurl)
             return self
         except ResponseError as e:
             try:

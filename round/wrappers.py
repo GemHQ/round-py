@@ -25,6 +25,7 @@ class Wrapper(object):
 
     def __init__(self, resource, client):
         self.resource = resource
+        self.context = client.context
         self.client = client
 
     def __getattr__(self, name):
@@ -42,6 +43,7 @@ class DictWrapper(collections.Mapping):
 
     def __init__(self, resource, client):
         self.resource = resource
+        self.context = client.context
         self.client = client
         self.data = {}
         self.populate()
@@ -86,6 +88,7 @@ class ListWrapper(collections.Sequence):
 
     def __init__(self, resource, client):
         self.resource = resource
+        self.context = client.context
         self.client = client
         self.data = []
         self.populate()
