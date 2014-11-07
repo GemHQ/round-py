@@ -48,31 +48,30 @@ class User(Wrapper, Updatable):
 
     def begin_device_authorization(self, name, device_id):
         try:
-            del self.context.schemes[u'Gem-OOB-OTP']['credential']
+            self.context.schemes[u'Gem-OOB-OTP'][u'credential'] = 'data="none"'
             self.current_device_name = name
             self.current_device_id = device_id
-            reply = self.resource.authorize_device(name=name, device_id=device_id)
+            reply = self.resource.authorize_device({u'name': name,
+                                                    u'device_id': device_id})
         except ResponseError as e:
             try:
-                reply = {'message': 'Device authorization requested'}
-                self.current_otp_key = reply['Gem-OOB-OTP']['key']
-            return self
+                return e.headers['WWW-Authenticate']['Gem-OOB-OTP'][u'key']
             except:
                 raise e
-        return reply
 
-    def complete_device_authorization(self, app_url, api_token, secret):
+    def complete_device_authorization(self, app_url, api_token, key, secret):
         try:
             self.client.authenticate_otp(api_token=api_token,
-                                         key=self.current_otp_key,
-                                         secret=secret)
+                                         key=key, secret=secret)
 
-            r = self.resource.authorize_device(name=self.current_device_name,
-                                               device_id=self.current_device_id)
+            r = self.resource.authorize_device({u'name': self.current_device_name,
+                                                u'device_id': self.current_device_id})
+        except AttributeError:
+            raise ("You must first call user.begin_device_authorization(name='name', device_id='device_id')")
 
-            self.client.authenticate_device(app_url=app_url,
-                                            api_token=api_token,
-                                            user_url=r.url,
-                                            user_token=r.user_token,
-                                            device_id=self.current_device_id)
-            return User(r, self.client)
+        self.client.authenticate_device(app_url=app_url,
+                                        api_token=api_token,
+                                        user_url=r.url,
+                                        user_token=r.user_token,
+                                        device_id=self.current_device_id)
+        return User(r, self.client)
