@@ -18,7 +18,7 @@ class Transactions(ListWrapper):
         self.collection_list.append(wrapper)
 
     def wrap(self, resource):
-        return wrappers.Transaction(resource, self.client)
+        return Transaction(resource, self.client)
 
 
 class Transaction(Wrapper):

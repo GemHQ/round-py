@@ -5,6 +5,8 @@
 
 from .config import *
 
+from coinop.bit.transaction import Transaction as CoinopTx
+
 from .wrappers import *
 
 import transactions as txs
@@ -52,7 +54,7 @@ class Account(Wrapper, Updatable):
         content = dict(outputs=self.outputs_from_payees(payees))
         unsigned = self.resource.payments.create(content)
 
-        transaction = txs.Transaction(data=unsigned.attributes)
+        transaction = CoinopTx(data=unsigned.attributes)
         signatures = self.wallet.signatures(transaction)
 
         # TODO: investigate removing the txhash as a required param
