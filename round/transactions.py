@@ -7,7 +7,6 @@ from .config import *
 
 from .wrappers import *
 
-
 class Transactions(ListWrapper):
 
     def __init__(self, resource, client):
