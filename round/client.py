@@ -30,13 +30,13 @@ class Client(object):
     def authenticate(self, **kwargs):
         added = []
         if u'developer' in kwargs:
-            added.append(authenticate_developer(**kwargs[u'developer']))
+            added.append(self.authenticate_developer(**kwargs[u'developer']))
         if u'application' in kwargs:
-            added.append(authenticate_application(**kwargs[u'application']))
+            added.append(self.authenticate_application(**kwargs[u'application']))
         if u'device' in kwargs:
-            added.append(authenticate_device(**kwargs[u'device']))
+            added.append(self.authenticate_device(**kwargs[u'device']))
         if u'otp' in kwargs:
-            added.append(authenticate_otp(**kwargs[u'otp']))
+            added.append(self.authenticate_otp(**kwargs[u'otp']))
         if not added:
             raise ValueError(u"Supported authentication schemes are:\n{}".format(
                 pp(client().schemes)))
@@ -111,9 +111,10 @@ class Client(object):
             try:
                 dev_resource = self.resources.developers.get()
                 self._developer = Developer(dev_resource, self)
-            except Exception as e:
-                raise Exception(
-                    u"Authenticate this client with {} first".format(
+            except AttributeError as e:
+                # TODO: Add AuthenticationError
+                raise AttributeError(
+                    u"You must first authenticate this client with\n`{}`.".format(
                         self.context.schemes['Gem-Developer']['usage']))
 
         return self._developer
@@ -124,10 +125,11 @@ class Client(object):
             try:
                 app_resource = self.resources.application(self.context.app_url).get()
                 self._application = Application(app_resource, self)
-            except Exception as e:
-                raise Exception(
-                    u"Authenticate this client with {} first".format(
-                        self.context.schemes['Gem-Application']['usage']))
+            except AttributeError as e:
+                raise AttributeError(
+                    u"You must first authenticate this client with\n`{}` or\n`{}`.".format(
+                        self.context.schemes['Gem-Application']['usage'],
+                        self.context.schemes['Gem-Device']['usage']))
 
         return self._application
 
@@ -137,9 +139,9 @@ class Client(object):
             try:
                 user_resource = self.resources.user(self.context.user_url).get()
                 self._user = User(user_resource, self)
-            except Exception as e:
-                raise Exception(
-                    u"Authenticate this client with {} first".format(
+            except AttributeError as e:
+                raise AttributeError(
+                    u"You must first authenticate this client with\n`{}`.".format(
                         self.context.schemes['Gem-Device']['usage']))
 
         return self._user
