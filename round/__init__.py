@@ -9,7 +9,7 @@ import json
 import patchboard
 
 from pprint import pprint as pp
-from datetime import date
+from time import time
 
 # TODO: PSS when ruby can handle it.
 from Crypto.PublicKey import RSA
@@ -60,9 +60,9 @@ class Context(dict):
         for scheme in schemes:
             if scheme in self.schemes and u'credential' in self.schemes[scheme]:
                 if scheme == u'Gem-Developer':
-                    return scheme, u'{}, signature="{}"'.format(
-                        self.schemes[scheme][u'credential'],
-                        self.dev_signature(request_args[u'body']))
+                    sig, ts = self.dev_signature(request_args[u'body'])
+                    return scheme, u'{}, signature="{}", timestamp="{}"'.format(
+                        self.schemes[scheme][u'credential'], sig, ts)
                 else:
                     return scheme, self.schemes[scheme][u'credential']
 
@@ -93,9 +93,10 @@ class Context(dict):
             body = json.loads(request_body) if request_body else {}
             key = RSA.importKey(self.privkey)
             signer = PKCS1_v1_5.new(key)
-            content = u'{}-{}'.format(json.dumps(body, separators=(',',':')), date.today().strftime('%Y/%m/%d'))
+            ts = int(time())
+            content = u'{}-{}'.format(json.dumps(body, separators=(',',':')), ts)
             digest = SHA256.new(content)
-            return base64.urlsafe_b64encode(signer.sign(digest))
+            return base64.urlsafe_b64encode(signer.sign(digest)), ts
         except Exception as e:
             pp(e)
             raise Exception(u"You must provide a valid RSA private key.")
