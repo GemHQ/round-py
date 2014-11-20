@@ -36,19 +36,19 @@ class Context(dict):
         self.schemes = {
             u'Gem-Developer':
                 {u'usage':
-                     u"client.authenticate_developer(email=email, privkey=pem_or_der_encoded_rsa_private_key)",
+                     u"client.authenticate_developer(email=email, privkey=pem_or_der_encoded_rsa_private_key [, override=False, fetch=True])",
                  u'params': [u'email', u'privkey']},
             u'Gem-Application':
                 {u'usage':
-                     u"client.authenticate_application(app_url=app_url, api_token=token, instance_id=instance_id)",
+                     u"client.authenticate_application(app_url=app_url, api_token=token, instance_id=instance_id [, override=False, fetch=True])",
                  u'params': [u'app_url', u'api_token', u'instance_id']},
             u'Gem-Device':
                 {u'usage':
-                     u"client.authenticate_device(app_url=app_url, api_token=token, user_url=user_url, user_token=token, device_id=device_id)",
+                     u"client.authenticate_device(api_token=token, user_token=token, device_id=device_id [, email=user_email, user_url=user_url, app_url=app_url, override=False, fetch=True])",
                  u'params': [u'app_url', u'api_token', u'user_url', u'user_token', u'device_id']},
             u'Gem-OOB-OTP':
                 {u'usage':
-                     u"client.authenticate_otp(api_token=token, key=otp_key, secret=otp_secret)",
+                     u"client.authenticate_otp(api_token=token, key=otp_key, secret=otp_secret [, override=False])",
                  u'params': [u'key', u'secret', u'api_token'],
                  u'credential':
                      u'data=none'}
@@ -81,7 +81,7 @@ class Context(dict):
         for field in self.schemes[scheme]['params']:
             if field in params:
                 setattr(self, field, params[field])
-                if field in [u'privkey', u'app_url', u'user_url']:
+                if field in [u'privkey', u'app_url', u'user_url', u'user_email']:
                     del params[field]
 
         self.schemes[scheme][u'credential'] = Context.format_auth_params(params)

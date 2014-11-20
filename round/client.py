@@ -71,17 +71,19 @@ class Client(object):
 
         return self.application if fetch else True
 
-    def authenticate_device(self, api_token, user_url, user_token, device_id,
-                            app_url=None, override=False, fetch=True):
+    def authenticate_device(self, api_token, user_token, device_id, email=None,
+                            user_url=None, app_url=None, override=False,
+                            fetch=True):
         if ('credential' in self.context.schemes[u'Gem-Device'] and
             not override):
             raise ValueError(u"This object already has Gem-Device authentication. To overwrite it call authenticate_device with override=True.")
 
-        if (not api_token or not user_url or
+        if (not api_token or (not email and not user_url) or
             not user_token or not device_id or
             not self.context.authorize(u'Gem-Device',
                                        app_url=app_url,
                                        api_token=api_token,
+                                       user_email=email,
                                        user_url=user_url,
                                        user_token=user_token,
                                        device_id=device_id)):
@@ -134,15 +136,32 @@ class Client(object):
         return self._application
 
     @property
-    def user(self):
+    def user(self, email=None):
+        user_resource = False
         if not hasattr(self, '_user'):
             try:
-                user_resource = self.resources.user(self.context.user_url).get()
-                self._user = User(user_resource, self)
+                if email:
+                    user_resource = self.resources.user(email)
+                elif hasattr(self.context, u'user_url'):
+                    user_resource = self.resources.user(self.context.user_url)
+                else:
+                    user_resource = self.resources.user_query(self.context.user_email)
             except AttributeError as e:
                 raise AttributeError(
                     u"You must first authenticate this client with\n`{}`.".format(
                         self.context.schemes['Gem-Device']['usage']))
+
+        elif email and self._user.email != email:
+            user_resource = self.resources.user(email)
+
+        if user_resource:
+            self._user = User(user_resource, self)
+            # Fetch the user if we can. If not, we're probably just getting a
+            # resource so we can do authorize_device.
+            try:
+                self._user.refresh()
+            except:
+                pass
 
         return self._user
 
