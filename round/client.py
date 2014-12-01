@@ -28,6 +28,7 @@ class Client(object):
         self.users = Users(self.resources.users, self)
 
     def authenticate(self, **kwargs):
+        print "client.authenticate() is DEPRECATED!"
         added = []
         if u'developer' in kwargs:
             added.append(self.authenticate_developer(**kwargs[u'developer']))
