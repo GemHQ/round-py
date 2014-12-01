@@ -90,7 +90,7 @@ class Client(object):
             raise ValueError("Usage: {}".format(
                 self.context.schemes[u'Gem-Device']['usage']))
 
-        return self.user if fetch else True
+        return self._user if fetch else True
 
     def authenticate_otp(self, api_token, key, secret, override=True):
         if ('credential' in self.context.schemes[u'Gem-OOB-OTP'] and
@@ -135,24 +135,23 @@ class Client(object):
 
         return self._application
 
-    @property
     def user(self, email=None):
         user_resource = False
         if not hasattr(self, '_user'):
             try:
                 if email:
-                    user_resource = self.resources.user(email)
+                    user_resource = self.resources.user_query({'email': email})
                 elif hasattr(self.context, u'user_url'):
                     user_resource = self.resources.user(self.context.user_url)
                 else:
-                    user_resource = self.resources.user_query(self.context.user_email)
+                    user_resource = self.resources.user_query({'email': self.context.user_email})
             except AttributeError as e:
                 raise AttributeError(
                     u"You must first authenticate this client with\n`{}`.".format(
                         self.context.schemes['Gem-Device']['usage']))
 
         elif email and self._user.email != email:
-            user_resource = self.resources.user(email)
+            user_resource = self.resources.user_query({'email': email})
 
         if user_resource:
             self._user = User(user_resource, self)
