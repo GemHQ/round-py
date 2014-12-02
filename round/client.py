@@ -28,7 +28,7 @@ class Client(object):
         self.users = Users(self.resources.users, self)
 
     def authenticate(self, **kwargs):
-        print "client.authenticate() is DEPRECATED!"
+        print u"client.authenticate() is DEPRECATED!"
         added = []
         if u'developer' in kwargs:
             added.append(self.authenticate_developer(**kwargs[u'developer']))
@@ -45,20 +45,20 @@ class Client(object):
 
     def authenticate_developer(self, email, privkey, timestamp,
                                override=False, fetch=True):
-        if ('credential' in self.context.schemes[u'Gem-Developer'] and
+        if (u'credential' in self.context.schemes[u'Gem-Developer'] and
             not override):
             raise ValueError(u"This object already has Gem-Developer authentication. To overwrite it call authenticate_developer with override=True.")
 
         if (not email or not privkey or not timestamp or
             not self.context.authorize(u'Gem-Developer', email=email, privkey=privkey, timestamp=timestamp)):
             raise ValueError("Usage: {}".format(
-                self.context.schemes[u'Gem-Developer']['usage']))
+                self.context.schemes[u'Gem-Developer'][u'usage']))
 
         return self.developer if fetch else True
 
     def authenticate_application(self, app_url, api_token, instance_id,
                                  override=False, fetch=True):
-        if ('credential' in self.context.schemes[u'Gem-Application'] and
+        if (u'credential' in self.context.schemes[u'Gem-Application'] and
             not override):
             raise ValueError(u"This object already has Gem-Application authentication. To overwrite it call authenticate_application with override=True.")
 
@@ -67,15 +67,15 @@ class Client(object):
                                        app_url=app_url,
                                        api_token=api_token,
                                        instance_id=instance_id)):
-            raise ValueError("Usage: {}".format(
-                self.context.schemes[u'Gem-Application']['usage']))
+            raise ValueError(u"Usage: {}".format(
+                self.context.schemes[u'Gem-Application'][u'usage']))
 
         return self.application if fetch else True
 
     def authenticate_device(self, api_token, user_token, device_id, email=None,
                             user_url=None, app_url=None, override=False,
                             fetch=True):
-        if ('credential' in self.context.schemes[u'Gem-Device'] and
+        if (u'credential' in self.context.schemes[u'Gem-Device'] and
             not override):
             raise ValueError(u"This object already has Gem-Device authentication. To overwrite it call authenticate_device with override=True.")
 
@@ -88,13 +88,13 @@ class Client(object):
                                        user_url=user_url,
                                        user_token=user_token,
                                        device_id=device_id)):
-            raise ValueError("Usage: {}".format(
-                self.context.schemes[u'Gem-Device']['usage']))
+            raise ValueError(u"Usage: {}".format(
+                self.context.schemes[u'Gem-Device'][u'usage']))
 
-        return self._user if fetch else True
+        return self.user() if fetch else True
 
     def authenticate_otp(self, api_token, key, secret, override=True):
-        if ('credential' in self.context.schemes[u'Gem-OOB-OTP'] and
+        if (u'credential' in self.context.schemes[u'Gem-OOB-OTP'] and
             not override):
             raise ValueError(u"This object already has Gem-OOB-OTP authentication. To overwrite it call authenticate_otp with override=True.")
 
@@ -103,14 +103,14 @@ class Client(object):
                                        api_token=api_token,
                                        key=key,
                                        secret=secret)):
-            raise ValueError("Usage: {}".format(
-                self.context.schemes[u'Gem-OOB-OTP']['usage']))
+            raise ValueError(u"Usage: {}".format(
+                self.context.schemes[u'Gem-OOB-OTP'][u'usage']))
 
         return True
 
     @property
     def developer(self):
-        if not hasattr(self, '_developer'):
+        if not hasattr(self, u'_developer'):
             try:
                 dev_resource = self.resources.developers.get()
                 self._developer = Developer(dev_resource, self)
@@ -118,21 +118,21 @@ class Client(object):
                 # TODO: Add AuthenticationError
                 raise AttributeError(
                     u"You must first authenticate this client with\n`{}`.".format(
-                        self.context.schemes['Gem-Developer']['usage']))
+                        self.context.schemes[u'Gem-Developer'][u'usage']))
 
         return self._developer
 
     @property
     def application(self):
-        if not hasattr(self, '_application'):
+        if not hasattr(self, u'_application'):
             try:
                 app_resource = self.resources.application(self.context.app_url).get()
                 self._application = Application(app_resource, self)
             except AttributeError as e:
                 raise AttributeError(
                     u"You must first authenticate this client with\n`{}` or\n`{}`.".format(
-                        self.context.schemes['Gem-Application']['usage'],
-                        self.context.schemes['Gem-Device']['usage']))
+                        self.context.schemes[u'Gem-Application'][u'usage'],
+                        self.context.schemes[u'Gem-Device'][u'usage']))
 
         return self._application
 
@@ -141,18 +141,20 @@ class Client(object):
         if not hasattr(self, '_user'):
             try:
                 if email:
-                    user_resource = self.resources.user_query({'email': email})
+                    user_resource = self.resources.user_query({u'email': email})
                 elif hasattr(self.context, u'user_url'):
-                    user_resource = self.resources.user(self.context.user_url)
+                    pp(self.context)
+                    pp(self.context.__dict__)
+                    user_resource = self.resources.user({u'url': self.context.user_url})
                 else:
-                    user_resource = self.resources.user_query({'email': self.context.user_email})
+                    user_resource = self.resources.user_query({u'email': self.context.user_email})
             except AttributeError as e:
                 raise AttributeError(
                     u"You must first authenticate this client with\n`{}`.".format(
-                        self.context.schemes['Gem-Device']['usage']))
+                        self.context.schemes[u'Gem-Device'][u'usage']))
 
         elif email and self._user.email != email:
-            user_resource = self.resources.user_query({'email': email})
+            user_resource = self.resources.user_query({u'email': email})
 
         if user_resource:
             self._user = User(user_resource, self)
