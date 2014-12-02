@@ -45,7 +45,7 @@ class Context(dict):
             u'Gem-Device':
                 {u'usage':
                      u"client.authenticate_device(api_token=token, user_token=token, device_id=device_id [, email=user_email, user_url=user_url, app_url=app_url, override=False, fetch=True])",
-                 u'params': [u'app_url', u'api_token', u'user_url', u'user_token', u'device_id']},
+                 u'params': [u'app_url', u'api_token', u'user_email', u'user_url', u'user_token', u'device_id']},
             u'Gem-OOB-OTP':
                 {u'usage':
                      u"client.authenticate_otp(api_token=token, key=otp_key, secret=otp_secret [, override=False])",
@@ -79,10 +79,10 @@ class Context(dict):
             return False
 
         for field in self.schemes[scheme]['params']:
-            if field in params:
+            if field in params and params[field]:
                 setattr(self, field, params[field])
-                if field in [u'privkey', u'app_url', u'user_url', u'user_email']:
-                    del params[field]
+            if field in [u'privkey', u'app_url', u'user_url', u'user_email']:
+                del params[field]
 
         self.schemes[scheme][u'credential'] = Context.format_auth_params(params)
         return self.schemes[scheme][u'credential']
