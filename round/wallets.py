@@ -15,7 +15,7 @@ from .rules import Rule, Rules
 # The passphrase parameter should stay out of the content dict
 # so that there is no chance the client's passphrase will get passed
 # to our server.
-def generate(passphrase, network=DEFAULT_NETWORK, **content):
+def generate(passphrase, network=DEFAULT_NETWORK, **kwargs):
     multi_wallet = MultiWallet.generate([u'primary', u'backup'], network=network)
 
     primary_seed = multi_wallet.private_seed(u'primary')
@@ -26,20 +26,27 @@ def generate(passphrase, network=DEFAULT_NETWORK, **content):
 
     encrypted_seed = PassphraseBox.encrypt(passphrase, primary_seed)
 
-    content[u'network'] = GEM_NETWORK[network]
-    content[u'backup_public_seed'] = backup_public_seed
-    content[u'primary_public_seed'] = primary_public_seed
-    content[u'primary_private_seed'] = encrypted_seed
-    return backup_seed, content
+    kwargs[u'network'] = GEM_NETWORK[network]
+    kwargs[u'backup_public_seed'] = backup_public_seed
+    kwargs[u'primary_public_seed'] = primary_public_seed
+    kwargs[u'primary_private_seed'] = encrypted_seed
+    return backup_seed, kwargs
 
 
 class Wallets(DictWrapper):
 
-    def create(self, **content):
-        resource = self.resource.create(content)
+    def create(self, name, **kwargs):
+        backup_seed = kwargs.get('backup_private_seed', None)
+        if u'passphrase' not in kwargs and u'primary_public_seed' not in kwargs:
+            raise ValueError("Usage: wallets.create(passphrase='new-wallet-passphrase')")
+        elif u'passphrase' in kwargs:
+            backup_seed, kwargs = generate(kwargs['passphrase'])
+
+        kwargs[u'name'] = name
+        resource = self.resource.create(kwargs)
         wallet = self.wrap(resource)
         self.add(wallet)
-        return wallet
+        return backup_seed, wallet
 
     def wrap(self, resource):
         return Wallet(resource, self.client)

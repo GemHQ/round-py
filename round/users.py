@@ -17,9 +17,9 @@ class Users(DictWrapper):
         if u'passphrase' not in kwargs and u'wallet' not in kwargs:
             raise ValueError("Usage: users.create(email, passphrase='new-wallet-passphrase')")
         elif u'passphrase' in kwargs:
-            backup_seed, wallet_data = wallets.generate(passphrase)
+            backup_seed, wallet_data = wallets.generate(kwargs[u'passphrase'])
             del kwargs[u'passphrase']
-            kwargs.update({u'wallet': wallet_data})
+            kwargs[u'wallet'] = wallet_data
 
         kwargs.update({u'email': email})
 
