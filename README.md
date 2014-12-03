@@ -13,11 +13,9 @@ patches welcome.
 
 * A python 2.7 environment (your distro probably does this as part of the base system, but the nicer way is with `pyenv` and/or `virtualenv`). `coinop-py` is currently developed under 2.7.7.
 
-* Git and a python extension build environment. You probably have most or all of this on your machine already, but the  following should do it on a bare Debian/Ubuntu system (package names correct on Ubuntu 13.10 and 14.04 at least):
+* Git and a python extension build environment.
 
-  ```bash
-  $ sudo apt-get install gcc make libffi-dev python-dev python-pip git
-  ```
+* libffi
 
 #### Installing:
 
@@ -29,6 +27,7 @@ patches welcome.
 1. Clone the git repository and run setup.py:
 
   ```bash
+  $ sudo apt-get install gcc make libffi-dev python-dev python-pip git
   $ git clone git@github.com:GemHQ/round-py.git
   $ cd round-py
   $ sudo python setup.py install
@@ -40,17 +39,17 @@ setup.py with sudo)
 ### Mac OSX:
 
 1.  Install Xcode Command Line Tools
-```bash
-xcode-select --install
-```
+  ```bash
+  $ xcode-select --install
+  ```
 
 1.  ```bash
-brew install libffi
-```
+  $ brew install libffi
+  ```
 
 1.  ```bash
-$ export PKG_CONFIG_PATH=/usr/local/Cellar/libffi/3.0.13/lib/pkgconfig/
-```
+  $ export PKG_CONFIG_PATH=/usr/local/Cellar/libffi/3.0.13/lib/pkgconfig/
+  ```
 
 1. clone the git repository and run setup.py:
 

@@ -93,6 +93,7 @@ class User(Wrapper, Updatable):
         self.client.authenticate_device(api_token=api_token,
                                         user_url=r.url,
                                         user_token=r.user_token,
-                                        device_id=device_id)
+                                        device_id=device_id,
+                                        override=True)
 
         return User(r, self.client)
