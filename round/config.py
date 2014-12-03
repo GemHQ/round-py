@@ -1,6 +1,6 @@
 #DEFAULT_URL = u"https://api.gem.co/"
-#DEFAULT_URL = u"https://developsb.gem.co/"
-DEFAULT_URL = u"http://api-develop.gem.co"
+DEFAULT_URL = u"https://developsb.gem.co:443"
+
 DEFAULT_NETWORK = u'testnet'
 NETWORK_MAP = {u'testnet': u'testnet',
                u'testnet3': u'testnet',
