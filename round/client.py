@@ -43,14 +43,14 @@ class Client(object):
                 pp(client().schemes)))
         return added
 
-    def authenticate_developer(self, email, privkey, timestamp,
+    def authenticate_developer(self, email, privkey,
                                override=False, fetch=True):
         if (u'credential' in self.context.schemes[u'Gem-Developer'] and
             not override):
             raise ValueError(u"This object already has Gem-Developer authentication. To overwrite it call authenticate_developer with override=True.")
 
-        if (not email or not privkey or not timestamp or
-            not self.context.authorize(u'Gem-Developer', email=email, privkey=privkey, timestamp=timestamp)):
+        if (not email or not privkey or
+            not self.context.authorize(u'Gem-Developer', email=email, privkey=privkey)):
             raise ValueError("Usage: {}".format(
                 self.context.schemes[u'Gem-Developer'][u'usage']))
 
