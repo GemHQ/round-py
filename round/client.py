@@ -73,8 +73,7 @@ class Client(object):
         return self.application if fetch else True
 
     def authenticate_device(self, api_token, user_token, device_id, email=None,
-                            user_url=None, app_url=None, override=False,
-                            fetch=True):
+                            user_url=None, override=False, fetch=True):
         if (u'credential' in self.context.schemes[u'Gem-Device'] and
             not override):
             raise ValueError(u"This object already has Gem-Device authentication. To overwrite it call authenticate_device with override=True.")
@@ -82,7 +81,6 @@ class Client(object):
         if (not api_token or (not email and not user_url) or
             not user_token or not device_id or
             not self.context.authorize(u'Gem-Device',
-                                       app_url=app_url,
                                        api_token=api_token,
                                        user_email=email,
                                        user_url=user_url,
@@ -130,9 +128,8 @@ class Client(object):
                 self._application = Application(app_resource, self)
             except AttributeError as e:
                 raise AttributeError(
-                    u"You must first authenticate this client with\n`{}` or\n`{}`.".format(
-                        self.context.schemes[u'Gem-Application'][u'usage'],
-                        self.context.schemes[u'Gem-Device'][u'usage']))
+                    u"You must first authenticate this client with\n`{}`.".format(
+                        self.context.schemes[u'Gem-Application'][u'usage']))
 
         return self._application
 
