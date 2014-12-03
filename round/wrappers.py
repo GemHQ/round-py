@@ -7,10 +7,9 @@ import abc
 import collections
 
 from .config import *
+from .errors import *
 
 from coinop.bit.transaction import Transaction as Tx
-
-from patchboard.response import ResponseError
 
 from pprint import pprint as pp
 
