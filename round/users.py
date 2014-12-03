@@ -42,14 +42,6 @@ class User(Wrapper, Updatable):
         return User(resource, self.client)
 
     @property
-    def applications(self):
-        if not hasattr(self, '_applications'):
-            apps_resource = self.resource.applications
-            self._applications = apps.Applications(apps_resource,
-                                                   self.client)
-        return self._applications
-
-    @property
     def wallets(self):
         if not hasattr(self, '_wallets'):
             wallets_resource = self.resource.wallets
