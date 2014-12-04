@@ -1,4 +1,12 @@
 
+0.5.2 / 2014-12-04
+==================
+
+  * fixed edge case for client.user()
+  * added AuthenticationError
+  * reverted unnecessary timestamp param
+  * removed user.applications method. Is not a thing.
+
 0.5.1 / 2014-12-02
 ==================
 
