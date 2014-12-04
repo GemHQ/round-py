@@ -30,3 +30,15 @@ class OTPConflictError(RoundError):
 
     def __init__(self):
         self.message = "User has too many outstanding device authorizations."
+
+
+class AuthenticationError(RoundError):
+
+    def __init__(self, context, schemes):
+        error_message = u""
+        self.valid_schemes = schemes
+        for scheme in schemes:
+            if scheme in context.schemes:
+                error_message += context.schemes[scheme][u'usage'] + "\n"
+
+        self.message = u"You must first authenticate this client with one of:\n{}".format(error_message)

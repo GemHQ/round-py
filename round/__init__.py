@@ -67,13 +67,8 @@ class Context(dict):
                 else:
                     return scheme, self.schemes[scheme][u'credential']
 
-        error_message = u""
-        for scheme in schemes:
-            if scheme in self.schemes:
-                error_message += self.schemes[scheme][u'usage'] + "\n"
 
-        raise Exception(
-            u"You must first authenticate your client\n{}".format(error_message))
+        raise AuthenticationError(self, schemes)
 
     def authorize(self, scheme, **params):
         if scheme not in self.schemes:
