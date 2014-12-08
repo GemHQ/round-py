@@ -4,7 +4,7 @@
 # Copyright 2014 BitVault, Inc. dba Gem
 
 from patchboard.response import ResponseError
-
+from config import *
 
 class RoundError(Exception):
 
@@ -18,6 +18,10 @@ class RoundError(Exception):
     def msg(self):
         return self.message
 
+
+class UnknownNetworkError(RoundError):
+    def __init__(self, network):
+        self.message = "Invalid network: `{}`. Please specify one of our supported networks: {}".format(network, SUPPORTED_NETWORKS)
 
 class UnknownKeyError(RoundError):
 

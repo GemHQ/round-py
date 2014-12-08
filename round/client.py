@@ -7,6 +7,7 @@ import bitcoin
 
 from .config import *
 from wrappers import *
+from errors import *
 from developers import Developer, Developers
 from users import User, Users
 from applications import Application, Applications
@@ -20,8 +21,11 @@ class Client(object):
 
     def __init__(self, pb_client, network=DEFAULT_NETWORK):
         self.pb_client = pb_client
-        self.network = NETWORK_MAP[network]
-        bitcoin.SelectParams(network)
+        try:
+            self.network = NETWORK_MAP[network]
+            bitcoin.SelectParams(network)
+        except:
+            raise UnknownNetworkError(network)
         self.context = self.pb_client.context
         self.resources = self.pb_client.resources
         self.developers = Developers(self.resources.developers, self)
