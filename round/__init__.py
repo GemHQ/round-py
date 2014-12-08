@@ -25,7 +25,10 @@ __patchboard_client = None
 def client(url=DEFAULT_URL, network=DEFAULT_NETWORK):
     global __patchboard_client
 
-    if __patchboard_client is None or url not in __patchboard_client:
+    if __patchboard_client is None:
+        __patchboard_client = {}
+
+    if url not in __patchboard_client:
         __patchboard_client[url] = patchboard.discover(url,
                                                   {u'default_context': Context})
     return Client(__patchboard_client[url].spawn(), network)
