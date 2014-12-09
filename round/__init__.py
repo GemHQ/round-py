@@ -53,9 +53,7 @@ class Context(dict):
             u'Gem-OOB-OTP':
                 {u'usage':
                      u"client.authenticate_otp(api_token=token, key=otp_key, secret=otp_secret [, override=False])",
-                 u'params': [u'key', u'secret', u'api_token'],
-                 u'credential':
-                     u'data=none'}
+                 u'params': [u'key', u'secret', u'api_token']}
         }
 
     def authorizer(self, schemes, resource, action, request_args):
