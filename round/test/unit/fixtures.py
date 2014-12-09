@@ -27,11 +27,6 @@ def developer(developers):
 
 
 @pytest.fixture(scope=u'function')
-def alt_developer(developers):
-    return developers.create(email="alt{}".format(email()), pubkey=pubkey())
-
-
-@pytest.fixture(scope=u'function')
 def apps(developer):
     developer.client.authenticate_developer(email=developer.email, privkey=privkey())
     return developer.applications
@@ -46,27 +41,32 @@ def app(apps):
 def instance_id():
     return "bogus-instance-id"
 
-@pytest.fixture(scope=u'function')
-def alt_app(apps):
-    return apps.create(name="alt{}".format(app_name()))
-
 
 @pytest.fixture(scope=u'function')
-def user(app):
-    return app.users.create(email=email(), passphrase=passphrase(),
-                            first_name="James", last_name="Jameson")
+def user(user_email, client):
+    return client.users.create(email=user_email, passphrase=passphrase(),
+                               first_name="James", last_name="Jameson")[1]
 
 
 @pytest.fixture(scope=u'function')
-def alt_user(app):
-    return app.users.create(email="alt{}".format(email()),
-                            passphrase=passphrase(),
-                            first_name="Jane", last_name="Jameson")
+def user_email():
+    return email()
 
 
 @pytest.fixture(scope=u'function')
-def users(app):
-    return app.users
+def user_token():
+    return "bogus-user-token"
+
+
+@pytest.fixture(scope=u'function')
+def device_id():
+    return "bogus-device-id"
+
+
+@pytest.fixture(scope=u'function')
+def users(user, client):
+    users = round.users.Users(None, client)
+    users.add(user)
 
 
 @pytest.fixture(scope=u'function')

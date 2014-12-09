@@ -11,9 +11,9 @@ from round.client import Client as RoundClient
 from helpers import *
 from fixtures import *
 
-mark.usefixtures(client, developers, developer, alt_developer,
-                 apps, app, alt_app, users, user, alt_user,
-                 wallets, wallet, accounts, account, addresses, address)
+mark.usefixtures(client, developers, developer,
+                 apps, app, users, user, wallets, wallet,
+                 accounts, account, addresses, address)
 
 class TestClient:
 
@@ -53,33 +53,65 @@ class TestClient:
             assert d.attributes[field] == developer.attributes[field]
 
         cred = 'email="{}"'
-        assert client.context.schemes[u'Gem-Developer']['credential'] == cred.format(
+        assert client.context.schemes[u'Gem-Developer'][u'credential'] == cred.format(
             developer.email)
         assert client.context.privkey == privkey()
 
         with raises(ValueError):
             d = client.authenticate_developer(developer.email, privkey=privkey())
 
-
-    def test_authenticate_application(self, client, app):
+    def test_authenticate_application(self, client, app, instance_id):
         with raises(round.AuthenticationError):
             apps = app.users.list()
 
         client.authenticate_application(app.url, app.api_token,
-                                        instance_id(), fetch=False)
+                                        instance_id, fetch=False)
 
         cred = 'instance_id="{}", api_token="{}"'
-        assert client.context.schemes[u'Gem-Application']['credential'] == cred.format(
-            instance_id(),
+        assert client.context.schemes[u'Gem-Application'][u'credential'] == cred.format(
+            instance_id,
             app.api_token)
 
         assert client.context.app_url == app.url
         assert client.context.api_token == app.api_token
-        assert client.context.instance_id == instance_id()
+        assert client.context.instance_id == instance_id
 
         with raises(ValueError):
             client.authenticate_application(app.url, app.api_token,
-                                            instance_id(), fetch=False)
+                                            instance_id, fetch=False)
+
+    def test_authenticate_device(self, client, app, user, device_id, user_email,
+                                 user_token):
+        with raises(round.AuthenticationError):
+            user = user.get()
+
+        # With email
+        client.authenticate_device(app.api_token, user_token, device_id,
+                                   email=user_email, fetch=False)
+        # With user_url
+        client.authenticate_device(app.api_token, user_token, device_id,
+                                   user_url=user.url, override=True, fetch=False)
+
+        cred = 'user_token="{}", device_id="{}", api_token="{}"'
+        assert client.context.schemes[u'Gem-Device'][u'credential'] == cred.format(
+            user_token,
+            device_id,
+            app.api_token)
+
+        assert client.context.user_token == user_token
+        assert client.context.api_token == app.api_token
+        assert client.context.user_email == user_email
+        assert client.context.user_url == user.url
+        assert client.context.device_id == device_id
+
+        with raises(ValueError):
+            client.authenticate_device(app.api_token, user_token, device_id,
+                                       email=user_email, fetch=False)
+
+        # fails without user_url or email
+        with raises(ValueError):
+            client.authenticate_device(app.api_token, user_token, device_id,
+                                       override=True, fetch=False)
 
 
     # def test_developers(self, developers):
