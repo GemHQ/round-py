@@ -8,25 +8,27 @@ import pytest
 
 import round
 
-# This is the one time this is OK--we use everything in the module
-from helpers import (round_url, email, password, app_name, callback_url,
-                     locked_wallet_name, locked_wallet_passphrase,
-                     wallet_name, wallet_passphrase, account_name)
+from helpers import *
 
 
 @pytest.fixture(scope=u'function')
-def initial_client():
+def client():
     return round.client(round_url())
 
 
 @pytest.fixture(scope=u'function')
-def developers(initial_client):
-    return initial_client.developers
+def developers(client):
+    return client.developers
 
 
 @pytest.fixture(scope=u'function')
 def developer(developers):
-    return developers.create(email=email(), password=password())
+    return developers.create(email=email(), pubkey=pubkey())
+
+
+@pytest.fixture(scope=u'function')
+def alt_developer(developers):
+    return developers.create(email="alt{}".format(email()), pubkey=pubkey())
 
 
 @pytest.fixture(scope=u'function')
@@ -36,12 +38,25 @@ def apps(developer):
 
 @pytest.fixture(scope=u'function')
 def app(apps):
-    return apps.create(name=app_name(), callback_url=callback_url())
+    return apps.create(name=app_name())
+
+
+@pytest.fixture(scope=u'function')
+def alt_app(apps):
+    return apps.create(name="alt{}".format(app_name()))
 
 
 @pytest.fixture(scope=u'function')
 def user(app):
-    return app.users.create(first_name="James", last_name="Jameson")
+    return app.users.create(email=email(), passphrase=passphrase(),
+                            first_name="James", last_name="Jameson")
+
+
+@pytest.fixture(scope=u'function')
+def alt_user(app):
+    return app.users.create(email="alt{}".format(email()),
+                            passphrase=passphrase(),
+                            first_name="Jane", last_name="Jameson")
 
 
 @pytest.fixture(scope=u'function')
@@ -58,7 +73,7 @@ def wallets(user):
 def wallet(user):
     backup_seed, new_wallet = user.wallets.create(
         name=wallet_name(),
-        passphrase=wallet_passphrase())
+        passphrase=passphrase())
     return new_wallet
 
 
