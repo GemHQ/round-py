@@ -113,6 +113,23 @@ class TestClient:
             client.authenticate_device(app.api_token, user_token, device_id,
                                        override=True, fetch=False)
 
+    def test_authenticate_otp(self, client, app, user):
+        client.authenticate_otp(app.api_token, "key", "secret")
+
+        cred = 'secret="{}", key="{}", api_token="{}"'
+        assert client.context.schemes[u'Gem-OOB-OTP'][u'credential'] == cred.format(
+            "secret",
+            "key",
+            app.api_token)
+
+        assert client.context.key == "key"
+        assert client.context.secret == "secret"
+        assert client.context.api_token == app.api_token
+
+        with raises(ValueError):
+            client.authenticate_device(app.api_token, "key", "secret")
+
+
 
     # def test_developers(self, developers):
     #     assert developers
