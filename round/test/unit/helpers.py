@@ -12,7 +12,7 @@ def round_url():
     return u"https://api-develop.gem.co"
 
 def timestamp():
-    return int(round(time.time()))
+    return time.time()
 
 def email():
     return u'test-{}@gem.co'.format(timestamp())

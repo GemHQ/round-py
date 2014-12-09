@@ -44,26 +44,43 @@ class TestClient:
         assert type(client.developers) == round.developers.Developers
         assert type(client.users) == round.users.Users
 
-    def test_authenticate_developer(self, client, developer, alt_developer):
+    def test_authenticate_developer(self, client, developer):
+        with raises(round.AuthenticationError):
+            developer.get()
+
         d = client.authenticate_developer(developer.email, privkey=privkey())
         for field in d.attributes:
             assert d.attributes[field] == developer.attributes[field]
 
-        assert client.context.schemes[u'Gem-Developer']['credential']
-        assert d.applications
-        with raises(patchboard.response.ResponseError):
-            apps = alt_developer.applications
+        cred = 'email="{}"'
+        assert client.context.schemes[u'Gem-Developer']['credential'] == cred.format(
+            developer.email)
+        assert client.context.privkey == privkey()
 
-    # def test_authenticate_application(self, client, application, alt_application):
-    #     d = client.authenticate_application(application.url,
-    #                                         application.api_token,
-    #     for field in d.attributes:
-    #         assert d.attributes[field] == developer.attributes[field]
+        with raises(ValueError):
+            d = client.authenticate_developer(developer.email, privkey=privkey())
 
-    #     assert client.context.schemes[u'Gem-Developer']['credential']
-    #     assert d.applications
-    #     with raises(patchboard.response.ResponseError):
-    #         apps = alt_developer.applications
+
+    def test_authenticate_application(self, client, app):
+        with raises(round.AuthenticationError):
+            apps = app.users.list()
+
+        client.authenticate_application(app.url, app.api_token,
+                                        instance_id(), fetch=False)
+
+        cred = 'instance_id="{}", api_token="{}"'
+        assert client.context.schemes[u'Gem-Application']['credential'] == cred.format(
+            instance_id(),
+            app.api_token)
+
+        assert client.context.app_url == app.url
+        assert client.context.api_token == app.api_token
+        assert client.context.instance_id == instance_id()
+
+        with raises(ValueError):
+            client.authenticate_application(app.url, app.api_token,
+                                            instance_id(), fetch=False)
+
 
     # def test_developers(self, developers):
     #     assert developers

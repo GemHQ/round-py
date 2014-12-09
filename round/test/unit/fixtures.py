@@ -33,6 +33,7 @@ def alt_developer(developers):
 
 @pytest.fixture(scope=u'function')
 def apps(developer):
+    developer.client.authenticate_developer(email=developer.email, privkey=privkey())
     return developer.applications
 
 
@@ -42,9 +43,8 @@ def app(apps):
 
 
 @pytest.fixture(scope=u'function')
-def app_instance(app):
-    return app.authorize_instance(name=instance_name())
-
+def instance_id():
+    return "bogus-instance-id"
 
 @pytest.fixture(scope=u'function')
 def alt_app(apps):
