@@ -20,18 +20,18 @@ from .client import Client
 from .config import *
 from .errors import *
 
-__patchboard_client = None
+_patchboard = None
 
 def client(url=DEFAULT_URL, network=DEFAULT_NETWORK):
-    global __patchboard_client
+    global _patchboard
 
-    if __patchboard_client is None:
-        __patchboard_client = {}
+    if _patchboard is None:
+        _patchboard = {}
 
-    if url not in __patchboard_client:
-        __patchboard_client[url] = patchboard.discover(url,
+    if url not in _patchboard:
+        _patchboard[url] = patchboard.discover(url,
                                                   {u'default_context': Context})
-    return Client(__patchboard_client[url].spawn(), network)
+    return Client(_patchboard[url].spawn(), network)
 
 
 class Context(dict):
