@@ -23,6 +23,9 @@ def passphrase():
 def app_name():
     return u'test-app-{}'.format(timestamp())
 
+def instance_name():
+    return u'test-instance-{}'.format(timestamp())
+
 def wallet_name():
     return u'my favorite wallet'
 

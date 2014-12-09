@@ -42,6 +42,11 @@ def app(apps):
 
 
 @pytest.fixture(scope=u'function')
+def app_instance(app):
+    return app.authorize_instance(name=instance_name())
+
+
+@pytest.fixture(scope=u'function')
 def alt_app(apps):
     return apps.create(name="alt{}".format(app_name()))
 

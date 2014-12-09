@@ -54,6 +54,16 @@ class TestClient:
         with raises(patchboard.response.ResponseError):
             apps = alt_developer.applications
 
+    # def test_authenticate_application(self, client, application, alt_application):
+    #     d = client.authenticate_application(application.url,
+    #                                         application.api_token,
+    #     for field in d.attributes:
+    #         assert d.attributes[field] == developer.attributes[field]
+
+    #     assert client.context.schemes[u'Gem-Developer']['credential']
+    #     assert d.applications
+    #     with raises(patchboard.response.ResponseError):
+    #         apps = alt_developer.applications
 
     # def test_developers(self, developers):
     #     assert developers
