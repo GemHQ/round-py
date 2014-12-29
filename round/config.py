@@ -1,7 +1,9 @@
-#DEFAULT_URL = u"https://api.gem.co/"
-DEFAULT_URL = u"https://developsb.gem.co:443"
+#DEFAULT_URL = u"https://api.gem.co"
+#DEFAULT_NETWORK = u'bitcoin'
 
+DEFAULT_URL = "https://api-sandbox.gem.co"
 DEFAULT_NETWORK = u'testnet'
+
 SUPPORTED_NETWORKS = [u'testnet', u'bitcoin']
 NETWORK_MAP = {u'testnet': u'testnet',
                u'testnet3': u'testnet',
