@@ -94,6 +94,8 @@ class Wallet(Wrapper, Updatable):
 
     def signatures(self, transaction):
         # TODO: output.metadata['type']['change']
+        if not self.multi_wallet:
+            raise Exception("This wallet must be unlocked with wallet.unlock(passphrase)")
         change_output = transaction.outputs[-1]
         if self.multi_wallet.is_valid_output(change_output):
             return self.multi_wallet.signatures(transaction)
