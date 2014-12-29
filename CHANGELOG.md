@@ -1,4 +1,21 @@
 
+0.5.3 / 2014-12-29
+==================
+
+  * Set default sandbox url to api-sandbox.gem.co
+  * Added exception for locked wallets
+  * added client.developer test
+  * added test_authenticate_otp
+  * Added authenticate_device
+  * removed unnecessary default credential from otp
+  * added authenticate_application -- packaged client tests will minimally interact with the API and will be limited to unit tests. Functional client testing will be maintained in-house (as it requires access to a development instance of the API)
+  * started adding auth_app, but need to find an API mocking system before continuing
+  * working baseline tests
+  * renamed global patchboard object to reflect what it actually is
+  * added UnknownNetworkError
+  * support running clients against multiple urls with the same python process
+  * removed old scripted tests
+
 0.5.2 / 2014-12-04
 ==================
 
