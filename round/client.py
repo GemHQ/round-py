@@ -23,7 +23,7 @@ class Client(object):
         self.pb_client = pb_client
         try:
             self.network = NETWORK_MAP[network]
-            bitcoin.SelectParams(network)
+            bitcoin.SelectParams(self.network)
         except:
             raise UnknownNetworkError(network)
         self.context = self.pb_client.context
