@@ -17,7 +17,11 @@ class Developers(object):
         self.client = client
 
     def create(self, **content):
-        priv = content[u'privkey'] if u'privkey' in content else None
+        priv = None
+        if u'privkey' in content:
+            priv = content[u'privkey']
+            del content[u'privkey']
+
         resource = self.resource.create(content)
         if priv:
             resource.context.authorize(u'Gem-Developer',
