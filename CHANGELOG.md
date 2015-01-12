@@ -1,4 +1,10 @@
 
+0.5.4 / 2015-01-12
+==================
+
+  * Remove privkey from parameters to prevent patchboard from sending it in dev.create requests
+  * Fix for setting mainnet params in pycoin
+
 0.5.3 / 2014-12-29
 ==================
 
