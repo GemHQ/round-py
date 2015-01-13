@@ -43,19 +43,19 @@ setup.py with sudo)
   $ xcode-select --install
   ```
 
-1.  ```bash
+2.  ```bash
   $ brew install libffi libsodium
   ```
 
-1.  ```bash
+3.  ```bash
   $ export PKG_CONFIG_PATH=/usr/local/Cellar/libffi/3.0.13/lib/pkgconfig/
   ```
 
-1. ```bash
+4. ```bash
   $ pip install PyNaCl PyYAML patchboard coinop
   ```
 
-1. clone the git repository and run setup.py:
+5. clone the git repository and run setup.py:
 
   ```bash
   $ git clone git@github.com:GemHQ/round-py.git
@@ -81,13 +81,13 @@ setup.py with sudo)
   $ heroku config:add BUILDPACK_URL=https://github.com/ddollar/heroku-buildpack-multi.git
   ```
 
-1. Add these lines to the *top* to your `.buildpacks` file.
+2. Add these lines to the *top* to your `.buildpacks` file.
   ```
   git://github.com/fletom/heroku-buildpack-python-libffi.git
   git://github.com/fletom/heroku-buildpack-libsodium.git
   ```
 
-1. Set the `SODIUM_INSTALL` environment variable
+3. Set the `SODIUM_INSTALL` environment variable
   ```bash
   $ heroku config:set SODIUM_INSTALL=system
   ```
