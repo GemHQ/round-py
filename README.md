@@ -44,11 +44,15 @@ setup.py with sudo)
   ```
 
 1.  ```bash
-  $ brew install libffi
+  $ brew install libffi libsodium
   ```
 
 1.  ```bash
   $ export PKG_CONFIG_PATH=/usr/local/Cellar/libffi/3.0.13/lib/pkgconfig/
+  ```
+
+1. ```bash
+  $ pip install PyNaCl PyYAML patchboard coinop
   ```
 
 1. clone the git repository and run setup.py:
@@ -56,5 +60,36 @@ setup.py with sudo)
   ```bash
   $ git clone git@github.com:GemHQ/round-py.git
   $ cd round-py
-  $ python setup.py install
+  $ python setup.py develop **for production environments use `python setup.py install`***
   ```
+
+### Heroku
+
+[Heroku](http://www.heroku.com) introduces some complexities around libsodium ([PyNaCl](https://pynacl.readthedocs.org/en/latest/)), the cryptography library `round` uses.
+
+1. Include the following in your `requirements.txt`.
+  ```
+  pycrypto
+  cffi
+  cryptography
+  PyNaCl
+  git+https://[GH_USERNAME]:[GH_PASSWORD_OR_ACCESS_TOKEN]@github.com/GemHQ/round-py.git#egg=round
+  ```
+
+1. Install the [heroku-buildpack-multi](https://github.com/ddollar/heroku-buildpack-multi) to allow multiple buildpacks
+  ```bash
+  $ heroku config:add BUILDPACK_URL=https://github.com/ddollar/heroku-buildpack-multi.git
+  ```
+
+1. Add these lines to the *top* to your `.buildpacks` file.
+  ```
+  git://github.com/fletom/heroku-buildpack-python-libffi.git
+  git://github.com/fletom/heroku-buildpack-libsodium.git
+  ```
+
+1. Set the `SODIUM_INSTALL` environment variable
+  ```bash
+  $ heroku config:set SODIUM_INSTALL=system
+  ```
+
+From here you should be able to `import round` into your heroku project without error. (Most errors related to `round` on Heroku will mention `<sodium.h>` or `cffi` -- this is because PyNaCl compiles on import, which is likely to change in the next major release, see [this discussion](https://github.com/pyca/pynacl/issues/79).)
