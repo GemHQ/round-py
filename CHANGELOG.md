@@ -1,4 +1,10 @@
 
+0.5.5 / 2015-01-27
+==================
+
+  * Moved begin_ and complete_device_authorization to the client object and require the user email address as a parameter (also renamed `name` argument to `device_name` for clarity)
+  * Updated README with Heroku/Mac OS X install instructions
+
 0.5.4 / 2015-01-12
 ==================
 
