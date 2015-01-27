@@ -6,6 +6,7 @@
 from patchboard.response import ResponseError
 from config import *
 
+
 class RoundError(Exception):
 
     def __init__(self, message):
@@ -23,6 +24,7 @@ class UnknownNetworkError(RoundError):
     def __init__(self, network):
         self.message = "Invalid network: `{}`. Please specify one of our supported networks: {}".format(network, SUPPORTED_NETWORKS)
 
+
 class UnknownKeyError(RoundError):
 
     def __init__(self, key):
@@ -33,7 +35,7 @@ class UnknownKeyError(RoundError):
 class OTPConflictError(RoundError):
 
     def __init__(self):
-        self.message = "User has too many outstanding device authorizations."
+        self.message = "User does not exist or has too many outstanding device authorizations."
 
 
 class AuthenticationError(RoundError):

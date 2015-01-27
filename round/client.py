@@ -110,6 +110,54 @@ class Client(object):
 
         return True
 
+
+    def begin_device_authorization(self, email, api_token, device_name,
+                                   device_id):
+        try:
+            self.context.schemes[u'Gem-OOB-OTP'][u'credential'] = 'api_token="{}"'.format(api_token)
+            reply = self.user(email).authorize_device({u'name': device_name,
+                                                       u'device_id': device_id})
+        except ResponseError as e:
+            try:
+                key = e.headers['WWW-Authenticate']['Gem-OOB-OTP'][u'key']
+                return key
+            except KeyError:
+                if e.message == 'unauthorized':
+                    raise OTPConflictError()
+                else:
+                    raise StandardError(e.message)
+            except:
+                raise e
+
+
+    def complete_device_authorization(self, email, api_token, device_name,
+                                      device_id, key, secret):
+        try:
+            self.authenticate_otp(api_token=api_token,
+                                  key=key, secret=secret)
+
+            r = self.user(email).authorize_device({u'name': device_name,
+                                                   u'device_id': device_id})
+
+        except ResponseError as e:
+            try:
+                new_key = e.headers['WWW-Authenticate']['Gem-OOB-OTP'][u'key']
+                if new_key == key:
+                    raise e
+                else:
+                    raise UnknownKeyError(new_key)
+            except KeyError:
+                raise e
+
+        self.authenticate_device(api_token=api_token,
+                                 user_url=r.url,
+                                 user_token=r.user_token,
+                                 device_id=device_id,
+                                 override=True)
+
+        return User(r, self)
+
+
     @property
     def developer(self):
         if not hasattr(self, u'_developer'):
