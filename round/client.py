@@ -93,7 +93,7 @@ class Client(object):
             raise ValueError(u"Usage: {}".format(
                 self.context.schemes[u'Gem-Device'][u'usage']))
 
-        return self.user() if fetch else True
+        return self.user().refresh() if fetch else True
 
     def authenticate_otp(self, api_token, key, secret, override=True):
         if (u'credential' in self.context.schemes[u'Gem-OOB-OTP'] and
