@@ -92,8 +92,11 @@ class Client(object):
                                        device_id=device_id)):
             raise ValueError(u"Usage: {}".format(
                 self.context.schemes[u'Gem-Device'][u'usage']))
-
-        return self.user().refresh() if fetch else True
+        if fetch:
+            user = self.user(email) if email else self.user()
+            return user.refresh()
+        else:
+            return True
 
     def authenticate_otp(self, api_token, key, secret, override=True):
         if (u'credential' in self.context.schemes[u'Gem-OOB-OTP'] and
@@ -192,8 +195,6 @@ class Client(object):
                 if email:
                     user_resource = self.resources.user_query({u'email': email})
                 elif hasattr(self.context, u'user_url'):
-                    pp(self.context)
-                    pp(self.context.__dict__)
                     user_resource = self.resources.user({u'url': self.context.user_url})
                 else:
                     user_resource = self.resources.user_query({u'email': self.context.user_email})
