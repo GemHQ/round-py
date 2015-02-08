@@ -76,6 +76,8 @@ class TestDeveloper:
 			w = u.wallets['default']
 			with raises(round.AuthenticationError):
 				w.accounts.create(name='blah')
+			with pytest.raises(AttributeError):
+				w.primary_private_seed
 			assert isinstance(w.balance, int)
 			assert w.name == 'default'
 
