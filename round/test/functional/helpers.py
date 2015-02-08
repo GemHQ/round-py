@@ -9,7 +9,7 @@ import pytest
 import time
 
 def round_url():
-    return u"https://api-sandbox.gem.co"
+    return u"https://api-sandbox.gem.co:443"
 
 def timestamp():
     return time.time()
