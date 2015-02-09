@@ -4,6 +4,9 @@
 
 from pytest import mark, raises
 from helpers import *
+from round.users import User
+from round.wallets import *
+from round.accounts import *
 import time
 import patchboard
 import round
@@ -24,8 +27,22 @@ create = False
 
 c = round.client()
 
-
 class TestWallet:
+	def test_user_wallet_management(self):
+		u = c.authenticate_device(api_token=api_token,
+                           user_token=user_token,
+                           device_id=device_id,
+                           user_url=user_url,
+                           override=True)
+
+		w = u.wallets['default']
+
+		assert isinstance(w.balance, int)
+		assert len(w.attributes) == 13
+		assert w.name == 'default'
+		assert not w.primary_private_seed is None 
+		assert w.is_locked()
+
 	def test_wallet_details(self):
 			 assert True
 	

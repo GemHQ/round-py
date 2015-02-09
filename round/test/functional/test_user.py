@@ -4,9 +4,9 @@
 
 from pytest import mark, raises
 from helpers import *
-from round.users import User
-from round.wallets import Wallet
-from round.accounts import Account
+from round.users import *
+from round.wallets import *
+from round.accounts import *
 import time
 import patchboard
 import round
@@ -34,7 +34,9 @@ class TestUser:
 			if create:
 				backup_seed, user = client.users.create(email=email, passphrase='password')
 				assert isinstance(backup_seed, basestring)
-				assert isinstance(user, round.users.User)
+				assert len(backup_seed) == 111
+				assert backup_seed[0:4] == 'xprv'
+				assert isinstance(user, User)
 	
 	def test_user_authentication_email(self):
 			u = c.authenticate_device(api_token=api_token,
@@ -46,6 +48,7 @@ class TestUser:
 			assert isinstance(u, User)
 			assert len(u.attributes) == 7 
 			assert u.user_token == user_token
+			assert isinstance(u.wallets, Wallets)
 
 	def test_user_authentication_user_url(self):
 			u = c.authenticate_device(api_token=api_token,
@@ -57,10 +60,9 @@ class TestUser:
 			assert isinstance(u, User)
 			assert len(u.attributes) == 7 
 			assert u.user_token == user_token
+			assert isinstance(u.wallets, Wallets)
 
-	def test_user_wallet_management(self):
-			assert True
-
+			
 
 
 
