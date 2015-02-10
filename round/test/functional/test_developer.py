@@ -4,7 +4,7 @@
 
 from pytest import mark, raises
 from helpers import *
-from round.applicaitons import *
+from round.applications import *
 
 import time
 import patchboard
