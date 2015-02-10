@@ -53,3 +53,7 @@ class Application(Wrapper, Updatable):
                                        api_token=self.api_token,
                                        instance_id=self._instance_id)
         return self._application_instance
+
+    def reset(self):
+        self.resource = self.resource.reset()
+        return self
