@@ -35,7 +35,7 @@ class TestUser:
 				backup_seed, user = client.users.create(email=email, passphrase='password')
 				assert isinstance(backup_seed, basestring)
 				assert len(backup_seed) == 111
-				assert backup_seed[0:4] == 'xprv'
+				assert backup_seed[0:4] == 'tprv'
 				assert isinstance(user, User)
 	
 	def test_user_authentication_email(self):

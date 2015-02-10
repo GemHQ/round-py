@@ -32,6 +32,9 @@ def wallet_name():
 def account_name():
     return u'super duper account'
 
+def random_wallet_name():
+    return u'random name {}'.format(timestamp())
+
 def pubkey():
     return u'-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoVw+yyLfmMRSuQcUAQFK\n7I4hLYXnpt23Avl/jmHqH50HU4PiOUKSBqwoCzu6jgOzZMcZoZV5Hor86czaASqN\nJPjSVnJDmh7nav2S6IzZ7nbXI/OT26JZgtr1jieaH++o2+aV47u/tK1wPyGPM+8D\n8XpojxPOgoihNg8kXRwng6SAmqXp94Kny019qvyvjJkvM+PxehhrS1s3jv59d7NF\nbYRZlTkj9ZfXlacVcK70LfdCrdUfU2AFB4v4zHnPoEO7jGCODtXAi7PlR/nVLD36\nMGy548ozpiYI0yyM3+sJCig4W+GPifWUNtyrASUyU7u1frZ56QELJgJ+NFsBsR9l\nhQIDAQAB\n-----END PUBLIC KEY-----\n'
 
