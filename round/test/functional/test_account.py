@@ -41,8 +41,20 @@ class TestAccount:
 	def test_account_collection(self):
 		assert True
 
-	def test_account_management(self):
+	def test_account_creation(self):
 		assert True
 
-	def test_account_details(self):
+	def test_account_functionality(self):
+		assert True
+
+	def test_account_update(self):
+		assert True
+
+	def test_address_creation(self):
+		assert True
+
+	def test_account_pay(self):
+		assert True
+
+	def test_transaction_collection(self):
 		assert True
