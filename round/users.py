@@ -14,12 +14,12 @@ class Users(DictWrapper):
     def create(self, email, **kwargs):
         backup_seed = None
 
-        if u'passphrase' not in kwargs and u'wallet' not in kwargs:
+        if u'passphrase' not in kwargs and u'default_wallet' not in kwargs:
             raise ValueError("Usage: users.create(email, passphrase='new-wallet-passphrase')")
         elif u'passphrase' in kwargs:
             backup_seed, wallet_data = wallets.generate(kwargs[u'passphrase'])
             del kwargs[u'passphrase']
-            kwargs[u'wallet'] = wallet_data
+            kwargs[u'default_wallet'] = wallet_data
 
         kwargs.update({u'email': email})
 
