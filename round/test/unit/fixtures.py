@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # unit/fixtures.py
 #
 # Copyright 2014 BitVault, Inc. dba Gem

@@ -1,5 +1,6 @@
 # unit/helpers.py
-#
+# -*- coding: utf-8 -*-
+# functional/helpers.py
 # Copyright 2014 BitVault, Inc. dba Gem
 #
 # Broken out of fixtures.py so that in the future they can be used in the

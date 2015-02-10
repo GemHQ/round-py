@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # client_test.py
 #
 # Copyright 2014 BitVault, Inc. dba Gem

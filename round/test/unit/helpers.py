@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # unit/helpers.py
 #
 # Copyright 2014 BitVault, Inc. dba Gem
