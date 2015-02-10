@@ -7,6 +7,7 @@ from helpers import *
 from round.users import User
 from round.wallets import *
 from round.accounts import *
+from round.transactions import *
 from coinop.bit.multiwallet import *
 
 import time
@@ -36,28 +37,83 @@ u = c.authenticate_device(api_token=api_token,
 
 w = u.wallets['default']
 
+account_attribute_keys = [u'addresses', u'name', u'transactions', u'i', u'url', u'payments', u'key', u'path', u'balance', u'pending_balance']
 
 class TestAccount:
 	def test_account_collection(self):
-		assert True
+		assert isinstance(w.accounts, Accounts)
+
+		for n, a in w.accounts.iteritems():
+			assert isinstance(n, basestring)
+			assert isinstance(a, Account)
+
+		assert len(w.accounts) > 0
 
 	def test_account_creation(self):
-		assert True
-
-	def test_account_functionality(self):
-		assert True
+		old_accounts_length = len(w.accounts)
+		if create:
+			new_account = w.accounts.create(name=random_account_name())
+			assert isinstance(new_account, Account)
+			assert len(new_account.attributes) == 10
+			assert account_attribute_keys == new_account.attributes.keys()
+			assert new_account.balance == 0
+			assert new_account.pending_balance == 0
 
 	def test_account_update(self):
-		assert True
+		a = w.accounts['default']
+		with raises(round.AuthenticationError):
+			a.update(name='new name')
 
 	def test_account_pay(self):
-		assert True
+		a = w.accounts['newChecking']
+		previous_balance = a.balance
+		if create:
+			payee =[{'address':w.accounts['default'].addresses.create().string, 'amount':20000}]
+			payment = a.pay(payee)
+			assert isinstance(payment.data, dict)
+			assert payment.status == 'unconfirmed'
+			assert len(payment.hash) == 64
+
+			refreshed_account = a.refresh()
+			assert refreshed_account.pending_balance == -payee[0]['amount'] + -payment.fee
 
 	def test_address_creation(self):
-		assert True
+		a = w.accounts['addressCreations']
+		prev_address_size = len(a.addresses)
+
+		address = a.addresses.create()
+
+		assert isinstance(address, patchboard.util.SchemaStruct)
+		assert address.path
+		assert address.string
+		assert addresss.string[0] == '2'
+		assert len(a.addresses) == prev_address_size + 1
 
 	def test_receive_payment(self):
-		assert True
+		a = w.accounts['newChecking']
+		old_balance = a.balance
+		old_incoming_tx = len(a.transactions(type='incoming'))
+
+		address = a.addresses.create().string
+		getMoney(address)
+
+		assert old_balance < a.refresh().balance
+		assert old_incoming_tx < len(a.refresh().transactions(type='incoming'))
 
 	def test_transaction_collection(self):
-		assert True
+		a = w.accounts['newChecking']
+		txs = a.transactions()
+		tx = txs[0]
+		assert isinstance(txs, Transactions)
+		assert isinstance(tx, Transaction)
+
+		tx_data = tx.resource.to_hash()
+		data_keys = [u'url', u'data', u'type', u'key']
+		assert tx_data.keys() == data_keys
+		
+
+		for t in a.transactions(type='incoming'):
+			assert t.type == 'incoming'
+
+		for t in a.transactions(type='outgoing'):
+			assert t.type == 'outgoing'

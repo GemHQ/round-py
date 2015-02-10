@@ -61,15 +61,3 @@ class TestUser:
 			assert len(u.attributes) == 7 
 			assert u.user_token == user_token
 			assert isinstance(u.wallets, Wallets)
-
-			
-
-
-
-
-
-
-
-
-
-

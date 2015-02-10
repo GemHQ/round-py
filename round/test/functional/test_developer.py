@@ -4,6 +4,8 @@
 
 from pytest import mark, raises
 from helpers import *
+from round.applicaitons import *
+
 import time
 import patchboard
 import round
@@ -38,6 +40,17 @@ class TestDeveloper:
 				assert isinstance(new_app.api_token, basestring)
 				assert new_app.api_token != api_token
 				assert len(dev.refresh().applications) > num_apps
+
+	def test_application_reset(self):
+			dev = c.authenticate_developer(email=dev_email, privkey=privkey)
+			app = dev.applications['testReset']
+			old_api_token = app.api_token
+
+			reset_app = app.reset()
+			new_api_token = reset_app.api_token
+			assert isinstance(reset_app, Application)
+			assert new_api_token != old_api_token
+			assert app.attributes['key'] == reset_app.attributes['key']
 
 	def test_authorize_new_instance(self):
 			if create:
@@ -91,9 +104,3 @@ class TestDeveloper:
 			txs = a.transactions()
 			assert len(txs) > 0
 			assert isinstance(txs[2].data['hash'],unicode)
-
-
-
-
-			
-

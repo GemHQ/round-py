@@ -7,6 +7,8 @@
 
 import pytest
 import time
+import httplib
+import urllib
 
 def round_url():
     return u"https://api-sandbox.gem.co:443"
@@ -33,7 +35,10 @@ def account_name():
     return u'super duper account'
 
 def random_wallet_name():
-    return u'random name {}'.format(timestamp())
+    return u'random wallet {}'.format(timestamp())
+
+def random_account_name():
+    return u'random account {}'.format(timestamp())
 
 def pubkey():
     return u'-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoVw+yyLfmMRSuQcUAQFK\n7I4hLYXnpt23Avl/jmHqH50HU4PiOUKSBqwoCzu6jgOzZMcZoZV5Hor86czaASqN\nJPjSVnJDmh7nav2S6IzZ7nbXI/OT26JZgtr1jieaH++o2+aV47u/tK1wPyGPM+8D\n8XpojxPOgoihNg8kXRwng6SAmqXp94Kny019qvyvjJkvM+PxehhrS1s3jv59d7NF\nbYRZlTkj9ZfXlacVcK70LfdCrdUfU2AFB4v4zHnPoEO7jGCODtXAi7PlR/nVLD36\nMGy548ozpiYI0yyM3+sJCig4W+GPifWUNtyrASUyU7u1frZ56QELJgJ+NFsBsR9l\nhQIDAQAB\n-----END PUBLIC KEY-----\n'
@@ -64,3 +69,22 @@ def app_url():
 
 def dev_email():
     return u'joshua+devJava1@gem.co'
+
+def payee(address, amount):
+    return {'address':address, 'amount':amount}
+
+def create_payees(account, num):
+    amount = 20000
+    payees = []
+    for x in xrange(num):
+        payees.append(payee(account.addresses.create().string, amount))
+
+def getMoney(address):
+    params = urllib.urlencode({'address': address})
+    headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
+    conn = httplib.HTTPConnection('faucet.haskoin.com:80')
+    conn.request("POST", "/?",params,headers)
+    response = conn.getresponse()
+    print address, response.status, response.reason
+    conn.close()
+
