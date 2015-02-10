@@ -7,6 +7,8 @@ from helpers import *
 from round.users import User
 from round.wallets import *
 from round.accounts import *
+from coinop.bit.multiwallet import *
+
 import time
 import patchboard
 import round
@@ -42,6 +44,11 @@ class TestWallet:
 			assert isinstance(w, Wallet)
 			assert n == w.name
 
+		for t in u.wallets.iteritems():
+			assert isinstance(t, tuple)
+			assert isinstance(t[0], basestring)
+			assert isinstance(t[1], Wallet)
+
 	def test_create_wallet(self):
 		if create:
 			old_num_wallets = len(u.wallets)
@@ -68,10 +75,19 @@ class TestWallet:
 		balance = w.balance
 		assert isinstance(balance, int)
 
+	def test_wallet_update(self):
+		w = u.wallets['default']
+		with raises(round.AuthenticationError):
+			w.update(name='new name')
 
-	
-	def test_account_management(self):
-			assert True
+	def test_wallet_rules(self):
+		w = u.wallets['default']
+		with raises(round.AuthenticationError):
+			w.rules
 
-	def test_account_details(self):
-			assert True
+	def test_multi_wallet_network(self):
+		w = u.wallets['default']
+
+		mw = w.multi_wallet
+		assert isinstance(mw, MultiWallet)
+		assert mw.network == c.network
