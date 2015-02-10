@@ -50,10 +50,13 @@ class TestAccount:
 	def test_account_update(self):
 		assert True
 
+	def test_account_pay(self):
+		assert True
+
 	def test_address_creation(self):
 		assert True
 
-	def test_account_pay(self):
+	def test_receive_payment(self):
 		assert True
 
 	def test_transaction_collection(self):
