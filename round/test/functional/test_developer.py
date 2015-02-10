@@ -30,11 +30,11 @@ c = round.client()
 class TestDeveloper:
     def test_developer_functionality(self):
         dev = c.authenticate_developer(email=dev_email, privkey=privkey)
-        
+
         app = dev.applications['default']
         assert app.api_token == api_token
 
-        #test creation of an application        
+        #test creation of an application
         if create:
             num_apps = len(dev.applications)
             new_app = dev.applications.create(name=app_name())
@@ -62,8 +62,8 @@ class TestDeveloper:
             assert  ai.name == random_instance_name
 
     def test_instance_authentication(self):
-        app = c.authenticate_application(app_url=app_url, 
-                                         api_token=api_token, 
+        app = c.authenticate_application(app_url=app_url,
+                                         api_token=api_token,
                                          instance_id=instance_id)
         assert len(app.users) > 0
 
@@ -75,15 +75,15 @@ class TestDeveloper:
         assert app.name == dev.applications['default'].name
 
     def test_app_instance_data_access(self):
-        app = c.authenticate_application(app_url=app_url, 
-                                         api_token=api_token, 
+        app = c.authenticate_application(app_url=app_url,
+                                         api_token=api_token,
                                          instance_id=instance_id,
                                          override = True)
         # in app auth test you can get info about a user
         # wallet and the account but fail on creation
         u = app.users[email]
         with raises(round.AuthenticationError):
-            u.wallets.create(name='wallet', passphrase='password')  
+            u.wallets.create(name='wallet', passphrase='password')
         assert u.user_token == user_token
         assert len(u.wallets) > 1
 
