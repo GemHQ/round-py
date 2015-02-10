@@ -4,7 +4,7 @@
 
 from pytest import mark, raises
 from helpers import *
-from round.applications import *
+from round.applicationspy import *
 
 import time
 import patchboard
@@ -42,7 +42,7 @@ class TestDeveloper:
 				assert len(dev.refresh().applications) > num_apps
 
 	def test_application_reset(self):
-			dev = c.authenticate_developer(email=dev_email, privkey=privkey)
+			dev = c.authenticate_developer(email=dev_email, privkey=privkey, override=True)
 			app = dev.applications['testReset']
 			old_api_token = app.api_token
 

@@ -90,15 +90,18 @@ class TestAccount:
 		assert len(a.addresses) == prev_address_size + 1
 
 	def test_receive_payment(self):
-		a = w.accounts['newChecking']
-		old_balance = a.balance
-		old_incoming_tx = len(a.transactions(type='incoming'))
+		if create:
+			a = w.accounts['newChecking']
+			old_balance = a.balance
+			old_incoming_tx = len(a.transactions(type='incoming'))
 
-		address = a.addresses.create().string
-		getMoney(address)
+			address = a.addresses.create().string
+			getMoney(address)
 
-		#assert old_balance < a.refresh().balance
-		assert old_incoming_tx < len(a.refresh().transactions(type='incoming'))
+			time.sleep(120)
+
+			assert old_balance < a.refresh().balance
+			assert old_incoming_tx < len(a.refresh().transactions(type='incoming'))
 
 	def test_transaction_collection(self):
 		a = w.accounts['newChecking']
