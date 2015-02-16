@@ -19,6 +19,7 @@ class Users(DictWrapper):
         elif u'passphrase' in kwargs:
             backup_seed, wallet_data = wallets.generate(kwargs[u'passphrase'])
             del kwargs[u'passphrase']
+            wallet_data[u'name'] = u'default'
             kwargs[u'default_wallet'] = wallet_data
 
         kwargs.update({u'email': email})
