@@ -5,7 +5,7 @@
 
 from pytest import mark, raises
 from helpers import *
-from round.applicationspy import *
+from round.applications import *
 
 import time
 import patchboard
