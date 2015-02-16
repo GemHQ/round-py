@@ -1,4 +1,11 @@
 
+0.6.0 / 2015-02-16
+==================
+
+  * Renamed users.create(wallet to users.create(default_wallet
+  * Cleanup
+  * Added client-side unit tests
+
 0.5.5 / 2015-01-27
 ==================
 
