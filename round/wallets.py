@@ -40,7 +40,8 @@ class Wallets(DictWrapper):
         if u'passphrase' not in kwargs and u'primary_public_seed' not in kwargs:
             raise ValueError("Usage: wallets.create(passphrase='new-wallet-passphrase')")
         elif u'passphrase' in kwargs:
-            backup_seed, kwargs = generate(kwargs['passphrase'])
+            backup_seed, kwargs = generate(kwargs['passphrase'],
+                                           network=self.client.network)
 
         kwargs[u'name'] = name
         resource = self.resource.create(kwargs)

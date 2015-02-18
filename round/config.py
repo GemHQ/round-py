@@ -1,7 +1,6 @@
 #DEFAULT_URL = u"https://api.gem.co"
 #DEFAULT_NETWORK = u'bitcoin'
 
-#DEFAULT_URL = "http://localhost:8999"
 DEFAULT_URL = "https://api-sandbox.gem.co"
 DEFAULT_NETWORK = u'testnet'
 
