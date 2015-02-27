@@ -19,10 +19,6 @@ class PyTest(TestCommand):
         errno = 0
         if u"host" not in self.pytest_args:
             pass
-            #import sys,subprocess
-            #errno = subprocess.call([sys.executable, "patchboard/tests/scripts/play.py"])
-            #if errno > 0:
-            #    raise SystemExit(errno)
         import pytest
         errno = max(errno, pytest.main(self.pytest_args))
         raise SystemExit(errno)

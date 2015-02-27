@@ -11,7 +11,9 @@ patches welcome.
 
 #### Prerequisites:
 
-* A python 2.7 environment (your distro probably does this as part of the base system, but the nicer way is with `pyenv` and/or `virtualenv`). `coinop-py` is currently developed under 2.7.7.
+* Python 2.7
+
+* Virtualenv and virtualenvwrapper (or equivalent virtual environment solution) is required for Linux and recommended for everyone.
 
 * Git and a python extension build environment.
 
@@ -22,19 +24,65 @@ patches welcome.
 1. Ask us to add you to the round-py github repo (https://github.com/GemHQ/round-py). While you wait impatiently, continue with the following.
 
 
-### Linux
+### Linux (debian-based, tested on Ubuntu)
 
-1. Clone the git repository and run setup.py:
+1. Install pip into your user account:
 
   ```bash
-  $ sudo apt-get install gcc make libffi-dev python-dev python-pip git
-  $ git clone git@github.com:GemHQ/round-py.git
-  $ cd round-py
-  $ sudo python setup.py install
+  $ wget https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py && python ez_setup.py –-user
+  $ wget https://raw.github.com/pypa/pip/master/contrib/get-pip.py && python get-pip.py –-user
   ```
 
-  (if you're using a virtual environment, you obviously don't need to run
-setup.py with sudo)
+2. Add your local path in .bashrc or .bash_profile
+
+```bash
+  export PATH="${HOME}/.local/bin:${PATH}"
+  ```
+
+3. Source that
+
+  ```bash
+  $ source .bashrc
+  ```
+
+4. Install virtualenv
+
+  ```bash
+  $ pip install --user virtualenv virtualenvwrapper
+  ```
+
+5. Add virtualenvwrapper initialization to your .bashrc or .bash_profile
+
+  ```bash
+  export WORKON_HOME="${HOME}/.virtualenvs"
+  source .local/bin/virtualenvwrapper.sh
+  workon py
+  ```
+
+6. Source that again.
+  ```bash
+  $ source ~/.bashrc
+  ```
+
+7. Make a virtual environment
+
+  ```bash
+  $ mkvirtualenv py
+  ```
+
+8. Install system dependencies (*this is the only time you need sudo!*)
+
+  ```bash
+  $ sudo apt-get install gcc make libffi-dev python-dev git
+  ```
+
+9. Clone this repo and install.
+
+  ```bash
+  $ git clone git@github.com:GemHQ/round-py.git
+  $ cd round-py
+  $ python setup.py install
+  ```
 
 ### Mac OSX:
 
