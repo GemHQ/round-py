@@ -35,7 +35,7 @@ patches welcome.
 
 2. Add your local path in .bashrc or .bash_profile
 
-```bash
+  ```bash
   export PATH="${HOME}/.local/bin:${PATH}"
   ```
 
