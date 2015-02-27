@@ -29,8 +29,10 @@ patches welcome.
 1. Install pip into your user account:
 
   ```bash
-  $ wget https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py && python ez_setup.py –-user
-  $ wget https://raw.github.com/pypa/pip/master/contrib/get-pip.py && python get-pip.py –-user
+  $ wget https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py
+  $ python ez_setup.py –-user
+  $ wget https://raw.github.com/pypa/pip/master/contrib/get-pip.py
+  $ python get-pip.py –-user
   ```
 
 2. Add your local path in .bashrc or .bash_profile
