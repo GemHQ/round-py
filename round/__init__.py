@@ -3,7 +3,6 @@
 #
 # Copyright 2014 BitVault, Inc. dba Gem
 
-
 import base64
 import json
 import patchboard
