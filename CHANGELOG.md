@@ -1,4 +1,12 @@
 
+0.6.1 / 2015-03-02
+==================
+
+  *  tweak to linux install instructions
+  *  Added subscription support (event notifications)
+  *  Added confirmations parameter to account.pay
+  *  updated readme with better linux installation instructions
+
 0.6.0 / 2015-02-16
 ==================
 
