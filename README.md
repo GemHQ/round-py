@@ -24,7 +24,7 @@ patches welcome.
 1. Ask us to add you to the round-py github repo (https://github.com/GemHQ/round-py). While you wait impatiently, continue with the following.
 
 
-### Linux (debian-based, tested on Ubuntu)
+### Linux (debian-based, tested on Ubuntu 14.04)
 
 1. Install pip into your user account:
 
@@ -58,7 +58,6 @@ patches welcome.
   ```bash
   export WORKON_HOME="${HOME}/.virtualenvs"
   source .local/bin/virtualenvwrapper.sh
-  workon py
   ```
 
 6. Source that again.
@@ -70,6 +69,7 @@ patches welcome.
 
   ```bash
   $ mkvirtualenv py
+  $ workon py
   ```
 
 8. Install system dependencies (*this is the only time you need sudo!*)
