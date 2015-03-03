@@ -10,6 +10,13 @@ from .wrappers import *
 class Subscriptions(ListWrapper):
 
     def create(self, callback_url):
+        """
+        Create a new Subscription on all addresses contained by this collection's
+        parent object.
+        Return the new round.Subscription object.
+        Keyword arguments:
+        callback_url -- URI of an active endpoint which can receive notifications
+        """
         resource = self.resource.create({u'subscribed_to': u'address',
                                          u'callback_url': callback_url})
         subscription = self.wrap(resource)

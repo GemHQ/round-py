@@ -15,8 +15,11 @@ from pprint import pprint as pp
 
 class Updatable(object):
 
-    def update(self, **content):
-        return self.__class__(self.resource.update(content),
+    def update(self, **kwargs):
+        """
+        Update resource and return a round.Class-wrapped object.
+        """
+        return self.__class__(self.resource.update(kwargs),
                               self.client)
 
 
