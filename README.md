@@ -7,9 +7,7 @@ patches welcome.
 
 ## Installing round-py:
 
-### Ubuntu:
-
-#### Prerequisites:
+### Prerequisites:
 
 * Python 2.7
 
@@ -18,10 +16,6 @@ patches welcome.
 * Git and a python extension build environment.
 
 * libffi
-
-#### Installing:
-
-1. Ask us to add you to the round-py github repo (https://github.com/GemHQ/round-py). While you wait impatiently, continue with the following.
 
 
 ### Linux (debian-based, tested on Ubuntu 14.04)
