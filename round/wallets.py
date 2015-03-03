@@ -10,7 +10,7 @@ from coinop.bit.multiwallet import MultiWallet
 
 from .wrappers import *
 from .accounts import Account, Accounts
-from .rules import Rule, Rules
+from .subscriptions import Subscription, Subscriptions
 
 # The passphrase parameter should stay out of the content dict
 # so that there is no chance the client's passphrase will get passed
@@ -65,14 +65,6 @@ class Wallet(Wrapper, Updatable):
                                  client=self.client,
                                  wallet=self)
 
-    @property
-    def rules(self):
-        if not hasattr(self, '_rules'):
-            rules_resource = self.resource.rules
-            self._rules = Rules(rules_resource,
-                                self.client)
-        return self._application
-
     def is_unlocked(self):
         return not self.is_locked()
 
@@ -92,6 +84,17 @@ class Wallet(Wrapper, Updatable):
                 u'cosigner': wallet.cosigner_public_seed,
                 u'backup': wallet.backup_public_seed},
             network=NETWORK_MAP[network])
+
+    @property
+    def subscriptions(self):
+        """
+        Fetch and return Subscriptions associated with this wallet.
+        """
+        if not hasattr(self, '_subscriptions'):
+            subscriptions_resource = self.resource.subscriptions
+            self._subscriptions = subscriptions.Subscriptions(
+                subscriptions_resource, self.client)
+        return self._subscriptions
 
     def signatures(self, transaction):
         # TODO: output.metadata['type']['change']

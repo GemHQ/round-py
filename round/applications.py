@@ -57,3 +57,14 @@ class Application(Wrapper, Updatable):
     def reset(self):
         self.resource = self.resource.reset()
         return self
+
+    @property
+    def subscriptions(self):
+        """
+        Fetch and return Subscriptions associated with this account.
+        """
+        if not hasattr(self, '_subscriptions'):
+            subscriptions_resource = self.resource.subscriptions
+            self._subscriptions = subscriptions.Subscriptions(
+                subscriptions_resource, self.client)
+        return self._subscriptions

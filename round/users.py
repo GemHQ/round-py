@@ -52,3 +52,14 @@ class User(Wrapper, Updatable):
             self._wallets = wallets.Wallets(wallets_resource,
                                             self.client)
         return self._wallets
+
+    @property
+    def subscriptions(self):
+        """
+        Fetch and return Subscriptions associated with this user.
+        """
+        if not hasattr(self, '_subscriptions'):
+            subscriptions_resource = self.resource.subscriptions
+            self._subscriptions = subscriptions.Subscriptions(
+                subscriptions_resource, self.client)
+        return self._subscriptions

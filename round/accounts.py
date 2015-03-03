@@ -10,6 +10,7 @@ from coinop.bit.transaction import Transaction as CoinopTx
 from .wrappers import *
 
 import transactions as txs
+import subscriptions
 import addresses
 
 
@@ -53,7 +54,7 @@ class Account(Wrapper, Updatable):
     def __init__(self, resource, client, wallet):
         """
         Initialize a round.Account from an Account patchboard.Resource object.
-        Return the updated Account object.
+        Return the new round.Account object.
         Keyword arguments:
         resource --  Account patchboard.Resource object
         client -- authenticated round.Client object
@@ -125,6 +126,17 @@ class Account(Wrapper, Updatable):
         """
         transaction_resource = self.resource.transactions(query)
         return txs.Transactions(transaction_resource, self.client)
+
+    @property
+    def subscriptions(self):
+        """
+        Fetch and return Subscriptions associated with this account.
+        """
+        if not hasattr(self, '_subscriptions'):
+            subscriptions_resource = self.resource.subscriptions
+            self._subscriptions = subscriptions.Subscriptions(
+                subscriptions_resource, self.client)
+        return self._subscriptions
 
     @property
     def addresses(self):
