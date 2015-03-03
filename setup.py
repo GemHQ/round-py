@@ -35,12 +35,15 @@ setup(name='round',
       install_requires=[
           'PyYAML',
           'patchboard',
-          'PyNaCl',
+          'PyNaCl>=0.3.0dev',
           'coinop',
       ],
       tests_require=[
         'pytest',
-        ],
+      ],
+      dependency_links=[
+          "http://github.com/pyca/pynacl/tarball/8aa8759#egg=pynacl-0.3.0dev"
+      ],
       cmdclass = {'test': PyTest},
       zip_safe=False
-      )
+)
