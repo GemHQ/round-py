@@ -20,63 +20,42 @@ patches welcome.
 
 ### Linux (debian-based, tested on Ubuntu 14.04)
 
-1. Install pip into your user account:
+1. Install system dependencies (*this is the only time you need sudo!*)
 
   ```bash
-  $ wget https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py
-  $ python ez_setup.py –-user
-  $ wget https://raw.github.com/pypa/pip/master/contrib/get-pip.py
-  $ python get-pip.py –-user
+  $ sudo apt-get install gcc make libffi-dev python-dev python-pip git
   ```
 
-2. Add your local path in .bashrc or .bash_profile
-
-  ```bash
-  export PATH="${HOME}/.local/bin:${PATH}"
-  ```
-
-3. Source that
-
-  ```bash
-  $ source .bashrc
-  ```
-
-4. Install virtualenv
+2. Install virtualenv
 
   ```bash
   $ pip install --user virtualenv virtualenvwrapper
   ```
 
-5. Add virtualenvwrapper initialization to your .bashrc or .bash_profile
+3. Edit .bashrc or .bash_profile to add ENV variables.
 
   ```bash
+  export PATH="${HOME}/.local/bin:${PATH}"
   export WORKON_HOME="${HOME}/.virtualenvs"
   source ${HOME}/.local/bin/virtualenvwrapper.sh
   ```
 
-6. Source that again.
+4. Source that.
   ```bash
   $ source ~/.bashrc
   ```
 
-7. Make a virtual environment
+5. Make a virtual environment (optionally add `workon py` to your .bashrc to use this env automatically)
 
   ```bash
   $ mkvirtualenv py
-  $ workon py
   ```
 
-8. Install system dependencies (*this is the only time you need sudo!*)
-
-  ```bash
-  $ sudo apt-get install gcc make libffi-dev python-dev git
-  ```
-
-9. Clone this repo and install.
+6. Clone this repo and install.
 
   ```bash
   $ git clone git@github.com:GemHQ/round-py.git
-  $ cd round-py
+  $ cd round-py && git checkout devnacl
   $ python setup.py install
   ```
 
