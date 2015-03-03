@@ -7,6 +7,7 @@ from .config import *
 
 from .wrappers import *
 import applications as apps
+import subscriptions
 import wallets
 
 class Users(DictWrapper):

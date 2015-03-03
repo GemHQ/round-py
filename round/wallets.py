@@ -92,7 +92,7 @@ class Wallet(Wrapper, Updatable):
         """
         if not hasattr(self, '_subscriptions'):
             subscriptions_resource = self.resource.subscriptions
-            self._subscriptions = subscriptions.Subscriptions(
+            self._subscriptions = Subscriptions(
                 subscriptions_resource, self.client)
         return self._subscriptions
 
