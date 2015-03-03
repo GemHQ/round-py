@@ -51,7 +51,7 @@ patches welcome.
 
   ```bash
   export WORKON_HOME="${HOME}/.virtualenvs"
-  source .local/bin/virtualenvwrapper.sh
+  source ${HOME}/.local/bin/virtualenvwrapper.sh
   ```
 
 6. Source that again.
