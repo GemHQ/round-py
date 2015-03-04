@@ -1,4 +1,12 @@
 
+0.6.2 / 2015-03-04
+==================
+
+  *  PyNaCl 0.3.0 is released :)
+  *  Update README with easier install instructions
+  *  Begin documentation for public release
+  *  Minor bugfixes
+
 0.6.1 / 2015-03-02
 ==================
 
