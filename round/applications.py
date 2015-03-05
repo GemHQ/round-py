@@ -6,8 +6,8 @@
 from .config import *
 
 from .wrappers import *
+from .subscriptions import Subscriptions
 import users
-import rules
 
 
 class Applications(DictWrapper):
@@ -36,14 +36,6 @@ class Application(Wrapper, Updatable):
                                       self.client)
         return self._users
 
-    @property
-    def rules(self):
-        if not hasattr(self, u'_rules'):
-            rules_resource = self.resource.rules
-            self._rules = rules.Rules(rules_resource,
-                                      self.client)
-        return self._rules
-
     def authorize_instance(self, **content):
         if (not hasattr(self, u'_application_instance') or
             not self._application_instance):
@@ -65,6 +57,6 @@ class Application(Wrapper, Updatable):
         """
         if not hasattr(self, '_subscriptions'):
             subscriptions_resource = self.resource.subscriptions
-            self._subscriptions = subscriptions.Subscriptions(
+            self._subscriptions = Subscriptions(
                 subscriptions_resource, self.client)
         return self._subscriptions

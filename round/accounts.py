@@ -8,9 +8,9 @@ from .config import *
 from coinop.bit.transaction import Transaction as CoinopTx
 
 from .wrappers import *
+from .subscriptions import Subscriptions
 
 import transactions as txs
-import subscriptions
 import addresses
 
 
@@ -134,7 +134,7 @@ class Account(Wrapper, Updatable):
         """
         if not hasattr(self, '_subscriptions'):
             subscriptions_resource = self.resource.subscriptions
-            self._subscriptions = subscriptions.Subscriptions(
+            self._subscriptions = Subscriptions(
                 subscriptions_resource, self.client)
         return self._subscriptions
 
