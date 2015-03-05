@@ -24,9 +24,9 @@ email = email()
 instance_id = instance_id()
 app_url = app_url()
 dev_email= dev_email()
-random_instance_name = instance_name()
+random_instance_name = random_instance_name()
 
-create = False
+create = test_create_methods()
 
 c = round.client(url=round_url(), network='testnet')
 
@@ -47,7 +47,7 @@ class TestUser:
                                   override=True)
 
         assert isinstance(u, User)
-        assert len(u.attributes) == 7 
+        assert len(u.attributes) == 8 
         assert u.user_token == user_token
         assert isinstance(u.wallets, Wallets)
 
@@ -59,6 +59,6 @@ class TestUser:
                                   override=True)
 
         assert isinstance(u, User)
-        assert len(u.attributes) == 7 
+        assert len(u.attributes) == 8 
         assert u.user_token == user_token
         assert isinstance(u.wallets, Wallets)

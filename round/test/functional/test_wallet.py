@@ -25,8 +25,9 @@ email = email()
 instance_id = instance_id()
 app_url = app_url()
 dev_email= dev_email()
-random_instance_name = instance_name()
-create = False
+random_instance_name = random_instance_name()
+
+create = test_create_methods()
 
 c = round.client()
 u = c.authenticate_device(api_token=api_token,
@@ -81,10 +82,10 @@ class TestWallet:
         with raises(round.AuthenticationError):
             w.update(name='new name')
 
-    def test_wallet_rules(self):
+    def test_wallet_subscriptions(self):
         w = u.wallets['default']
         with raises(round.AuthenticationError):
-            w.rules
+            w.subscriptions
 
     def test_multi_wallet_network(self):
         w = u.wallets['default']
