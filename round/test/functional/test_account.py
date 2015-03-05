@@ -26,8 +26,9 @@ email = email()
 instance_id = instance_id()
 app_url = app_url()
 dev_email= dev_email()
-random_instance_name = instance_name()
-create = False
+random_instance_name = random_instance_name()
+
+create = test_create_methods()
 
 c = round.client()
 u = c.authenticate_device(api_token=api_token,
@@ -112,7 +113,12 @@ class TestAccount:
         assert isinstance(tx, Transaction)
 
         tx_data = tx.resource.to_hash()
-        data_keys = [u'url', u'data', u'type', u'key']
+        data_keys = [u'status',u'inputs',
+                     u'lock_time',u'fee',
+                     u'hash',u'url',
+                     u'outputs',u'created_at',
+                     u'value',u'version',
+                     u'key',u'type']
         assert tx_data.keys() == data_keys
         
 

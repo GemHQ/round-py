@@ -17,16 +17,16 @@ def round_url():
 def timestamp():
     return time.time()
 
-def email():
+def random_email():
     return u'test-{}@gem.co'.format(timestamp())
 
 def passphrase():
     return u'incredibly_secure'
 
-def app_name():
+def random_app_name():
     return u'test-app-{}'.format(timestamp())
 
-def instance_name():
+def random_instance_name():
     return u'test-instance-{}'.format(timestamp())
 
 def wallet_name():
@@ -63,7 +63,7 @@ def email():
     return u'joshua+userJava06@gem.co'
 
 def instance_id():
-    return u'DE73gGgLcJB07D0gW0G3VUN3aywgcd1T8F3bT-0eTy8'
+    return u'JAuan0m4ePdwqU8VthUTeWu5J6uTthN9bEEfWSLl7XU'
 
 def app_url():
     return u'https://api-sandbox.gem.co/apps/oHgM6NrHq-C_K2-f1pfwIg'
@@ -88,4 +88,7 @@ def getMoney(address):
     response = conn.getresponse()
     print address, response.status, response.reason
     conn.close()
+
+def test_create_methods():
+    return False
 

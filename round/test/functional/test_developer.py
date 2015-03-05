@@ -6,6 +6,7 @@
 from pytest import mark, raises
 from helpers import *
 from round.applications import *
+from round.transactions import *
 
 import time
 import patchboard
@@ -22,8 +23,9 @@ email = email()
 instance_id = instance_id()
 app_url = app_url()
 dev_email= dev_email()
-random_instance_name = instance_name()
-create = False
+random_instance_name = random_instance_name()
+
+create = test_create_methods()
 
 c = round.client()
 
@@ -104,4 +106,4 @@ class TestDeveloper:
 
         txs = a.transactions()
         assert len(txs) > 0
-        assert isinstance(txs[2].data['hash'],unicode)
+        assert isinstance(txs[2], Transaction)
