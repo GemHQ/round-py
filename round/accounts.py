@@ -83,7 +83,7 @@ class Account(Wrapper, Updatable):
         Keyword arguments:
         payees -- list of outputs in the form: [{'amount': 10000(satoshis),
                                                  'address':'validbtcaddress'}, ...]
-        confirmations -- Required confirmations for UTXO selection (integer > 1)
+        confirmations -- Required confirmations for UTXO selection (integer > 0)
         """
         content = dict(outputs=self.outputs_from_payees(payees), confirmations=confirmations)
         unsigned = self.resource.payments.create(content)
