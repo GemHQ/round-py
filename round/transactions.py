@@ -22,6 +22,11 @@ class Transactions(ListWrapper):
 
 
 class Transaction(Wrapper):
+
+    @property
+    def attributes(self):
+        return self.resource.attributes
+
     def cancel(self):
         try:
             return self.resource.cancel()
