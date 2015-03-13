@@ -12,15 +12,19 @@ from .wrappers import *
 from .accounts import Account, Accounts
 from .subscriptions import Subscription, Subscriptions
 
-# The passphrase parameter should stay out of the content dict
-# so that there is no chance the client's passphrase will get passed
-# to our server.
+
 def generate(passphrase, network=DEFAULT_NETWORK, **kwargs):
-    multi_wallet = MultiWallet.generate([u'primary', u'backup'], network=network)
 
+    seeds, multi_wallet = MultiWallet.generate([u'primary', u'backup'],
+                                               entropy=True, network=network)
+
+    # For practicality, we encrypt the master node of the primary tree
+    # but return the actual seed for the backup key
     primary_seed = multi_wallet.private_seed(u'primary')
-    backup_seed = multi_wallet.private_seed(u'backup')
+    backup_seed = seeds[u'backup']
 
+    # These are misnomers -- these are the pubkeys for the master nodes.
+    # public "seed" isn't a real thing.
     primary_public_seed = multi_wallet.public_seed(u'primary')
     backup_public_seed = multi_wallet.public_seed(u'backup')
 
