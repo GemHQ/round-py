@@ -81,7 +81,7 @@ class Wallet(Wrapper, Updatable):
             wallet.primary_private_seed)
 
         self.multi_wallet = MultiWallet(
-            private={u'primary': primary_seed},
+            private_seeds={u'primary': primary_seed},
             public={
                 u'cosigner': wallet.cosigner_public_seed,
                 u'backup': wallet.backup_public_seed},
