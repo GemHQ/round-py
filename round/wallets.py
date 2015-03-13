@@ -18,9 +18,7 @@ def generate(passphrase, network=DEFAULT_NETWORK, **kwargs):
     seeds, multi_wallet = MultiWallet.generate([u'primary', u'backup'],
                                                entropy=True, network=network)
 
-    # For practicality, we encrypt the master node of the primary tree
-    # but return the actual seed for the backup key
-    primary_seed = multi_wallet.private_seed(u'primary')
+    primary_seed = seeds[u'primary']
     backup_seed = seeds[u'backup']
 
     # These are misnomers -- these are the pubkeys for the master nodes.
