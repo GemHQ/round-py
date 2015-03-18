@@ -25,17 +25,16 @@ class UnknownNetworkError(RoundError):
         self.message = "Invalid network: `{}`. Please specify one of our supported networks: {}".format(network, SUPPORTED_NETWORKS)
 
 
-class UnknownKeyError(RoundError):
-
-    def __init__(self, key):
-        self.key = key
-        self.message = "No OTP key found for user. A new key has been generated and a new secret has been delivered. Use key={} to call complete_device_authorization (you should catch this error and use error.key).".format(key)
-
-
-class OTPConflictError(RoundError):
+class InvalidMFAError(RoundError):
 
     def __init__(self):
-        self.message = "User does not exist or has too many outstanding device authorizations."
+        self.message = "Multi-factor authentication failed. Invalid MFA token."
+
+
+class MFARequiredError(RoundError):
+
+    def __init__(self):
+        self.message = "Multi-factor authentication required. Prompt user for to get a token from their TOPT - or if the user hasn't configured TOPT they will have been sent an SMS with the token. Retry this action with the mfa_token= kwarg."
 
 
 class AuthenticationError(RoundError):
