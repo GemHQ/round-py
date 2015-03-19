@@ -79,7 +79,10 @@ class DictWrapper(collections.Mapping):
         return(self)
 
     def key_for(self, wrapper):
-        return wrapper.name
+        try:
+            return wrapper.name
+        except:
+            return wrapper.key
 
     @abc.abstractmethod
     def wrap(self, resource):
