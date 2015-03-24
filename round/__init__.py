@@ -49,10 +49,10 @@ class Context(dict):
                 {u'usage':
                      u"client.authenticate_device(api_token=token, user_token=token, device_id=device_id [, email=user_email, user_url=user_url, override=False, fetch=True])",
                  u'params': [u'api_token', u'user_email', u'user_url', u'user_token', u'device_id']},
-            u'Gem-OOB-OTP':
+            u'Gem-Identify':
                 {u'usage':
-                     u"client.authenticate_otp(api_token=token, key=otp_key, secret=otp_secret [, override=False])",
-                 u'params': [u'key', u'secret', u'api_token']}
+                     u"client.authenticate_identify(api_token=token [, override=False])",
+                 u'params': [u'api_token']}
         }
 
     def authorizer(self, schemes, resource, action, request_args):

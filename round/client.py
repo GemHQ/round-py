@@ -71,6 +71,8 @@ class Client(object):
                                        instance_id=instance_id)):
             raise ValueError(u"Usage: {}".format(
                 self.context.schemes[u'Gem-Application'][u'usage']))
+        else:
+            self.context.authorize(u'Gem-Identify', api_token=api_token)
 
         return self.application if fetch else True
 
@@ -95,6 +97,19 @@ class Client(object):
             return user.refresh()
         else:
             return True
+
+    def authenticate_identify(self, api_token, override=False):
+        if (u'credential' in self.context.schemes[u'Gem-Identify'] and
+            not override):
+            raise ValueError(u"This object already has Gem-Identify authentication. To overwrite it call authenticate_identify with override=True.")
+
+        if not api_token or not self.context.authorize(u'Gem-Identify',
+                                                       api_token=api_token):
+            raise ValueError(u"Usage: {}".format(
+                self.context.schemes[u'Gem-Identify'][u'usage']))
+
+        return True
+
 
     def request_device_authorization(self, email, api_token, device_name,
                                      device_id, mfa_token=None):
