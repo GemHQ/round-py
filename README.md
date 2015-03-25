@@ -85,8 +85,9 @@ patches welcome.
   ```bash
   $ git clone git@github.com:GemHQ/round-py.git
   $ cd round-py
-  $ python setup.py develop **for production environments use:** `python setup.py install`
+  $ python setup.py develop
   ```
+**for production environments use:** `python setup.py install`
 
 ### Heroku
 
