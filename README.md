@@ -25,8 +25,8 @@ The round client is designed to interact with Gem's API to make building blockch
 * libffi
 
 #### [Linux (debian-based, tested on Ubuntu 14.04)](docs/install.md#linux-debian-based-tested-on-ubuntu-1404)
-#### [Mac OSX](docs/install.md#Mac-OSX)
-#### [Heroku](docs/install.md#Heroku)
+#### [Mac OSX](docs/install.md#mac-osx)
+#### [Heroku](docs/install.md#heroku)
 
 ## Getting Started Tutorial
 #### Table of Contents
@@ -71,6 +71,8 @@ In this step you will learn how to instantiate the API client for the given netw
 	client = round.client("production")
 	```
 
+[[top]](README.md#getting-started-tutorial)
+
 ### 2. Configure your applicaiton and API Token
 In this step your application and you will retrieve the API Token for the application and set your applications redirect url.  The url is used to push the user back to your app after they complete an out of band challange.
 
@@ -83,6 +85,8 @@ In this step your application and you will retrieve the API Token for the applic
 	```python
 	api_token = u'q234t09ergoasgr-9_qt4098qjergjia-asdf2490'
 	```
+
+[[top]](README.md#getting-started-tutorial)
 
 ### 3. Create your User and Wallet
 In this step you will create your own personal Gem user and wallet authorized on your application.  This is an end user account for a user to have a Gem wallet to hold bitcoin with and generate 2 of 3 keys thus the user is in full control.
@@ -102,6 +106,8 @@ In this step you will create your own personal Gem user and wallet authorized on
 1. **Store the device_token safety** as this will be used for subsequent login sessions with the user.
 1. You will receive an email from Gem asking you to confirm your account and finish setup.  Please follow the instructions.
 
+[[top]](README.md#getting-started-tutorial)
+
 ### 4. Authenticate your User
 In this step you will learn how to authenticate a users device to get a fully functional user to perform wallet actions.  You use this call when the user returns to your app from the create step, or subsequent calls thereafter.
 
@@ -114,6 +120,8 @@ In this step you will learn how to authenticate a users device to get a fully fu
 						user_email = email)
 	```
 
+[[top]](README.md#getting-started-tutorial)
+
 ### 5. Access the wallet and Default Account
 In this section you'll learn how to get to the default account of a wallet.  A wallet is a collection of accounts.  [Learn more about the wallet and acocunts]([docs/wallet-and-account-details.md)
 
@@ -122,6 +130,8 @@ In this section you'll learn how to get to the default account of a wallet.  A w
 	```python
 	my_account = full_user.wallets['default'].accounts['default']
 	```
+
+[[top]](README.md#getting-started-tutorial)
 
 ### 6. Generate an Address and Add Funds
 In this section you'll learn how to create an address to fund with testnet coins aka funny money.
@@ -141,6 +151,8 @@ Payments have to be confirmed by the network and on Testnet that can be slow.  T
 You will be able to make a payment on a single confirmation.  While you wait for that to happen, feel free to read more details about:
 [Wallets and Accounts](docs/Advanced-Topics.md#More-About-Wallets-and-Accounts)
 
+[[top]](README.md#getting-started-tutorial)
+
 ### 7. Make a Payment
 In this section you’ll learn how to create a payment a multi-signature payment in an HD wallet.  Once your address gets one more more confirmations we’ll be able to send a payment out of the wallet.  To make a payment, you'll unlock a wallet, generate a list of payees and then call the pay method.
 
@@ -158,4 +170,5 @@ In this section you’ll learn how to create a payment a multi-signature payment
 the pay call takes a list of payee objects.  A payee is a dict of `{'address':ADDRESS, 'amount':amount}` where address is the bitcoin address and amount is the number of satoshis.  Confirmations default to six and represents the number of confirmations an unspent output needs to have in order to be used in the transaction.  The last arg is the redirect url for Gem to send the user back to your application after the user submits their 2FA challenge.  
 
 **CONGRATS** - now build something cool. 
-[top](README.md#getting-started-tutorial)
+
+[[top]](README.md#getting-started-tutorial)
