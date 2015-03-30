@@ -28,11 +28,11 @@ The round client is designed to interact with Gem's API to make building blockch
 1. [Configure your application and API token](README.md#Configure-your-application-and-API-Token)
 1. [Create your User and Wallet](README.md#Create-your-User-and-Wallet)
 1. [Authenticate your User](README.md#Authenticate-your-User)
-1. [Access the wallet and create an account](README.md#Access-the-Wallet-and-Create-an-Account)
+1. [Access the wallet and Default Account](README.md#Access-the-Wallet-and-Default-Account)
 1. [Generate an Address and Add Funds](README.md#Generate-an-Address-and-Add-Funds)
 1. [Make a Payment](README.md#Make-a-Payment)
 1. [Advanced Topics](README.md#advanced-topics)
-	1. [More about Accounts]
+	1. [More about Wallets and Accounts]([docs/wallet-and-account-details.md)
 	1. [More about Txs]
 	1. [Subscriptions]
 	1. [Integrated 2FA]
@@ -96,9 +96,28 @@ In this step you will create your own personal Gem user and wallet authorized on
 1. You will receive an email from Gem asking you to confirm your account and finish setup.  Please follow the instructions.
 
 ### Authenticate your User
+In this step you will learn how to authenticate a users device to get a fully functional user to perform wallet actions.  You use this call when the user returns to your app from the create step, or subsequent calls thereafter.
+
+1. Call the authenticate_device method from the client object
+	
+	```python
+	full_user = client.authenticate_device(
+						api_token = api_token,
+						device_token = device_token,
+						user_email = email)
+	```
+
+### Access the wallet and Default Account
+In this section you'll learn how to get to the default account of a wallet.  A wallet is a collection of accounts.  [Learn more about the wallet and acocunts]([docs/wallet-and-account-details.md)
+
+1. Get the default wallet and then default account
+
+	```python
+	account = full_user.wallets['default'].accounts['default']
+	```
+
+### Generate an Address and Add Funds
 
 
-### Access the wallet and create an account
-### Generate an address and Add Funds
 ### Make a Payment
 ### Advanced Topics
