@@ -54,7 +54,7 @@ In this step you will learn how to instantiate the API client for the given netw
 	>>> import round
 	```
 
-1. Create the client object 
+1. Create the client object using the sandbox stack 
 
 	```python 
 	# the default client is set to sandbox the testnet stack 
@@ -78,9 +78,26 @@ In this step your application and you will retrieve the API Token for the applic
 	```
 
 ### Create your User and Wallet
+In this step you will create your own personal Gem user and wallet authorized on your application.  This is an end user account for a user to have a Gem wallet to hold bitcoin with and generate 2 of 3 keys thus the user is in full control.
 
+1. Create your user and wallet:
+
+	```python
+	#  Store the device token for future authentication
+	device_token, lite_user = client.users.create(
+			first_name = "YOUR FIRST NAME",
+			last_name = "YOUR LAST NAME",
+			email = "YOUR EMAIL ADDRESS",
+			passphrase = "aReallyStrongPassword",
+			device_id = "UUID String",
+			device_name = "SOME DEVICE NAME")
+	```
+1. **Store the device_token safety** as this will be used for subsequent login sessions with the user.
+1. You will receive an email from Gem asking you to confirm your account and finish setup.  Please follow the instructions.
 
 ### Authenticate your User
+
+
 ### Access the wallet and create an account
 ### Generate an address and Add Funds
 ### Make a Payment
