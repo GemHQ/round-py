@@ -23,15 +23,15 @@ The round client is designed to interact with Gem's API to make building blockch
 
 ## Getting Started Tutorial
 #### Table of Contents
-1. [Introduction](README.md#Introduction)
-1. [Run the client](README.md#Run-the-Client)
-1. [Configure your application and API token](README.md#Configure-your-application-and-API-Token)
-1. [Create your User and Wallet](README.md#Create-your-User-and-Wallet)
-1. [Authenticate your User](README.md#Authenticate-your-User)
-1. [Access the wallet and create an account](README.md#Access-the-Wallet-and-Create-an-Account)
-1. [Generate an Address and Add Funds](README.md#Generate-an-Address-and-Add-Funds)
-1. [Make a Payment](README.md#Make-a-Payment)
-1. [Advanced Topics](README.md#advanced-topics)
+1. [Introduction](https://github.com/GemHQ/round-py/blob/release/0.7.0/README.md#Introduction)
+1. [Run the client](https://github.com/GemHQ/round-py/blob/release/0.7.0/README.md#Run-the-Client)
+1. [Configure your application and API token](https://github.com/GemHQ/round-py/blob/release/0.7.0/README.md#Configure-your-application-and-API-Token)
+1. [Create your User and Wallet](https://github.com/GemHQ/round-py/blob/release/0.7.0/README.md#Create-your-User-and-Wallet)
+1. [Authenticate your User](https://github.com/GemHQ/round-py/blob/release/0.7.0/README.md#Authenticate-your-User)
+1. [Access the wallet and create an account](https://github.com/GemHQ/round-py/blob/release/0.7.0/README.md#Access-the-Wallet-and-Create-an-Account)
+1. [Generate an Address and Add Funds](https://github.com/GemHQ/round-py/blob/release/0.7.0/README.md#Generate-an-Address-and-Add-Funds)
+1. [Make a Payment](https://github.com/GemHQ/round-py/blob/release/0.7.0/README.md#Make-a-Payment)
+1. [Advanced Topics](https://github.com/GemHQ/round-py/blob/release/0.7.0/README.md#advanced-topics)
 	1. [More about Accounts]
 	1. [More about Txs]
 	1. [Subscriptions]
