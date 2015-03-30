@@ -23,7 +23,7 @@ The round client is designed to interact with Gem's API to make building blockch
 
 ## Getting Started Tutorial
 #### Table of Contents
-1. [Introduction](README.md#Introduction)
+1. [Introduction](./README.md#Introduction)
 1. [Run the client]
 1. [Configure your application and API token]
 1. [Create your User & Wallet]
