@@ -23,15 +23,15 @@ The round client is designed to interact with Gem's API to make building blockch
 
 ## Getting Started Tutorial
 #### Table of Contents
-1. [Introduction](https://github.com/GemHQ/round-py/blob/release/0.7.0/README.md#Introduction)
-1. [Run the client](https://github.com/GemHQ/round-py/blob/release/0.7.0/README.md#Run-the-Client)
-1. [Configure your application and API token](https://github.com/GemHQ/round-py/blob/release/0.7.0/README.md#Configure-your-application-and-API-Token)
-1. [Create your User and Wallet](https://github.com/GemHQ/round-py/blob/release/0.7.0/README.md#Create-your-User-and-Wallet)
-1. [Authenticate your User](https://github.com/GemHQ/round-py/blob/release/0.7.0/README.md#Authenticate-your-User)
-1. [Access the wallet and create an account](https://github.com/GemHQ/round-py/blob/release/0.7.0/README.md#Access-the-Wallet-and-Create-an-Account)
-1. [Generate an Address and Add Funds](https://github.com/GemHQ/round-py/blob/release/0.7.0/README.md#Generate-an-Address-and-Add-Funds)
-1. [Make a Payment](https://github.com/GemHQ/round-py/blob/release/0.7.0/README.md#Make-a-Payment)
-1. [Advanced Topics](https://github.com/GemHQ/round-py/blob/release/0.7.0/README.md#advanced-topics)
+1. [Introduction](README.md#Introduction)
+1. [Run the client](README.md#Run-the-Client)
+1. [Configure your application and API token](README.md#Configure-your-application-and-API-Token)
+1. [Create your User and Wallet](README.md#Create-your-User-and-Wallet)
+1. [Authenticate your User](README.md#Authenticate-your-User)
+1. [Access the wallet and create an account](README.md#Access-the-Wallet-and-Create-an-Account)
+1. [Generate an Address and Add Funds](README.md#Generate-an-Address-and-Add-Funds)
+1. [Make a Payment](README.md#Make-a-Payment)
+1. [Advanced Topics](README.md#advanced-topics)
 	1. [More about Accounts]
 	1. [More about Txs]
 	1. [Subscriptions]
@@ -40,11 +40,34 @@ The round client is designed to interact with Gem's API to make building blockch
 	1. [Operational/Custodial payments]
 
 ### Introduction
+This tutorial will have you run through setting up your application and creating your own wallet as a user of your application.  By the end of the tutorial, you will have created your User, wallet, account, an address as well as fund it and then make a payment using the bitcoin testnet network.
+
+This tutoril assumes that you have completed the developer signup and that you have successfully [installed the client](docs/install.md)
+
 ### Run the Client
+In this step you will learn how to instantiate the API client for the given networks.
+
+1. start an interactive shell and import the round library
+
+	```bash
+	$ bpython
+	>>> import round
+```
+
+1. Create the client object 
+
+```python 
+# the default client is set to sandbox the testnet stack 
+client = round.client()
+
+# if you want to configure the client for production mainnet
+client = round.client("production")
+```
+
 ### Configure your applicaiton and API Token
 ### Create your User and Wallet
 ### Authenticate your User
 ### Access the wallet and create an account
-### Generate an address and add funds
+### Generate an address and Add Funds
 ### Make a Payment
 ### Advanced Topics
