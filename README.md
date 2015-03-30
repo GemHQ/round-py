@@ -10,6 +10,12 @@ The round client is designed to interact with Gem's API to make building blockch
 * Rules engine for transactions
 * SDKs for many popular languages
 
+## Support information
+* __Support email__: [support@gem.co](mailto:support@gem.co) 
+* __Support IRC chat__: `#gemhq` on `irc.freenode.net`
+* __Issues__:  Use github issues
+* __Slack room__:  Send email to support requesting access to the slack room for this client
+
 ## Installing round-py:
 ### Prerequisites:
 * Python 2.7
@@ -135,4 +141,19 @@ You will be able to make a payment on a single confirmation.  While you wait for
 [Wallets and Accounts](docs/Advanced-Topics.md#More-About-Wallets-and-Accounts)
 
 ### Make a Payment
-### Advanced Topics
+In this section you’ll learn how to create a payment a multi-signature payment in an HD wallet.  Once your address gets one more more confirmations we’ll be able to send a payment out of the wallet.  To make a payment, you'll unlock a wallet, generate a list of payees and then call the pay method.
+
+1. Unlock the wallet:
+
+	```python
+	wallet.unlock(<YOUR PASSWORD>)
+	```
+1. Make a payment
+
+	```python
+	payment = account.pay([{‘address’:’ mxzdT4ShBudVtZbMqPMh9NVM3CS56Fp11s’, ‘amount’:25000}],confirmations = 1, ‘https://my.mobileapp.com')
+	```
+
+the pay call takes a list of payee objects.  A payee is a dict of `{'address':ADDRESS, 'amount':amount}` where address is the bitcoin address and amount is the number of satoshis.  Confirmations default to six and represents the number of confirmations an unspent output needs to have in order to be used in the transaction.  The last arg is the redirect url for Gem to send the user back to your application after the user submits their 2FA challenge.  
+
+**CONGRATS** - now build something cool. 
