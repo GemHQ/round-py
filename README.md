@@ -52,20 +52,34 @@ In this step you will learn how to instantiate the API client for the given netw
 	```bash
 	$ bpython
 	>>> import round
-```
+	```
 
 1. Create the client object 
 
-```python 
-# the default client is set to sandbox the testnet stack 
-client = round.client()
+	```python 
+	# the default client is set to sandbox the testnet stack 
+	client = round.client()
 
-# if you want to configure the client for production mainnet
-client = round.client("production")
-```
+	# if you want to configure the client for production mainnet
+	client = round.client("production")
+	```
 
 ### Configure your applicaiton and API Token
+In this step your application and you will retrieve the API Token for the application and set your applications redirect url.  The url is used to push the user back to your app after they complete an out of band challange.
+
+1. Set the redirect url by clicking in the options gear and selecting `add redirect url`
+
+1. In the [console](https://my.gem.co) copy your api token down by clicking on show
+
+1. Go back to your shell session and set a variable for api_token
+
+	```python
+	api_token = u'q234t09ergoasgr-9_qt4098qjergjia-asdf2490'
+	```
+
 ### Create your User and Wallet
+
+
 ### Authenticate your User
 ### Access the wallet and create an account
 ### Generate an address and Add Funds
