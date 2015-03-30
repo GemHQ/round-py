@@ -10,8 +10,6 @@ The Gem wallet has convenience methods to make managing the wallet easy to do.  
 * `wallet.balance`: returns the total balance of all accounts
 * `wallet.is_locked()`: returns True if locked
 * `wallet.accounts`: returns a collection of round accounts.
-* `wallet.unlock(passphrase='MYPASSWORD')`:  Unlocks the wallet for signing purposes
-* `wallet.attributes`: returns a dictonary of attributes about the wallet
 
 ### Accounts
 A gem account is the main object to interact with.  The account is where payments are made from and where you access transaction collections.  The gem wallet can have many accounts.  As mentioned in the wallet section, a Gem account within a wallet is a collection of bitcoin addresses and the complexity of dealing with addresses is now abstracted away.  
@@ -22,29 +20,30 @@ The key methods on an account to use are:
 * `account.pending_balance`: returns the sum of all incoming outgoing transactions with 0 confirmations
 * `account.pay(payees,confirmations,redirect_url)`: send bitcoin out of an account **must call [wallet.unlock](advanced.md#wallets) first**
 * `account.transactions`: return the collections of transactions
-* `account.attributes`: returns a dictionary 
 
-
-So how do I get a balance?  All you have to do is call account.balance.  But what if my incoming transaction has not confirmed?  All you have to do is call account.pending_balance.  A pending_balance in Gem is any address involved in a transaction with 0 confirmations.  This means that in multiple transactions both incoming and outgoing will produce a net pending_balance.  As they confirm with a single confirmation, the account balance gets updated.
-
-The attribute data on objects get cached for speed, so to fetch a new state of an account on the API, call account = account.refresh().
+A pending_balance in Gem is any address involved in a transaction with 0 confirmations.  This means that in multiple transactions both incoming and outgoing will produce a net pending_balance.  As they confirm with a single confirmation, the account balance in the API reflects the change.  Objects get cached for speed in the client, so to fetch a new state of an account on the API, call account = account.refresh().
 
 ## Transactions and Payments
-In this section you’ll learn more about the details of a transactions.
 Transaction collections have a relationship to an account.  When getting the transaction collection, you can specify as an argument incoming or outgoing.
-in your shell try it:  txs = account.transactions(type=‘incoming’)  
-Now lets look at a single transaction:  tx = txs[0]
-There is a lot of information on the tx.  You can call the attributes to get at the full list.  Additionally there are some convenience methods to get at key information quickly.  For example:
-tx.hash 
-If you want to see information within the attributes all you have to do is access it like any other k/v object.
-tx.attributes[u’fee’] or tx.attributes[‘status’]
-Lastly, if you create an unsigned transaction to inspect the fee, or if you don’t have enough funds to cover the fee plus the payment, you’ll need to cancel the transaction.  You can accomplish this by calling tx.cancel()
+`txs = account.transactions(type=‘incoming’)`
+
+ Now lets look at a single transaction: `tx = txs[0]`
+
+There is a lot of information on the tx.  You can call the attributes to get at the full list `tx.attributes`.  Additionally there are some convenience methods to get at key information quickly.  For example: `tx.hash`: returns the transaction hash
 
 ### Fee Estimation
+Fees are estimated by requesting for an unsigned transaction from the API.  The Gem API will then lock the unspent outputs to prevent a potential double spend.  The returned unsigned transaction will have a fee in the attributes that you can then inspect.  If you decide you don't want to perform the transaction you'll have to [cancel the transaction](advanced.md#canceling-unsigned-transaction)
+
 
 ### Canceling Unsigned Transaction
+You can accomplish this by calling tx.cancel()
 
 ### Accessing Details about the Transaction
+tx.attributes[u’fee’] or tx.attributes[‘status’]
+
+## Attributes and Refresh
+If you want to see information within the attributes all you have to do is access it like any other k/v object.
+tx.attributes[u’fee’] or tx.attributes[‘status’]
 
 ## Subscriptions
 In this section you’ll learn how to setup subscriptions on your application to be notified of any incoming/outgoing transactions.
