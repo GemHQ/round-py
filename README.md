@@ -15,6 +15,7 @@ The round client is designed to interact with Gem's API to make building blockch
 * __Support IRC chat__: `#gemhq` on `irc.freenode.net`
 * __Issues__:  Use github issues
 * __Slack room__:  Send email to support requesting access to the slack room for this client
+* __Detailed API Docs__:  http://guide.gem.co
 
 ## Installing round-py:
 ### Prerequisites:
@@ -29,28 +30,28 @@ The round client is designed to interact with Gem's API to make building blockch
 
 ## Getting Started Tutorial
 #### Table of Contents
-1. [Introduction](README.md#Introduction)
-1. [Run the client](README.md#Run-the-Client)
-1. [Configure your application and API token](README.md#Configure-your-application-and-API-Token)
-1. [Create your User and Wallet](README.md#Create-your-User-and-Wallet)
-1. [Authenticate your User](README.md#Authenticate-your-User)
-1. [Access the wallet and Default Account](README.md#Access-the-Wallet-and-Default-Account)
-1. [Generate an Address and Add Funds](README.md#Generate-an-Address-and-Add-Funds)
-1. [Make a Payment](README.md#Make-a-Payment)
-1. [Advanced Topics](README.md#advanced-topics)
-	1. [More about Wallets and Accounts]([docs/wallet-and-account-details.md)
-	1. [More about Txs]
-	1. [Subscriptions]
-	1. [Integrated 2FA]
-	1. [Operational/Custodail wallet models]
-	1. [Operational/Custodial payments]
+* [Introduction](README.md#Introduction)
+* [1. Run the client](README.md#Run-the-Client)
+* [2. Configure your application and API token](README.md#Configure-your-application-and-API-Token)
+* [3. Create your User and Wallet](README.md#Create-your-User-and-Wallet)
+* [4. Authenticate your User](README.md#Authenticate-your-User)
+* [5. Access the wallet and Default Account](README.md#Access-the-Wallet-and-Default-Account)
+* [6. Generate an Address and Add Funds](README.md#Generate-an-Address-and-Add-Funds)
+* [7. Make a Payment](README.md#Make-a-Payment)
+* [Advanced Topics](README.md#advanced-topics)
+	* [More about Wallets and Accounts](docs/advanced.md#wallet-and-account-details)
+	* [More about Txs](docs/advanced.md#Transactions)
+	* [Subscriptions](docs/advanced.md#Subscriptions)
+	* [Integrated 2FA](docs/advanced.md#2FA)
+	* [Operational/Custodail wallet models](docs/advanced.md#Operational-Custodial-Wallets)
+	* [Operational/Custodial payments](docs/advanced.md#Operational-Custodial-Wallet-Payments)
 
 ### Introduction
 This tutorial will have you run through setting up your application and creating your own wallet as a user of your application.  By the end of the tutorial, you will have created your User, wallet, account, an address as well as fund it and then make a payment using the bitcoin testnet network.
 
 This tutoril assumes that you have completed the developer signup and that you have successfully [installed the client](docs/install.md)
 
-### Run the Client
+### 1. Run the Client
 In this step you will learn how to instantiate the API client for the given networks.
 
 1. start an interactive shell and import the round library
@@ -70,7 +71,7 @@ In this step you will learn how to instantiate the API client for the given netw
 	client = round.client("production")
 	```
 
-### Configure your applicaiton and API Token
+### 2. Configure your applicaiton and API Token
 In this step your application and you will retrieve the API Token for the application and set your applications redirect url.  The url is used to push the user back to your app after they complete an out of band challange.
 
 1. Set the redirect url by clicking in the options gear and selecting `add redirect url`
@@ -83,7 +84,7 @@ In this step your application and you will retrieve the API Token for the applic
 	api_token = u'q234t09ergoasgr-9_qt4098qjergjia-asdf2490'
 	```
 
-### Create your User and Wallet
+### 3. Create your User and Wallet
 In this step you will create your own personal Gem user and wallet authorized on your application.  This is an end user account for a user to have a Gem wallet to hold bitcoin with and generate 2 of 3 keys thus the user is in full control.
 
 1. Create your user and wallet:
@@ -101,7 +102,7 @@ In this step you will create your own personal Gem user and wallet authorized on
 1. **Store the device_token safety** as this will be used for subsequent login sessions with the user.
 1. You will receive an email from Gem asking you to confirm your account and finish setup.  Please follow the instructions.
 
-### Authenticate your User
+### 4. Authenticate your User
 In this step you will learn how to authenticate a users device to get a fully functional user to perform wallet actions.  You use this call when the user returns to your app from the create step, or subsequent calls thereafter.
 
 1. Call the authenticate_device method from the client object
@@ -113,7 +114,7 @@ In this step you will learn how to authenticate a users device to get a fully fu
 						user_email = email)
 	```
 
-### Access the wallet and Default Account
+### 5. Access the wallet and Default Account
 In this section you'll learn how to get to the default account of a wallet.  A wallet is a collection of accounts.  [Learn more about the wallet and acocunts]([docs/wallet-and-account-details.md)
 
 1. Get the default wallet and then default account
@@ -122,7 +123,7 @@ In this section you'll learn how to get to the default account of a wallet.  A w
 	my_account = full_user.wallets['default'].accounts['default']
 	```
 
-### Generate an Address and Add Funds
+### 6. Generate an Address and Add Funds
 In this section you'll learn how to create an address to fund with testnet coins aka funny money.
 
 1. Create an address
@@ -140,7 +141,7 @@ Payments have to be confirmed by the network and on Testnet that can be slow.  T
 You will be able to make a payment on a single confirmation.  While you wait for that to happen, feel free to read more details about:
 [Wallets and Accounts](docs/Advanced-Topics.md#More-About-Wallets-and-Accounts)
 
-### Make a Payment
+### 7. Make a Payment
 In this section you’ll learn how to create a payment a multi-signature payment in an HD wallet.  Once your address gets one more more confirmations we’ll be able to send a payment out of the wallet.  To make a payment, you'll unlock a wallet, generate a list of payees and then call the pay method.
 
 1. Unlock the wallet:
