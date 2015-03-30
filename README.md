@@ -24,13 +24,13 @@ The round client is designed to interact with Gem's API to make building blockch
 ## Getting Started Tutorial
 #### Table of Contents
 1. [Introduction](README.md#Introduction)
-1. [Run the client]
-1. [Configure your application and API token]
-1. [Create your User & Wallet]
-1. [Authenticate your User]
-1. [Access the wallet and create an account]
-1. [Generate an address and add funds]
-1. [Make a payment]
+1. [Run the client](README.md#Run-the-Client)
+1. [Configure your application and API token](README.md#Configure-your-application-and-API-Token)
+1. [Create your User and Wallet](README.md#Create-your-User-and-Wallet)
+1. [Authenticate your User](README.md#Authenticate-your-User)
+1. [Access the wallet and create an account](README.md#Access-the-Wallet-and-Create-an-Account)
+1. [Generate an Address and Add Funds](README.md#Generate-an-Address-and-Add-Funds)
+1. [Make a Payment](README.md#Make-a-Payment)
 1. [Advanced Topics](README.md#advanced-topics)
 	1. [More about Accounts]
 	1. [More about Txs]
@@ -39,14 +39,12 @@ The round client is designed to interact with Gem's API to make building blockch
 	1. [Operational/Custodail wallet models]
 	1. [Operational/Custodial payments]
 
-`* advanced topics`
-
 ### Introduction
 ### Run the Client
-### Configure your applicaiton and API token
-### Create your User & Wallet
+### Configure your applicaiton and API Token
+### Create your User and Wallet
 ### Authenticate your User
 ### Access the wallet and create an account
 ### Generate an address and add funds
-### Make a payment
+### Make a Payment
 ### Advanced Topics
