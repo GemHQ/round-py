@@ -31,13 +31,13 @@ The round client is designed to interact with Gem's API to make building blockch
 ## Getting Started Tutorial
 #### Table of Contents
 * [Introduction](README.md#Introduction)
-* [1. Run the client](README.md#Run-the-Client)
-* [2. Configure your application and API token](README.md#Configure-your-application-and-API-Token)
-* [3. Create your User and Wallet](README.md#Create-your-User-and-Wallet)
-* [4. Authenticate your User](README.md#Authenticate-your-User)
-* [5. Access the wallet and Default Account](README.md#Access-the-Wallet-and-Default-Account)
-* [6. Generate an Address and Add Funds](README.md#Generate-an-Address-and-Add-Funds)
-* [7. Make a Payment](README.md#Make-a-Payment)
+* [1. Run the client](README.md#1-run-the-client)
+* [2. Configure your application and API token](README.md#2-configure-your-applicaiton-and-api-token)
+* [3. Create your User and Wallet](README.md#3-create-your-user-and-wallet)
+* [4. Authenticate your User](README.md#4-authenticate-your-user)
+* [5. Access the wallet and Default Account](README.md#5-access-the-wallet-and-default-account)
+* [6. Generate an Address and Add Funds](README.md#6-generate-an-address-and-add-funds)
+* [7. Make a Payment](README.md#7-make-a-payment)
 * [Advanced Topics](docs/advanced.md)
 	* [More about Wallets and Accounts](docs/advanced.md##wallets-and-accounts)
 	* [More about Transactions](docs/advanced.md#transactions-and-pyaments)
@@ -158,3 +158,4 @@ In this section you’ll learn how to create a payment a multi-signature payment
 the pay call takes a list of payee objects.  A payee is a dict of `{'address':ADDRESS, 'amount':amount}` where address is the bitcoin address and amount is the number of satoshis.  Confirmations default to six and represents the number of confirmations an unspent output needs to have in order to be used in the transaction.  The last arg is the redirect url for Gem to send the user back to your application after the user submits their 2FA challenge.  
 
 **CONGRATS** - now build something cool. 
+[top](README.md#getting-started-tutorial)
