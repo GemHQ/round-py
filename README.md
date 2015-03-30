@@ -113,11 +113,26 @@ In this section you'll learn how to get to the default account of a wallet.  A w
 1. Get the default wallet and then default account
 
 	```python
-	account = full_user.wallets['default'].accounts['default']
+	my_account = full_user.wallets['default'].accounts['default']
 	```
 
 ### Generate an Address and Add Funds
+In this section you'll learn how to create an address to fund with testnet coins aka funny money.
 
+1. Create an address
+
+	```python
+	 address = my_account.addresses.create()
+	print address.string, address.path
+	```
+1. Copy the address string and go to a faucet to fund it:
+	1. [TP's TestNet Faucet](https://tpfaucet.appspot.com/)
+	1. [Mojocoin Testnet3 Faucet](http://faucet.xeno-genesis.com/)
+
+Payments have to be confirmed by the network and on Testnet that can be slow.  To monitor for confirmations: input the address into the following url `https://live.blockcypher.com/btc-testnet/address/<YOUR ADDRESS>`.  The current standard number of confirmations for a transaction to be considered safe is 6. 
+
+You will be able to make a payment on a single confirmation.  While you wait for that to happen, feel free to read more details about:
+[Wallets and Accounts](docs/Advanced-Topics.md#More-About-Wallets-and-Accounts)
 
 ### Make a Payment
 ### Advanced Topics
