@@ -31,7 +31,7 @@ The round client is designed to interact with Gem's API to make building blockch
 1. [Access the wallet and create an account]
 1. [Generate an address and add funds]
 1. [Make a payment]
-1. [Advanced Topics]
+1. [Advanced Topics](README.md#advanced-topics)
 	1. [More about Accounts]
 	1. [More about Txs]
 	1. [Subscriptions]
