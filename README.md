@@ -40,7 +40,7 @@ The round client is designed to interact with Gem's API to make building blockch
 * [7. Make a Payment](README.md#7-make-a-payment)
 * [Advanced Topics](docs/advanced.md)
 	* [More about Wallets and Accounts](docs/advanced.md##wallets-and-accounts)
-	* [More about Transactions](docs/advanced.md#transactions-and-pyaments)
+	* [More about Transactions](docs/advanced.md#transactions-and-payments)
 	* [Subscriptions](docs/advanced.md#subscriptions)
 	* [Integrated 2FA](docs/advanced.md#integrated-2fa)
 	* [Operational/Custodail wallet models](docs/advanced.md#operationalcustodial-wallets)
