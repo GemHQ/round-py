@@ -113,12 +113,14 @@ class TestAccount:
         assert isinstance(tx, Transaction)
 
         tx_data = tx.resource.to_hash()
-        data_keys = [u'status',u'inputs',
-                     u'lock_time',u'fee',
-                     u'hash',u'url',
-                     u'outputs',u'created_at',
-                     u'value',u'version',
-                     u'key',u'type']
+        data_keys = [u'status', u'inputs',
+                    u'lock_time', u'fee',
+                    u'hash', u'version',
+                    u'url', u'outputs',
+                    u'created_at', u'value',
+                    u'confirmations', 
+                    u'key', u'type']
+
         assert tx_data.keys() == data_keys
         
 
