@@ -132,28 +132,31 @@ There are certain scenarios where you want to implement a wallet that you are in
 	* Instance tokens are used in the application authentication scheme.  When authenticating as an application, you will have full control of the applications wallets and allows a read only view of end user data if your app supports both.
 * __Keep the token safe__
 
-From here we create a new wallet.
-backup_key, totp_secret, wallet = app.wallets.create(<PASSPHRASE>)
+### Authenticate
+To authenticate as an application to get to an application wallet and/or pull information about the application call:
 
-The backup key is the root node that can derive all accounts, addresses.  This key will only be returned once via this call.  YOU MUST STORE IT IN A SAFE PLACE OFFLINE.  If you loose the backup_key and then later forget the passphrase to unlock the primary key, you will not be able to recover the wallet.
-
-The top secret is to be stored in a config file on the server operating the round client for this wallet.  This will be a part of the payment process.
-
-The wallet is the full wallet.  You can generate the accounts, addresses etc same as you did in the previous steps.
-
-### Authorization
+```python
+app = client.authenticate_application(app_url=app_url, 
+                                      api_token=api_token, 
+                                      instance_id=instance_id)
+```
 
 ### Wallet creation
+
+`backup_key, totp_secret, wallet = app.wallets.create(<PASSPHRASE>)`
+
+* The totp secret is to be stored in a config file on the server operating the round client for this wallet.  This will be a part of the payment process.
+* The backup key is the root node that can derive all accounts, addresses.  This key will only be returned once via this call.  __YOU MUST STORE IT IN A SAFE PLACE OFFLINE__.  If you loose the backup_key and then later forget the passphrase to unlock the primary key, you will not be able to recover the wallet.
+* The wallet is the full wallet.  You can generate the accounts, addresses etc same as an end user in the previous steps.
 
 ### Payments
 In this section you’ll learn how to make a payment for an operational/custodial wallet.
 
-Authenticate as the application
-app = client.authenticate_application(app_url, api_token, instance_token)
-Unlock the wallet.
-wallet.unlock(passphrase, top_secret)
-
-make a payment
-account.pay(payee,confirmations=4)
+1. Authenticate as the application
+	1. `app = client.authenticate_application(app_url, api_token, instance_token)`
+1. Unlock the wallet.
+	1. `wallet.unlock(passphrase, top_secret)`
+1. make a payment
+	1. `account.pay(payee,confirmations=4, app.totp_token.now())`
 
 The Gem client will use the top_secret to generate an MFA token that will be sent as part of the payment calls and verify on the Gem API side.
