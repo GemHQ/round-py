@@ -124,14 +124,13 @@ def login_user(user):
 ```
 
 ## Operational/Custodial Wallets
-In this section you’ll learn how to setup an internal wallet that you the developer are in full control over.  This can be a custodial modal where you hold funds on behalf of your users or if you have a business wallets.
+There are certain scenarios where you want to implement a wallet that you are in posession of that is used for business or custodial purposes.  In the operational/custodial model you will have two keys, the primary used for daily signing and the backup used for recovery.  This means that you hold funds be it the business or your end users.
 
-Create a new instance token in the management console.  
+### Configure 
 
-Instance tokens are used in the application authentication scheme.  This gives a particular client full control of the applications wallets and allows a read only view of end user data if your app supports both.
-
-Now we can authenticate
-app = client.authenticate_application(app_url, api_token, instance_token)
+* Create a new instance token in the management console.  
+	* Instance tokens are used in the application authentication scheme.  When authenticating as an application, you will have full control of the applications wallets and allows a read only view of end user data if your app supports both.
+* __Keep the token safe__
 
 From here we create a new wallet.
 backup_key, totp_secret, wallet = app.wallets.create(<PASSPHRASE>)
