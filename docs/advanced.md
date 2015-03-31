@@ -55,6 +55,7 @@ for tx in account.transactions(type='outgoing'):
 ```
 
 ## Attributes and Refresh
+### Attributes
 All objects in the round client have attributes in a key/value store.  If you want to see information within the attributes all you have to do is access it like any k/v object.
 
 to see all the attributes of an object:
@@ -72,18 +73,31 @@ user_email = user.attributes[u'email']
 
 __If there are no convenience methods for attributes you use often, please file an issue with what you need or make a pr if you build it in yourself.__
 
+### Refresh()
+The data on objects are cached client-side for performance versuses having to make API calls for every single method.  What this also means is that if you have for example an instance method for an account, then the information on the account could get into a stale state.  You will have to trigger a refresh of the object with any changes from the API. 
+
+When calling refresh, the object will be returned with the updated information.  Refresh can be called on individual objects as well as the corresponding collections.  For example:
+
+* `account = account.refresh()`: returns the account with any updated information
+* `account_collection = account_collection.refresh()`: returns an updated collection
+
 ## Subscriptions
-Setting up a subscription on your application will allow you to be notified via a webhook about any incoming/outgoing transaction for any address associated with an account in a wallet of your users.  There is no need to manage webhooks at an address level.
+Setting up a subscription on your application will allow you to be notified via a webhook about any incoming/outgoing transaction for any address associated with an account in a wallet of your users.  There is no need to manage webhooks at an address level anymore.  Gem's API will automatically register any new address or change address added to accounts automatically.  When a subscription is triggered, Gem will attempt delivery to the provided callback_url.  If your app server does not respond with a 200, Gem will continue to try.
 
-the management console - add a subscription token to the application.  This token is shared with the API and Gem will embed the token in any subscription notification that is sent to your app.
+### Configure the Application
 
-Expand the application by clicking on the name.  You will see a section called “subscriptions”
+1.  Go to the console and add a `subscription token` to the application.  This token is shared with the API and Gem will embed the token in any subscription notification that is sent to your app.
 
-Click the “add new subscription”  and that’s it.  Any new address added to any users wallet is automatically registered for you.
+1. Expand the application by clicking on the name.  You will see a section called “subscriptions”
 
+1. Click the “add new subscription”  and provide the callback_url .  Any new address added to any users wallet authorized on your app will automatically registered for you.
+
+### Webhook operations
 You will start to receive a webhook subscription at the provided url for incoming/outgoing transactions.  The payload of the subscription will contain information about the transaction, amount, and UIDs for the user/wallet/account information.  You’ll be able to use this information to query your app.
+
 For example - the following snippet will retrieve the user in a given subscription 
 
+```python
 generate the client
 client = round.client()
 
@@ -95,6 +109,7 @@ sub_user_key = ‘2309rjefvgnu1340jvfvj24r0j’
 user = None
 for u in app.users.itervalues():
 	user = u if u.attributes[u’key’] == sub_user_key
+```
 
 ##  Integrated 2FA
 In this section you’ll learn about how to use the Gem 2FA system to add additional 2FA challenges to your app, so you don’t have to integrate another api.
