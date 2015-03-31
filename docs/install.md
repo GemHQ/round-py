@@ -3,13 +3,8 @@
 ### Prerequisites:
 
 * Python 2.7
-
-* Virtualenv and virtualenvwrapper (or equivalent virtual environment solution) is required for Linux and recommended for everyone.
-
 * Git and a python extension build environment.
-
 * libffi
-
 
 ### Linux (debian-based, tested on Ubuntu 14.04)
 
@@ -17,12 +12,6 @@
 
   ```bash
   $ sudo apt-get install gcc make libffi-dev python-dev python-pip git
-  ```
-
-2. Install virtualenv
-
-  ```bash
-  $ pip install --user virtualenv virtualenvwrapper
   ```
 
 3. Edit .bashrc or .bash_profile to add ENV variables.
@@ -37,20 +26,13 @@
   ```bash
   $ source ~/.bashrc
   ```
-
-5. Make a virtual environment (optionally add `workon py` to your .bashrc to use this env automatically)
-
-  ```bash
-  $ mkvirtualenv py
-  ```
-
-6. Clone this repo and install.
+6. Install the client
 
   ```bash
-  $ git clone git@github.com:GemHQ/round-py.git
-  $ cd round-py && git checkout devnacl
-  $ python setup.py install
+  $ pip install round
   ```
+
+ [[back]](../README.md)
 
 ### Mac OSX:
 
@@ -69,18 +51,12 @@
   $ export PKG_CONFIG_PATH=/usr/local/Cellar/libffi/3.0.13/lib/pkgconfig/
   ```
 
-4. Pip install dependencies
+4. Pip install the client
   ```bash
-  $ pip install PyNaCl PyYAML patchboard coinop
+  $ pip round
   ```
 
-5. clone the git repository and run setup.py:
-  ```bash
-  $ git clone git@github.com:GemHQ/round-py.git
-  $ cd round-py
-  $ python setup.py develop
-  ```
-**for production environments use:** `python setup.py install`
+ [[back]](../README.md)
 
 ### Heroku
 
@@ -112,3 +88,5 @@
   ```
 
 From here you should be able to `import round` into your heroku project without error. (Most errors related to `round` on Heroku will mention `<sodium.h>` or `cffi` -- this is because PyNaCl compiles on import, which is likely to change in the next major release, see [this discussion](https://github.com/pyca/pynacl/issues/79).)
+
+ [[back]](../README.md)
