@@ -29,26 +29,53 @@ Transaction collections have a relationship to an account.  When getting the tra
 
  Now lets look at a single transaction: `tx = txs[0]`
 
-There is a lot of information on the tx.  You can call the attributes to get at the full list `tx.attributes`.  Additionally there are some convenience methods to get at key information quickly.  For example: `tx.hash`: returns the transaction hash
+There is a lot of information on the tx.  You can call the attributes to get at the full list `tx.attributes`.  Additionally there are some convenience methods to get at key information quickly.  For example, `tx.hash` returns the transaction hash.
 
 ### Fee Estimation
 Fees are estimated by requesting for an unsigned transaction from the API.  The Gem API will then lock the unspent outputs to prevent a potential double spend.  The returned unsigned transaction will have a fee in the attributes that you can then inspect.  If you decide you don't want to perform the transaction you'll have to [cancel the transaction](advanced.md#canceling-unsigned-transaction)
 
+Example snippet to generate an unsigned transaction:
+
+```python
+account = w.accounts['default']
+toAddress = u'2N4MtK1rZ88UWXDGWWVf1gYz1Runj4FMDr7'
+payees = [{'address':toAddress, 'amount':483034}]
+content = dict(outputs=account.outputs_from_payees(payees))
+unsigned = account.resource.payments.create(content)
+
+unsigned['fee']
+```
 
 ### Canceling Unsigned Transaction
-You can accomplish this by calling tx.cancel()
+You can accomplish this by calling `tx.cancel()` on a transaction.  If you have a lot of transactions you can loop over the collection and cancel.
 
-### Accessing Details about the Transaction
-tx.attributes[u’fee’] or tx.attributes[‘status’]
+```python
+for tx in account.transactions(type='outgoing'):
+    tx.cancel() if tx.attributes['status'] == 'unsigned'
+```
 
 ## Attributes and Refresh
-If you want to see information within the attributes all you have to do is access it like any other k/v object.
-tx.attributes[u’fee’] or tx.attributes[‘status’]
+All objects in the round client have attributes in a key/value store.  If you want to see information within the attributes all you have to do is access it like any k/v object.
+
+to see all the attributes of an object:
+
+```python
+from pprint import pprint as pp
+pp(account.attributes)
+```
+To access a particular attribute:
+
+```python
+fee = tx.attributes[u’fee’]
+user_email = user.attributes[u'email']
+```
+
+__If there are no convenience methods for attributes you use often, please file an issue with what you need or make a pr if you build it in yourself.__
 
 ## Subscriptions
-In this section you’ll learn how to setup subscriptions on your application to be notified of any incoming/outgoing transactions.
+Setting up a subscription on your application will allow you to be notified via a webhook about any incoming/outgoing transaction for any address associated with an account in a wallet of your users.  There is no need to manage webhooks at an address level.
 
-In the management console - add a subscription token to the application.  This token is shared with the API and Gem will embed the token in any subscription notification that is sent to your app.
+the management console - add a subscription token to the application.  This token is shared with the API and Gem will embed the token in any subscription notification that is sent to your app.
 
 Expand the application by clicking on the name.  You will see a section called “subscriptions”
 
