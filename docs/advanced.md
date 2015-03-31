@@ -18,7 +18,7 @@ The key methods on an account to use are:
 
 * `account.balance`: returns the sum of all transactions with 1 or more confirmations
 * `account.pending_balance`: returns the sum of all incoming outgoing transactions with 0 confirmations
-* `account.pay(payees,confirmations,redirect_url)`: send bitcoin out of an account **must call [wallet.unlock](advanced.md#wallets) first**
+* `account.pay(payees,confirmations,redirect_url)`: send bitcoin out of an account **must call [wallet.unlock()](advanced.md#wallets) first**
 * `account.transactions`: return the collections of transactions
 
 A pending_balance in Gem is any address involved in a transaction with 0 confirmations.  This means that in multiple transactions both incoming and outgoing will produce a net pending_balance.  As they confirm with a single confirmation, the account balance in the API reflects the change.  Objects get cached for speed in the client, so to fetch a new state of an account on the API, call account = account.refresh().
@@ -112,13 +112,16 @@ for u in app.users.itervalues():
 ```
 
 ##  Integrated 2FA
-In this section you’ll learn about how to use the Gem 2FA system to add additional 2FA challenges to your app, so you don’t have to integrate another api.
+Gem has built 2FA into the API but additionally built a system to add additional 2FA challenges to your app, so you don’t have to integrate yet another api.  You can ask Gem to send an sms challenge to the user to then pass back to your app.  The user will not get an SMS if the user has a TOTP app installed like Google Authenticator, Authy, Duo etc.  
 
-user.send_mfa()
+Example of how to incorporate 2FA into your app.
 
-user.verify_mfa()
-
-developer.send_mfa(phone_overrride=True)
+```python
+def login_user(user):
+	user.send_mfa(phone_number = 5555551212)
+	verify_password()
+	unlock_account(user) if user.verify_mfa(USER_ENTERED_MFA) 
+```
 
 ## Operational/Custodial Wallets
 In this section you’ll learn how to setup an internal wallet that you the developer are in full control over.  This can be a custodial modal where you hold funds on behalf of your users or if you have a business wallets.
