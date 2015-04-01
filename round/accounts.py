@@ -38,7 +38,7 @@ class Accounts(DictWrapper):
 
         Returns: The new round.Account
         """
-        accunt = self.wrap(self.resource.create(dict(name=name)))
+        account = self.wrap(self.resource.create(dict(name=name)))
         self.add(account)
         return account
 

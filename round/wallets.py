@@ -13,29 +13,54 @@ from .accounts import Account, Accounts
 from .subscriptions import Subscription, Subscriptions
 
 
-def generate(passphrase, network=DEFAULT_NETWORK, **kwargs):
+def generate(passphrase, network=DEFAULT_NETWORK):
+    """Generate a seed for the primary tree of a Gem wallet.
 
-    seeds, multi_wallet = MultiWallet.generate([u'primary'],
-                                               entropy=True,
-                                               network=network)
+    You may choose to store the passphrase for a user so the user doesn't have
+    to type it in every time. This is okay (although the security risks should be
+    obvious) but Gem strongly discourages storing even the encrypted private
+    seed, and storing both the passphrase and the private seed is completely
+    insane. Don't do it.
+
+    Args:
+      passphrase (str): The passphrase that will be used to encrypt the seed
+        before it's send to Gem. Key-stretching is done with PBDKF2 and
+        encryption is done with nacl's SecretBox.
+      network (str): Bitcoin network (bitcoin, testnet3)
+
+    Returns:
+      A dict containing the network, serialized public master node, and another
+      dict with the encrypted private seed for the wallet's primary tree.
+    """
+    seeds, multi_wallet = MultiWallet.generate(
+        [u'primary'], entropy=True, network=network)
 
     primary_seed = seeds[u'primary']
 
     # These are misnomers -- these are the pubkeys for the master nodes.
-    # public "seed" isn't a real thing.
+    # A public "seed" isn't a real thing.
     primary_public_seed = multi_wallet.public_seed(u'primary')
 
     encrypted_seed = PassphraseBox.encrypt(passphrase, primary_seed)
 
-    kwargs[u'network'] = GEM_NETWORK[network]
-    kwargs[u'primary_public_seed'] = primary_public_seed
-    kwargs[u'primary_private_seed'] = encrypted_seed
-    return kwargs
+    return dict(network=GEM_NETWORK[network],
+                primary_public_seed=primary_public_seed,
+                primary_private_seed=encrypted_seed)
 
 
 class Wallets(DictWrapper):
+    """A collection of round.Wallets objects."""
 
     def create(self, name, **kwargs):
+        """Create a new Wallet object and add it to this Wallets collection.
+
+        Args:
+          name (str): wallet name
+          **kwargs: Should contain either a `passphrase` or the output from
+            round.wallets.generate
+
+        Returns: The new round.Wallet
+        """
         if u'passphrase' not in kwargs and u'primary_public_seed' not in kwargs:
             raise ValueError("Usage: wallets.create(passphrase='new-wallet-passphrase')")
         elif u'passphrase' in kwargs:
@@ -53,6 +78,31 @@ class Wallets(DictWrapper):
 
 
 class Wallet(Wrapper, Updatable):
+    """A Gem Wallet represents a 3-key multisig HD bitcoin wallet.
+
+    Attributes:
+      primary_private_seed (dict): An encrypted representation of the private
+        seed for the primary tree. This is encrypted with a user-chosen
+        passphrase that is never sent to Gem. This is used for signing
+        transactions within this client libary.
+      primary_public_seed (str): A misnomer, this is the serialized master node
+        of the primary tree.
+      backup_public_seed (str): A misnomer, this is the serialized master node
+        of the backup tree. The backup private seed is generated out-of-band by
+        the end user when they confirm their email address and MFA information.
+        In the case of an Application wallet, the backup public can be delivered
+        in-band during the wallets.create call.
+      cosigner_public_seed (str): A misnomer, this is the serialized master node
+        of the cosigner tree. The cosigner private seed is generated and held by
+        Gem in Hardware Security Modules.
+      name (str): A human-readable name for the wallet. A User's primary wallet
+        is named 'default'.
+
+
+    Args:
+      resource (patchboard.Resource): server-side Wallet object
+      client (round.Client)
+    """
 
     def __init__(self, resource, client):
         super(Wallet, self).__init__(resource, client)

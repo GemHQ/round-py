@@ -16,11 +16,7 @@ from pprint import pprint as pp
 class Updatable(object):
 
     def update(self, **kwargs):
-        """
-        Update resource and return a round.Class-wrapped object.
-        """
-        return self.__class__(self.resource.update(kwargs),
-                              self.client)
+        return self.__class__(self.resource.update(kwargs), self.client)
 
 
 class MFAable(object):
@@ -78,6 +74,7 @@ class DictWrapper(collections.Mapping):
     def add(self, wrapper):
         key = self.key_for(wrapper)
         self.data[key] = wrapper
+        return wrapper
 
     def refresh(self):
         self.data = {}

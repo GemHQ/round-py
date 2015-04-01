@@ -13,9 +13,7 @@ import wallets
 
 class Users(DictWrapper):
 
-    def create(self, email, passphrase, device_name, device_id, api_token=None, **kwargs):
-
-
+    def create(self, email, passphrase, device_name, redirect_uri=None, api_token=None, **kwargs):
         if not passphrase and u'default_wallet' not in kwargs:
             raise ValueError("Usage: users.create(email, passphrase='new-wallet-passphrase', device_name, device_id, api_token)")
         elif passphrase:
@@ -23,24 +21,21 @@ class Users(DictWrapper):
                                               network=self.client.network)
             default_wallet[u'name'] = u'default'
 
-        user_data = {u'email': email,
-                     u'default_wallet': default_wallet}
+        # If not supplied, we assume the client already has an api_token param.
+        if api_token:
+            self.client.authenticate_identify(api_token)
+
+        user_data = dict(email=email,
+                         default_wallet=default_wallet,
+                         redirect_uri=redirect_uri,
+                         device_name=device_name)
         if u'first_name' in kwargs:
             user_data[u'first_name'] = kwargs[u'first_name']
         if u'last_name' in kwargs:
             user_data[u'last_name'] = kwargs[u'last_name']
         resource = self.resource.create(user_data)
         user = self.wrap(resource)
-        self.add(user)
-
-        # If not supplied, we assume the client already has an api_token param.
-        if api_token:
-            self.client.authenticate_identify(api_token)
-
-        device = user.devices.create({u'device_id':device_id,
-                                      u'name': device_name})
-
-        return user
+        return self.add(user)
 
     def wrap(self, resource):
         return User(resource, self.client)
@@ -65,9 +60,7 @@ class User(Wrapper, Updatable):
 
     @property
     def subscriptions(self):
-        """
-        Fetch and return Subscriptions associated with this user.
-        """
+        """Fetch and return Subscriptions associated with this user."""
         if not hasattr(self, '_subscriptions'):
             subscriptions_resource = self.resource.subscriptions
             self._subscriptions = Subscriptions(
