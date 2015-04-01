@@ -13,26 +13,34 @@ import wallets
 
 class Users(DictWrapper):
 
-    def create(self, email, **kwargs):
-        backup_seed = None
+    def create(self, email, passphrase, device_name, device_id, api_token=None, **kwargs):
 
-        if u'passphrase' not in kwargs and u'default_wallet' not in kwargs:
-            raise ValueError("Usage: users.create(email, passphrase='new-wallet-passphrase')")
-        elif u'passphrase' in kwargs:
-            backup_seed, wallet_data = wallets.generate(
-                kwargs[u'passphrase'],
-                network=self.client.network)
 
-            del kwargs[u'passphrase']
-            wallet_data[u'name'] = u'default'
-            kwargs[u'default_wallet'] = wallet_data
+        if not passphrase and u'default_wallet' not in kwargs:
+            raise ValueError("Usage: users.create(email, passphrase='new-wallet-passphrase', device_name, device_id, api_token)")
+        elif passphrase:
+            default_wallet = wallets.generate(passphrase,
+                                              network=self.client.network)
+            default_wallet[u'name'] = u'default'
 
-        kwargs.update({u'email': email})
-
-        resource = self.resource.create(kwargs)
+        user_data = {u'email': email,
+                     u'default_wallet': default_wallet}
+        if u'first_name' in kwargs:
+            user_data[u'first_name'] = kwargs[u'first_name']
+        if u'last_name' in kwargs:
+            user_data[u'last_name'] = kwargs[u'last_name']
+        resource = self.resource.create(user_data)
         user = self.wrap(resource)
         self.add(user)
-        return backup_seed, user
+
+        # If not supplied, we assume the client already has an api_token param.
+        if api_token:
+            self.client.authenticate_identify(api_token)
+
+        device = user.devices.create({u'device_id':device_id,
+                                      u'name': device_name})
+
+        return user
 
     def wrap(self, resource):
         return User(resource, self.client)

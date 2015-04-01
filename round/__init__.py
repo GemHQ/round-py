@@ -37,10 +37,14 @@ class Context(dict):
 
     def __init__(self):
         self.schemes = {
-            u'Gem-Developer':
+            u'Gem-Developer-Session':
                 {u'usage':
-                     u"client.authenticate_developer(email=email, privkey=pem_or_der_encoded_rsa_private_key [, override=False, fetch=True])",
-                 u'params': [u'email', u'privkey']},
+                     u"DEPRECATE",
+                 u'params': [u'key', u'session_token']},
+            u'Gem-User-Session':
+                {u'usage':
+                     u"DEPRECATE",
+                 u'params': [u'key', u'session_token']},
             u'Gem-Application':
                 {u'usage':
                      u"client.authenticate_application(app_url=app_url, api_token=token, instance_id=instance_id [, override=False, fetch=True])",
@@ -49,10 +53,18 @@ class Context(dict):
                 {u'usage':
                      u"client.authenticate_device(api_token=token, user_token=token, device_id=device_id [, email=user_email, user_url=user_url, override=False, fetch=True])",
                  u'params': [u'api_token', u'user_email', u'user_url', u'user_token', u'device_id']},
-            u'Gem-OOB-OTP':
+            u'Gem-Identify':
                 {u'usage':
-                     u"client.authenticate_otp(api_token=token, key=otp_key, secret=otp_secret [, override=False])",
-                 u'params': [u'key', u'secret', u'api_token']}
+                     u"client.authenticate_identify(api_token=token [, override=False])",
+                 u'params': [u'api_token']},
+            u'Gem-MFA':
+                {u'usage':
+                     u"client.authenticate_mfa(auth_token=token [, mfa_token=token])",
+                 u'params': [u'auth_token']},
+            u'Gem-Password':
+                {u'usage':
+                     u"client.authenticate_password(auth_token=token [, mfa_token=token])",
+                 u'params': [u'password_hash']}
         }
 
     def authorizer(self, schemes, resource, action, request_args):
@@ -60,12 +72,10 @@ class Context(dict):
             return u'', u''
         for scheme in schemes:
             if scheme in self.schemes and u'credential' in self.schemes[scheme]:
-                if scheme == u'Gem-Developer':
-                    sig, ts = self.dev_signature(request_args[u'body'])
-                    return scheme, u'{}, signature="{}", timestamp="{}"'.format(
-                        self.schemes[scheme][u'credential'], sig, ts)
-                else:
-                    return scheme, self.schemes[scheme][u'credential']
+                creds = self.schemes[scheme][u'credential']
+                if hasattr(self, 'mfa_token'):
+                    creds = '{}, mfa_token="{}"'.format(creds, self.mfa_token)
+                return scheme, creds
 
 
         raise AuthenticationError(self, schemes)

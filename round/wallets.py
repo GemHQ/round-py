@@ -15,41 +15,38 @@ from .subscriptions import Subscription, Subscriptions
 
 def generate(passphrase, network=DEFAULT_NETWORK, **kwargs):
 
-    seeds, multi_wallet = MultiWallet.generate([u'primary', u'backup'],
-                                               entropy=True, network=network)
+    seeds, multi_wallet = MultiWallet.generate([u'primary'],
+                                               entropy=True,
+                                               network=network)
 
     primary_seed = seeds[u'primary']
-    backup_seed = seeds[u'backup']
 
     # These are misnomers -- these are the pubkeys for the master nodes.
     # public "seed" isn't a real thing.
     primary_public_seed = multi_wallet.public_seed(u'primary')
-    backup_public_seed = multi_wallet.public_seed(u'backup')
 
     encrypted_seed = PassphraseBox.encrypt(passphrase, primary_seed)
 
     kwargs[u'network'] = GEM_NETWORK[network]
-    kwargs[u'backup_public_seed'] = backup_public_seed
     kwargs[u'primary_public_seed'] = primary_public_seed
     kwargs[u'primary_private_seed'] = encrypted_seed
-    return backup_seed, kwargs
+    return kwargs
 
 
 class Wallets(DictWrapper):
 
     def create(self, name, **kwargs):
-        backup_seed = kwargs.get('backup_private_seed', None)
         if u'passphrase' not in kwargs and u'primary_public_seed' not in kwargs:
             raise ValueError("Usage: wallets.create(passphrase='new-wallet-passphrase')")
         elif u'passphrase' in kwargs:
-            backup_seed, kwargs = generate(kwargs['passphrase'],
-                                           network=self.client.network)
+            kwargs = generate(kwargs['passphrase'],
+                              network=self.client.network)
 
         kwargs[u'name'] = name
         resource = self.resource.create(kwargs)
         wallet = self.wrap(resource)
         self.add(wallet)
-        return backup_seed, wallet
+        return wallet
 
     def wrap(self, resource):
         return Wallet(resource, self.client)

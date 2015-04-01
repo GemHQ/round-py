@@ -16,17 +16,9 @@ class Developers(object):
         self.context = client.context
         self.client = client
 
-    def create(self, **content):
-        priv = None
-        if u'privkey' in content:
-            priv = content[u'privkey']
-            del content[u'privkey']
+    def create(self, **kwargs):
 
-        resource = self.resource.create(content)
-        if priv:
-            resource.context.authorize(u'Gem-Developer',
-                                       email=content[u'email'],
-                                       privkey=priv)
+        resource = self.resource.create(kwargs)
         return self.wrap(resource)
 
     def wrap(self, resource):
@@ -35,15 +27,9 @@ class Developers(object):
 
 class Developer(Wrapper):
 
-    def update(self, **content):
-        resource = self.resource.update(content)
+    def update(self, phone_number):
+        resource = self.resource.update({'phone_number': phone_number})
 
-        email = resource.attributes.get(u'email', None)
-        priv = content.get(u'privkey', None)
-
-        resource.context.authorize(u'Gem-Developer',
-                                   email=email,
-                                   privkey=priv)
         return Developer(resource, self.client)
 
     @property
