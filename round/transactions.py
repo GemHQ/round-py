@@ -27,6 +27,12 @@ class Transaction(Wrapper):
     def attributes(self):
         return self.resource.attributes
 
+    def approve(self, mfa_token=None):
+        if mfa_token:
+            return self.with_mfa(mfa_token).resource.approve()
+
+        return self.resource.approve()
+
     def cancel(self):
         try:
             return self.resource.cancel()

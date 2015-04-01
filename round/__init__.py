@@ -45,7 +45,7 @@ class Context(dict):
     def __init__(self):
         self.schemes = {
             u'Gem-Application':
-                 {u'params': [u'app_url', u'api_token', u'instance_id']},
+                 {u'params': [u'app_url', u'api_token', u'instance_token']},
             u'Gem-Device':
                  {u'params': [u'api_token', u'user_email', u'user_url',
                               u'user_token', u'device_id']},

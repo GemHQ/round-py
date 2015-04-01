@@ -15,123 +15,146 @@ import addresses
 
 
 class Accounts(DictWrapper):
+    """A collection of round.Accounts objects.
+
+    Args:
+      resource: Account patchboard.Resource object
+      client: authenticated round.Client object
+      wallet: round.Wallet object to which this Account belongs.
+
+    Returns:
+      The new round.Accounts object.
+    """
 
     def __init__(self, resource, client, wallet):
-        """
-        Initialize a round.Accounts from an Accounts patchboard.Resource object.
-        Return the new round.Accounts object.
-        Keyword arguments:
-        resource --  Account patchboard.Resource object
-        client -- authenticated round.Client object
-        wallet -- round.Wallet object to which this Account belongs.
-        """
         self.wallet = wallet
         super(Accounts, self).__init__(resource, client)
 
-    def create(self, **content):
+    def create(self, name):
+        """Create a new Account object and add it to this Accounts collection.
+
+        Args:
+          name (str): Account name
+
+        Returns: The new round.Account
         """
-        Create a new Account object and add it to this Accounts collection.
-        Return the new round.Account.
-        Keyword arguments:
-        name -- Account name
-        """
-        resource = self.resource.create(content)
-        acc = self.wrap(resource)
-        self.add(acc)
-        return acc
+        accunt = self.wrap(self.resource.create(dict(name=name)))
+        self.add(account)
+        return account
 
     def wrap(self, resource):
-        """
-        Return a round.Account constructed from a patchboard.Resource object.
-        Keyword arguments:
-        resource -- Account patchboard.Resource object
-        """
         return Account(resource, self.client, self.wallet)
 
 
 class Account(Wrapper, Updatable):
+    """Accounts contain a sub-tree of a Wallet. (m/44/0/_)
+
+    Attributes:
+      addresses (round.Addresses): Collection of Addresses owned by this Account.
+      subscriptions (round.Subscriptuions): Collection of Subscriptions
+        registered on this Account.
+
+    Args:
+      resource (patchboard.Resource): server-side Account object
+      client (round.Client)
+      wallet (round.Wallet): The Wallet to which this Account belongs
+    """
 
     def __init__(self, resource, client, wallet):
-        """
-        Initialize a round.Account from an Account patchboard.Resource object.
-        Return the new round.Account object.
-        Keyword arguments:
-        resource --  Account patchboard.Resource object
-        client -- authenticated round.Client object
-        wallet -- round.Wallet object to which this Account belongs.
-        """
         super(Account, self).__init__(resource, client)
         self.wallet = wallet
 
     def update(self, **kwargs):
-        """
-        Update the Account resource with specified content.
-        Return the updated Account object.
-        Keyword arguments:
-        name -- name for the account
+        """Update the Account resource with specified content.
+
+        Args:
+          name (str): Human-readable name for the account
+
+        Returns: the updated Account object.
         """
         return self.__class__(self.resource.update(kwargs),
                               self.client,
                               wallet=self.wallet)
 
-    def pay(self, payees, confirmations=6):
+    def pay(self, payees, confirmations=6, mfa_token=None, redirect_uri=None):
+        """Create, verify, and sign a new Transaction.
+
+        If this Account is owned by a User object, the user must be redirected to
+        a URL (`mfa_uri`) returned by this call to input their MFA token. After
+        they complete that step, the Transaction will be approved and published
+        to the bitcoin network. If a `redirect_uri` is provided in this call, the
+        user will be redirected to that uri after they complete the MFA challenge
+        so it's a good idea to have an endpoint in your app (or custom scheme on
+        mobile) that can provide the user a seamless flow for returning to your
+        application. If they have not configured a TOTP MFA application (e.g.
+        Google Authenticator), then an SMS will be sent to their phone number
+        with their token.
+
+        If this Account is owned by an Application, the `mfa_token` can be
+        included in this call and the Transaction will be automatically approved
+        and published to the blockchain.
+
+        Args:
+          payees (list of dict): list of outputs in the form:
+            [{'amount': 10000(satoshis),
+              'address':'validbtcaddress'}, ...]
+          confirmations (int, optional): Required confirmations for UTXO
+            selection ( > 0)
+          mfa_token (str, optional): TOTP token for the Application owning this
+            Account's wallet.
+          redirect_uri (str, optional): URI to redirect a user to after they
+            input an mfa token on the page referenced by the `mfa_uri` returned
+            by this function.
+
+        Returns: An "unapproved" Transaction with an `mfa_uri` attribute to route
+          the user to the MFA confirmation page --  if called with Gem-Device
+          authentication.
+          An "unconfirmed" Transaction -- if called with Gem-Application auth
+          (and an `mfa_token` was supplied).
         """
-        Create an unsigned transaction.
-        Verify and sign the transaction, then submit the signed tx to the server
-        for signing and publication.
-        Return the unconfirmed Transaction.
-        Keyword arguments:
-        payees -- list of outputs in the form: [{'amount': 10000(satoshis),
-                                                 'address':'validbtcaddress'}, ...]
-        confirmations -- Required confirmations for UTXO selection (integer > 0)
-        """
-        content = dict(outputs=self.outputs_from_payees(payees), confirmations=confirmations)
+        # First create the unsigned tx.
+        content = dict(payees=payees,
+                       confirmations=confirmations,
+                       redirect_uri=redirect_uri)
         unsigned = self.resource.payments.create(content)
 
-        transaction = CoinopTx(data=unsigned.attributes)
-        signatures = self.wallet.signatures(transaction)
+        # Sign the tx with the primary private key.
+        coinoptx = CoinopTx(data=unsigned.attributes)
+        signatures = self.wallet.signatures(coinoptx)
 
-        # TODO: investigate removing the txhash as a required param
-        transaction_hash = transaction.hex_hash()
-        content = dict(inputs=signatures, transaction_hash=transaction_hash)
-        signed = unsigned.sign(content)
-        return txs.Transaction(signed, self.client)
+        # Update the tx with the signatures.
+        transaction = dict(signatures=dict(inputs=signatures,
+                                           transaction_hash=coinoptx.hex_hash()))
 
-    def outputs_from_payees(self, payees):
-        """
-        Adapt the payees parameter from the high level interface and return the
-        format required by the API schema. We may change the API schema at some
-        point to match.
-        Keyword arguments:
-        payees -- [{'amount': 10000(satoshis), 'address':'validbtcaddress'}, ...]
-        Return:
-                  [{'amount': 10000, 'payee': {'address': 'validbtcaddress'}, ...]
-        """
-        def fn(payee):
-            if 'amount' in payee and 'address' in payee:
-                return dict(
-                    amount=payee['amount'],
-                    payee={'address': payee['address']})
-            else:
-                raise ValueError("Invalid payee properties")
+        signed = txs.Transaction(unsigned.update(transaction), self.client)
 
-        return map(fn, payees)
+        # If this is an Application wallet, approve the transaction.
+        if mfa_token and self.wallet.application:
+            return txs.Transaction(signed.with_mfa(mfa_token).approve())
+
+        # Otherwise return the unapproved tx (now redirect the user to the
+        # `mfa_uri` attribute to approve!)
+        return signed
 
     def transactions(self, **query):
-        """
-        Fetch and return Transactions involving any Address inside this Account.
-        Keyword arguments:
-        status -- One of "confirmed", "unconfirmed", "unsigned", "canceled"
-        type -- One of "incoming", "outgoing"
+        """Fetch and return Transactions involving any Address inside this
+        Account.
+
+        Args:
+          status (str): One of ["unsigned", "unapproved",
+                                "confirmed", "unconfirmed",
+                                "canceled", "denied"]
+          type (str): One of ["incoming", "outgoing"]
+
+        Returns:
+          A collection of matching Transactions
         """
         transaction_resource = self.resource.transactions(query)
         return txs.Transactions(transaction_resource, self.client)
 
     @property
     def subscriptions(self):
-        """
-        Fetch and return Subscriptions associated with this account.
-        """
+        """Fetch and return Subscriptions registered on this account."""
         if not hasattr(self, '_subscriptions'):
             subscriptions_resource = self.resource.subscriptions
             self._subscriptions = Subscriptions(
@@ -140,8 +163,6 @@ class Account(Wrapper, Updatable):
 
     @property
     def addresses(self):
-        """
-        Fetch and return Addresses inside this Account.
-        """
+        """Fetch and return Addresses inside this Account."""
         address_resource = self.resource.addresses
         return addresses.Addresses(address_resource, self.client)
