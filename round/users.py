@@ -84,6 +84,7 @@ class User(Wrapper, Updatable):
       phone_number (str)
       default_wallet (round.Wallet)
       wallets (round.Wallets)
+      devices (list)
     """
 
     def update(self, **content):
@@ -92,6 +93,7 @@ class User(Wrapper, Updatable):
 
     @property
     def wallets(self):
+        """Fetch and return Wallets associated with this user."""
         if not hasattr(self, '_wallets'):
             wallets_resource = self.resource.wallets
             self._wallets = wallets.Wallets(wallets_resource,
