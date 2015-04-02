@@ -76,7 +76,7 @@ class Account(Wrapper, Updatable):
                               self.client,
                               wallet=self.wallet)
 
-    def pay(self, payees, confirmations=6, mfa_token=None, redirect_uri=None):
+    def pay(self, payees, utxo_confirmations=6, mfa_token=None, redirect_uri=None):
         """Create, verify, and sign a new Transaction.
 
         If this Account is owned by a User object, the user must be redirected to
@@ -114,7 +114,7 @@ class Account(Wrapper, Updatable):
         """
         # First create the unsigned tx.
         content = dict(payees=payees,
-                       confirmations=confirmations,
+                       utxo_confirmations=utxo_confirmations,
                        redirect_uri=redirect_uri)
         unsigned = self.resource.transactions().create(content)
 
