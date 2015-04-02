@@ -52,9 +52,7 @@ class Context(dict):
             u'Gem-Identify':
                  {u'params': [u'api_token']},
             u'Gem-MFA':
-                {u'params': [u'auth_token']},
-            u'Gem-Password':
-                {u'params': [u'password_hash']}
+                {u'params': [u'auth_token']}
         }
 
     def authorizer(self, schemes, resource, action, request_args):
