@@ -48,9 +48,9 @@ class Context(dict):
                  {u'params': [u'app_url', u'api_token', u'instance_token'],
                   u'usage': "client.authenticate_application(app_url, api_token, instance_token)"},
             u'Gem-Device':
-                 {u'params': [u'api_token', u'user_email', u'user_url',
-                              u'user_token', u'device_id'],
-                  u'usage': "client.authenticate_device(api_token, user_token, device_id, email)"},
+                 {u'params': [u'api_token', u'device_id', u'user_email',
+                              u'user_url'],
+                  u'usage': "client.authenticate_device(api_token, device_id, email)"},
             u'Gem-Identify':
                  {u'params': [u'api_token'],
                   u'usage': "client.authenticate_identify(api_token)"}}

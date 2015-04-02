@@ -18,6 +18,16 @@ class Users(DictWrapper):
                redirect_uri=None, api_token=None, **kwargs):
         """Create a new User object and add it to this Users collection.
 
+        In addition to creating a user, this call will create a device for that
+        user, whose device_id will be returned from this call. Store the
+        device_id, as it's required to complete Gem-Device authentication after
+        the user approves the device at the end of their signup flow.
+
+        After this call, be sure to redirect the user to the user.mfa_uri
+        location to complete their account. If you get a 409 Conflict error, then
+        the user already exists in the Gem system and you'll want to do a
+        `client.user(email).devices.create(device_name)`
+
         Args:
           email (str)
           device_name (str): Human-readable name for the device through which
@@ -32,7 +42,7 @@ class Users(DictWrapper):
             has Gem-Application or Gem-Identify authentication.
           **kwargs
 
-        Returns: The new round.User
+        Returns: A tuple of (device_id, round.User)
         """
 
         if not passphrase and u'default_wallet' not in kwargs:
@@ -66,7 +76,7 @@ class Users(DictWrapper):
             user_data[u'last_name'] = kwargs[u'last_name']
 
         resource = self.resource.create(user_data)
-        return self.wrap(resource)
+        return (resource.__dict__[u'device_id'], self.wrap(resource))
 
     def wrap(self, resource):
         return User(resource, self.client)

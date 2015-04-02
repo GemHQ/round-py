@@ -72,21 +72,20 @@ class Client(MFAable):
 
         return self.application if fetch else True
 
-    def authenticate_device(self, api_token, user_token, device_id, email=None,
-                            user_url=None, override=False, fetch=True):
+    def authenticate_device(self, api_token, device_id, email=None, user_url=None,
+                            override=False, fetch=True):
         """Set credentials for Device authentication.
 
         Args:
           api_token (str): Token issued to your Application through the Gem
             Developer Console.
-          user_token (str): Token identifying a User. You receive this from a
-            users.create call, or as a query parameter in the redirect_uri after
-            a user authorizes a device.
           device_id (str): Physical device identifier. You will receive this
-            from a user.devices.create call, or as a query parameter in the
-            redirect_uri after creating a user.
-          override (boolean): Replace existing Application credentials.
-          fetch (boolean): Return the authenticated User.
+            from a user.devices.create call or from users.create.
+          email (str, optional): User's email address, required if user_url is
+            not provided.
+          user_url (str, optional): User's Gem url.
+          override (boolean, optional): Replace existing Application credentials.
+          fetch (boolean, optional): Return the authenticated User.
 
         Returns:
           An User object if `fetch` is True.
