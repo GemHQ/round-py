@@ -83,7 +83,7 @@ class Client(object):
     def authenticate_identify(self, api_token, override=True):
         if (u'credential' in self.context.schemes[u'Gem-Identify'] and
             not override):
-            raise ValueError(u"This object already has Gem-Idnetify authentication. To overwrite it call authenticate_otp with override=True.")
+            raise ValueError(u"This object already has Gem-Idnetify authentication. To overwrite it call authenticate_identify with override=True.")
 
         if (not api_token or
             not self.context.authorize(u'Gem-Identify', api_token=api_token)):
@@ -92,52 +92,18 @@ class Client(object):
 
         return True
 
+    def authenticate_mfa(self, auth_token, override=True):
+        if (u'credential' in self.context.schemes[u'Gem-MFA'] and
+            not override):
+            raise ValueError(u"This object already has Gem-MFA authentication. To overwrite it call authenticate_mfa with override=True.")
 
-    def begin_device_authorization(self, email, api_token, device_name,
-                                   device_id):
-        try:
-            self.context.schemes[u'Gem-OOB-OTP'][u'credential'] = 'api_token="{}"'.format(api_token)
-            reply = self.user(email).authorize_device({u'name': device_name,
-                                                       u'device_id': device_id})
-        except ResponseError as e:
-            try:
-                key = e.headers['WWW-Authenticate']['Gem-OOB-OTP'][u'key']
-                return key
-            except KeyError:
-                if e.message == 'unauthorized':
-                    raise OTPConflictError()
-                else:
-                    raise StandardError(e.message)
-            except:
-                raise e
+        if (not auth_token or
+            not self.context.authorize(u'Gem-MFA', auth_token=auth_token)):
+            raise ValueError(u"Usage: {}".format(
+                self.context.schemes[u'Gem-MFA'][u'usage']))
 
+        return True
 
-    def complete_device_authorization(self, email, api_token, device_name,
-                                      device_id, key, secret):
-        try:
-            self.authenticate_otp(api_token=api_token,
-                                  key=key, secret=secret)
-
-            r = self.user(email).authorize_device({u'name': device_name,
-                                                   u'device_id': device_id})
-
-        except ResponseError as e:
-            try:
-                new_key = e.headers['WWW-Authenticate']['Gem-OOB-OTP'][u'key']
-                if new_key == key:
-                    raise e
-                else:
-                    raise UnknownKeyError(new_key)
-            except KeyError:
-                raise e
-
-        self.authenticate_device(api_token=api_token,
-                                 user_url=r.url,
-                                 user_token=r.user_token,
-                                 device_id=device_id,
-                                 override=True)
-
-        return User(r, self)
 
     @property
     def application(self):
