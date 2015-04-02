@@ -114,8 +114,7 @@ class Account(Wrapper, Updatable):
         """
         # First create the unsigned tx.
         content = dict(payees=payees,
-                       utxo_confirmations=utxo_confirmations,
-                       redirect_uri=redirect_uri)
+                       utxo_confirmations=utxo_confirmations)
         unsigned = self.resource.transactions().create(content)
 
         # Sign the tx with the primary private key.
@@ -124,7 +123,8 @@ class Account(Wrapper, Updatable):
 
         # Update the tx with the signatures.
         transaction = dict(signatures=dict(inputs=signatures,
-                                           transaction_hash=coinoptx.hex_hash()))
+                                           transaction_hash=coinoptx.hex_hash(),
+                                           redirect_uri=redirect_uri))
 
         signed = txs.Transaction(unsigned.update(transaction), self.client)
 

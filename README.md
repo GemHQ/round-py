@@ -11,7 +11,7 @@ The round client is designed to interact with Gem's API to make building blockch
 * SDKs for many popular languages
 
 ## Support information
-* __Support email__: [support@gem.co](mailto:support@gem.co) 
+* __Support email__: [support@gem.co](mailto:support@gem.co)
 * __Support IRC chat__: `#gemhq` on `irc.freenode.net`
 * __Issues__:  Use github issues
 * __Slack room__:  Send email to support requesting access to the slack room for this client
@@ -49,7 +49,7 @@ The round client is designed to interact with Gem's API to make building blockch
 ### Introduction
 This tutorial will have you run through setting up your application and creating your own wallet as a user of your application.  By the end of the tutorial, you will have created your User, wallet, account, an address as well as fund it and then make a payment using the bitcoin testnet network.
 
-This tutoril assumes that you have completed the developer signup and that you have successfully [installed the client](docs/install.md)
+This tutorial assumes that you have completed the developer signup and that you have successfully [installed the client](docs/install.md)
 
 ### 1. Run the Client
 In this step you will learn how to instantiate the API client for the given networks.
@@ -61,10 +61,10 @@ In this step you will learn how to instantiate the API client for the given netw
 	>>> import round
 	```
 
-1. Create the client object using the sandbox stack 
+1. Create the client object using the sandbox stack
 
-	```python 
-	# the default client is set to sandbox the testnet stack 
+	```python
+	# the default client is set to sandbox the testnet stack
 	client = round.client()
 
 	# if you want to configure the client for production mainnet
@@ -112,7 +112,7 @@ In this step you will create your own personal Gem user and wallet authorized on
 In this step you will learn how to authenticate a users device to get a fully functional user to perform wallet actions.  You use this call when the user returns to your app from the create step, or subsequent calls thereafter.
 
 1. Call the authenticate_device method from the client object
-	
+
 	```python
 	full_user = client.authenticate_device(
 						api_token = api_token,
@@ -146,7 +146,7 @@ In this section you'll learn how to create an address to fund with testnet coins
 	1. [TP's TestNet Faucet](https://tpfaucet.appspot.com/)
 	1. [Mojocoin Testnet3 Faucet](http://faucet.xeno-genesis.com/)
 
-Payments have to be confirmed by the network and on Testnet that can be slow.  To monitor for confirmations: input the address into the following url `https://live.blockcypher.com/btc-testnet/address/<YOUR ADDRESS>`.  The current standard number of confirmations for a transaction to be considered safe is 6. 
+Payments have to be confirmed by the network and on Testnet that can be slow.  To monitor for confirmations: input the address into the following url `https://live.blockcypher.com/btc-testnet/address/<YOUR ADDRESS>`.  The current standard number of confirmations for a transaction to be considered safe is 6.
 
 You will be able to make a payment on a single confirmation.  While you wait for that to happen, feel free to read more details about:
 [Wallets and Accounts](docs/Advanced-Topics.md#More-About-Wallets-and-Accounts)
@@ -167,8 +167,8 @@ In this section you’ll learn how to create a payment a multi-signature payment
 	payment = account.pay([{‘address’:’ mxzdT4ShBudVtZbMqPMh9NVM3CS56Fp11s’, ‘amount’:25000}],confirmations = 1, ‘https://my.mobileapp.com')
 	```
 
-the pay call takes a list of payee objects.  A payee is a dict of `{'address':ADDRESS, 'amount':amount}` where address is the bitcoin address and amount is the number of satoshis.  Confirmations default to six and represents the number of confirmations an unspent output needs to have in order to be used in the transaction.  The last arg is the redirect url for Gem to send the user back to your application after the user submits their 2FA challenge.  
+the pay call takes a list of payee objects.  A payee is a dict of `{'address':ADDRESS, 'amount':amount}` where address is the bitcoin address and amount is the number of satoshis.  Confirmations default to six and represents the number of confirmations an unspent output needs to have in order to be used in the transaction.  The last arg is the redirect url for Gem to send the user back to your application after the user submits their 2FA challenge.
 
-**CONGRATS** - now build something cool. 
+**CONGRATS** - now build something cool.
 
 [[top]](README.md#getting-started-tutorial)

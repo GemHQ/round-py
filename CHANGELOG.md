@@ -1,4 +1,16 @@
 
+0.7.0 / 2015-04-01
+==================
+
+  * TOTP support for Applications
+  * Wallets.generate can provide arbitrary trees for a wallet
+  * A _useful_ README
+  * Docstrings!
+  * New transaction flow supporting MFA
+  * Eliminated the 'payments' abstraction
+  * Backup seed generation for User accounts removed
+  * Various bug fixes and minor improvements
+
 0.6.2 / 2015-03-04
 ==================
 

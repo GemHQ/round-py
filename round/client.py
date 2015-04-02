@@ -18,7 +18,14 @@ from pprint import pprint as pp
 
 
 class Client(object):
+    """The Client object holds a connection to Gem and references to root-level
+    objects.
 
+    Attributes:
+      context (round.Context)
+      resources (patchboard.Resources)
+      users (round.Users)
+    """
     def __init__(self, pb_client, network=DEFAULT_NETWORK):
         self.pb_client = pb_client
         try:
