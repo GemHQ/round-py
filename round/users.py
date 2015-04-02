@@ -40,7 +40,15 @@ class Users(DictWrapper):
         elif passphrase:
             default_wallet = wallets.generate(
                 passphrase, network=self.client.network)[u'primary']
-            default_wallet[u'name'] = 'default'
+        else:
+            default_wallet = kwargs[u'default_wallet']
+
+        default_wallet[u'name'] = 'default'
+        default_wallet[u'primary_private_seed'] = default_wallet[u'encrypted_seed']
+        default_wallet[u'primary_public_seed'] = default_wallet[u'public_seed']
+        del default_wallet[u'encrypted_seed']
+        del default_wallet[u'public_seed']
+        del default_wallet[u'private_seed']
 
         # If not supplied, we assume the client already has an api_token param.
         if api_token:
@@ -48,9 +56,10 @@ class Users(DictWrapper):
 
         user_data = dict(email=email,
                          default_wallet=default_wallet,
-                         redirect_uri=redirect_uri,
                          device_name=device_name)
 
+        if redirect_uri:
+            user_data[u'redirect_uri'] = redirect_uri
         if u'first_name' in kwargs:
             user_data[u'first_name'] = kwargs[u'first_name']
         if u'last_name' in kwargs:

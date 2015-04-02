@@ -31,43 +31,9 @@ class Client(object):
         self.developers = Developers(self.resources.developers, self)
         self.users = Users(self.resources.users, self)
 
-    def authenticate(self, **kwargs):
-        print u"client.authenticate() is DEPRECATED!"
-        added = []
-        if u'developer' in kwargs:
-            added.append(self.authenticate_developer(**kwargs[u'developer']))
-        if u'application' in kwargs:
-            added.append(self.authenticate_application(**kwargs[u'application']))
-        if u'device' in kwargs:
-            added.append(self.authenticate_device(**kwargs[u'device']))
-        if u'otp' in kwargs:
-            added.append(self.authenticate_otp(**kwargs[u'otp']))
-        if not added:
-            raise ValueError(u"Supported authentication schemes are:\n{}".format(
-                pp(client().schemes)))
-        return added
-
     def with_mfa(self, mfa_token):
         self.context.mfa_token = mfa_token
         return self
-
-    def authenticate_developer(self, key, email, session_token,
-                               override=False, fetch=True):
-
-        if not self.context.authorize(u'Gem-Developer-Session', key=key, session_token=session_token):
-            raise ValueError("Usage: {}".format(
-                self.context.schemes[u'Gem-Developer-Session'][u'usage']))
-
-        return self.developer(email) if fetch else True
-
-    def authenticate_user(self, key, email, session_token,
-                          override=False, fetch=True):
-
-        if not self.context.authorize(u'Gem-User-Session', key=key, session_token=session_token):
-            raise ValueError("Usage: {}".format(
-                self.context.schemes[u'Gem-User-Session'][u'usage']))
-
-        return self.user(email) if fetch else True
 
     def authenticate_application(self, app_url, api_token, instance_id,
                                  override=False, fetch=True):
@@ -166,15 +132,6 @@ class Client(object):
 
         return User(r, self)
 
-
-    def developer(self, email=None):
-        if not hasattr(self, u'_developer'):
-            if email:
-                dev_resource = self.resources.developer_query({u'email': email})
-                self._developer = Developer(dev_resource.get(), self)
-
-        return self._developer
-
     @property
     def application(self):
         if not hasattr(self, u'_application'):
@@ -219,9 +176,6 @@ class Client(object):
         return self._user
 
     def wallet(self, url):
-        # Not memoizing here, because a wallet is not a fundamental
-        # part of a session, as a user or app would be.  Ditto account,
-        # below.
         wallet_resource = self.resources.wallet(url).get()
         return Wallet(wallet_resource, self)
 
