@@ -116,7 +116,7 @@ class Account(Wrapper, Updatable):
         content = dict(payees=payees,
                        confirmations=confirmations,
                        redirect_uri=redirect_uri)
-        unsigned = self.resource.payments.create(content)
+        unsigned = self.resource.transactions().create(content)
 
         # Sign the tx with the primary private key.
         coinoptx = CoinopTx(data=unsigned.attributes)

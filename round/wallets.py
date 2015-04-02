@@ -13,7 +13,7 @@ from .accounts import Account, Accounts
 from .subscriptions import Subscription, Subscriptions
 
 
-def generate(passphrase, network=DEFAULT_NETWORK):
+def generate(passphrase, network=DEFAULT_NETWORK, trees=[u'primary']):
     """Generate a seed for the primary tree of a Gem wallet.
 
     You may choose to store the passphrase for a user so the user doesn't have
@@ -27,19 +27,25 @@ def generate(passphrase, network=DEFAULT_NETWORK):
         before it's send to Gem. Key-stretching is done with PBDKF2 and
         encryption is done with nacl's SecretBox.
       network (str): Bitcoin network (bitcoin, testnet3)
+      trees (list of str): A list of names to generate trees for. For User
+        Wallets this will be ['primary'], for Application Wallets it will be
+       ['primary', 'backup'].
 
     Returns:
-      A dict containing the network, serialized public master node, and another
-      dict with the encrypted private seed for the wallet's primary tree.
+      A list of dicts containing the network, serialized public master node, and
+       a sub-dict with the encrypted private seed for each tree in `trees`.
     """
     seeds, multi_wallet = MultiWallet.generate(
-        [u'primary'], entropy=True, network=network)
+        trees, entropy=True, network=network)
 
-    primary_seed = seeds[u'primary']
 
-    # These are misnomers -- these are the pubkeys for the master nodes.
-    # A public "seed" isn't a real thing.
-    primary_public_seed = multi_wallet.public_seed(u'primary')
+    [dict(name=tree,
+          private_seed=seeds[tree],
+          public_seed=multi_wallet.public_seed(tree)) for tree in trees]
+
+        # These are misnomers -- these are the pubkeys for the master nodes.
+        # A public "seed" isn't a real thing.
+    primary_public_seed = u'primary'
 
     encrypted_seed = PassphraseBox.encrypt(passphrase, primary_seed)
 
@@ -97,7 +103,9 @@ class Wallet(Wrapper, Updatable):
         Gem in Hardware Security Modules.
       name (str): A human-readable name for the wallet. A User's primary wallet
         is named 'default'.
-
+      multi_wallet (coinop.Transaction): When unlocked, this variable will be
+        populated with a high-level interface wrapper around the primary private
+        seed.
 
     Args:
       resource (patchboard.Resource): server-side Wallet object
@@ -115,12 +123,26 @@ class Wallet(Wrapper, Updatable):
                                  wallet=self)
 
     def is_unlocked(self):
+        """Return true if the wallet is unlocked."""
         return not self.is_locked()
 
     def is_locked(self):
+        """Return true if the wallet is locked."""
         return (self.multi_wallet is None)
 
     def unlock(self, passphrase, network=None):
+        """Unlock the Wallet by decrypting the primary_private_seed with the
+        supplied passphrase. Once unlocked, the private seed is accessible in
+        memory and calls to `account.pay` will succeed. This is a necessary step
+        for creating transactions.
+
+        Args:
+          passphrase (str): The passphrase the User used to encrypt this wallet.
+          network (str): Bitcoin network (bitcoin, testnet3)
+
+        Returns:
+          self
+        """
         network = network if network else self.resource.network
         wallet = self.resource
         primary_seed = PassphraseBox.decrypt(
@@ -133,12 +155,11 @@ class Wallet(Wrapper, Updatable):
                 u'cosigner': wallet.cosigner_public_seed,
                 u'backup': wallet.backup_public_seed},
             network=NETWORK_MAP[network])
+        return self
 
     @property
     def subscriptions(self):
-        """
-        Fetch and return Subscriptions associated with this wallet.
-        """
+        """Fetch and return Subscriptions associated with this wallet."""
         if not hasattr(self, '_subscriptions'):
             subscriptions_resource = self.resource.subscriptions
             self._subscriptions = Subscriptions(
@@ -146,6 +167,14 @@ class Wallet(Wrapper, Updatable):
         return self._subscriptions
 
     def signatures(self, transaction):
+        """Sign a transaction.
+
+        Args:
+          transaction (coinop.Transaction)
+
+        Returns:
+          A list of signature dicts of the form [{'primary': 'base58signaturestring'}]
+        """
         # TODO: output.metadata['type']['change']
         if not self.multi_wallet:
             raise Exception("This wallet must be unlocked with wallet.unlock(passphrase)")

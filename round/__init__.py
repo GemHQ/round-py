@@ -78,7 +78,7 @@ class Context(dict):
             if scheme in self.schemes and u'credential' in self.schemes[scheme]:
                 cred = self.schemes[scheme][u'credential']
                 if hasattr(self, 'mfa_token'):
-                    cred = '{}, mfa_token="{}"'.format(creds, self.mfa_token)
+                    cred = '{}, mfa_token="{}"'.format(cred, self.mfa_token)
                 return scheme, cred
 
         raise AuthenticationError(self, schemes)
