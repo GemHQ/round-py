@@ -76,7 +76,7 @@ class Users(DictWrapper):
             user_data[u'last_name'] = kwargs[u'last_name']
 
         resource = self.resource.create(user_data)
-        return (resource.__dict__[u'device_id'], self.wrap(resource))
+        return resource.attributes[u'device_id'], self.wrap(resource)
 
     def wrap(self, resource):
         return User(resource, self.client)
