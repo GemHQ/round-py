@@ -102,7 +102,7 @@ In this step you will create your own personal Gem user and wallet authorized on
 			passphrase = "aReallyStrongPassphrase",
 			device_name = "SOME DEVICE NAME",
 			api_token = "YOUR API TOKEN"
-            		redirect_uri = "http://something/user-device-approved")
+            redirect_uri = "http://something/user-device-approved")
 	```
 
 1. Your application should **store the device_id permanently** as this will be required to authenticate from your app as this user.
