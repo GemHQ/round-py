@@ -3,6 +3,8 @@
 #
 # Copyright 2014 BitVault, Inc. dba Gem
 
+from pyotp import TOTP
+
 from .config import *
 
 from .wrappers import *
@@ -29,8 +31,7 @@ class Applications(DictWrapper):
                                        api_token=resource.api_token,
                                        instance_id=kwargs[u'instance_token'])
         app = self.wrap(resource)
-        self.add(app)
-        return app
+        return self.add(app)
 
     def wrap(self, resource):
         return Application(resource, self.client)
@@ -40,9 +41,23 @@ class Application(Wrapper, Updatable):
     """Representation of a Gem integration.
 
     Attributes:
+      api_token (str)
+      totp (pyotp.TOTP): A TOTP MFA token generator (initialized with set_totp)
       users (round.Users): A collection of Users who have an active device
         authorization on this Application.
     """
+
+    def set_totp(self, totp_secret):
+        """Set the secret for generating MFA tokens to authorize
+
+        Args:
+          totp_secret (str): The secret token set on an Application in the Gem
+            Developer Console.
+        """
+        self.totp = TOTP(totp_secret)
+
+    def get_mfa(self):
+        self.totp.now()
 
     @property
     def users(self):
