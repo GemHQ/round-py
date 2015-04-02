@@ -8,14 +8,17 @@ from .config import *
 from .wrappers import *
 
 class Subscriptions(ListWrapper):
+    """A collection of Subscription objects"""
 
     def create(self, callback_url):
-        """
-        Create a new Subscription on all addresses contained by this collection's
-        parent object.
-        Return the new round.Subscription object.
-        Keyword arguments:
-        callback_url -- URI of an active endpoint which can receive notifications
+        """Register a new Subscription on this collection's parent object.
+
+        Args:
+          callback_url (str): URI of an active endpoint which can receive
+          notifications.
+
+        Returns:
+           A round.Subscription object if successful.
         """
         resource = self.resource.create({u'subscribed_to': u'address',
                                          u'callback_url': callback_url})
@@ -31,12 +34,9 @@ class Subscriptions(ListWrapper):
 
 
 class Subscription(Wrapper, Updatable):
+    """A Subscription represents interest in any events on bitcoin addresses
+    related to the Subscription's parent object.
+    """
 
     def __init__(self, resource, client):
-        """
-        Initialize a round.Subscription from an Account patchboard.Resource object.
-        Keyword arguments:
-        resource --  Subscription patchboard.Resource object
-        client -- authenticated round.Client object
-        """
         super(Subscription, self).__init__(resource, client)

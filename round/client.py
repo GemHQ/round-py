@@ -47,18 +47,27 @@ class Client(object):
                 pp(client().schemes)))
         return added
 
-    def authenticate_developer(self, email, privkey,
+    def with_mfa(self, mfa_token):
+        self.context.mfa_token = mfa_token
+        return self
+
+    def authenticate_developer(self, key, email, session_token,
                                override=False, fetch=True):
-        if (u'credential' in self.context.schemes[u'Gem-Developer'] and
-            not override):
-            raise ValueError(u"This object already has Gem-Developer authentication. To overwrite it call authenticate_developer with override=True.")
 
-        if (not email or not privkey or
-            not self.context.authorize(u'Gem-Developer', email=email, privkey=privkey)):
+        if not self.context.authorize(u'Gem-Developer-Session', key=key, session_token=session_token):
             raise ValueError("Usage: {}".format(
-                self.context.schemes[u'Gem-Developer'][u'usage']))
+                self.context.schemes[u'Gem-Developer-Session'][u'usage']))
 
-        return self.developer if fetch else True
+        return self.developer(email) if fetch else True
+
+    def authenticate_user(self, key, email, session_token,
+                          override=False, fetch=True):
+
+        if not self.context.authorize(u'Gem-User-Session', key=key, session_token=session_token):
+            raise ValueError("Usage: {}".format(
+                self.context.schemes[u'Gem-User-Session'][u'usage']))
+
+        return self.user(email) if fetch else True
 
     def authenticate_application(self, app_url, api_token, instance_id,
                                  override=False, fetch=True):
@@ -98,18 +107,15 @@ class Client(object):
         else:
             return True
 
-    def authenticate_otp(self, api_token, key, secret, override=True):
-        if (u'credential' in self.context.schemes[u'Gem-OOB-OTP'] and
+    def authenticate_identify(self, api_token, override=True):
+        if (u'credential' in self.context.schemes[u'Gem-Identify'] and
             not override):
-            raise ValueError(u"This object already has Gem-OOB-OTP authentication. To overwrite it call authenticate_otp with override=True.")
+            raise ValueError(u"This object already has Gem-Idnetify authentication. To overwrite it call authenticate_otp with override=True.")
 
-        if (not api_token or not key or not secret or
-            not self.context.authorize(u'Gem-OOB-OTP',
-                                       api_token=api_token,
-                                       key=key,
-                                       secret=secret)):
+        if (not api_token or
+            not self.context.authorize(u'Gem-Identify', api_token=api_token)):
             raise ValueError(u"Usage: {}".format(
-                self.context.schemes[u'Gem-OOB-OTP'][u'usage']))
+                self.context.schemes[u'Gem-Identify'][u'usage']))
 
         return True
 
@@ -161,17 +167,11 @@ class Client(object):
         return User(r, self)
 
 
-    @property
-    def developer(self):
+    def developer(self, email=None):
         if not hasattr(self, u'_developer'):
-            try:
-                dev_resource = self.resources.developers.get()
-                self._developer = Developer(dev_resource, self)
-            except AttributeError as e:
-                # TODO: Add AuthenticationError
-                raise AttributeError(
-                    u"You must first authenticate this client with\n`{}`.".format(
-                        self.context.schemes[u'Gem-Developer'][u'usage']))
+            if email:
+                dev_resource = self.resources.developer_query({u'email': email})
+                self._developer = Developer(dev_resource.get(), self)
 
         return self._developer
 

@@ -16,14 +16,17 @@ from pprint import pprint as pp
 class Updatable(object):
 
     def update(self, **kwargs):
-        """
-        Update resource and return a round.Class-wrapped object.
-        """
-        return self.__class__(self.resource.update(kwargs),
-                              self.client)
+        return self.__class__(self.resource.update(kwargs), self.client)
 
 
-class Wrapper(object):
+class MFAable(object):
+
+    def with_mfa(self, mfa_token):
+        self.context.mfa_token = mfa_token
+        return self
+
+
+class Wrapper(MFAable):
 
     def __init__(self, resource, client):
         self.resource = resource
@@ -39,7 +42,6 @@ class Wrapper(object):
     def refresh(self):
         self.resource = self.resource.get()
         return self
-
 
 class DictWrapper(collections.Mapping):
 
@@ -60,7 +62,7 @@ class DictWrapper(collections.Mapping):
         return self.data.__len__()
 
     def __repr__(self):
-        return repr(self.items())
+        return repr(self.data.items())
 
     def populate(self):
         if hasattr(self.resource, u'list'):
@@ -72,11 +74,16 @@ class DictWrapper(collections.Mapping):
     def add(self, wrapper):
         key = self.key_for(wrapper)
         self.data[key] = wrapper
+        return wrapper
 
     def refresh(self):
         self.data = {}
         self.populate()
         return(self)
+
+    def with_mfa(self, mfa_token):
+        self.context.mfa_token = mfa_token
+        return self
 
     def key_for(self, wrapper):
         try:
@@ -118,3 +125,7 @@ class ListWrapper(collections.Sequence):
         self.data = []
         self.populate()
         return(self)
+
+    def with_mfa(self, mfa_token):
+        self.context.mfa_token = mfa_token
+        return self
