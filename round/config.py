@@ -1,7 +1,7 @@
-#DEFAULT_URL = u"https://api.gem.co"
+#DEFAULT_URL = u"https://api-v2.gem.co"
 #DEFAULT_NETWORK = u'bitcoin'
 
-DEFAULT_URL = "https://api-sandbox.gem.co"
+DEFAULT_URL = "https://api-sandbox-v2.gem.co"
 DEFAULT_NETWORK = u'testnet'
 
 SUPPORTED_NETWORKS = [u'testnet', u'bitcoin']
