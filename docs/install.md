@@ -1,10 +1,34 @@
 ## Installing round-py:
 
+
 ### Prerequisites:
 
 * Python 2.7
 * Git and a python extension build environment.
 * libffi
+
+#### Virtualenv (optional)
+
+1. Install virtualenv & wrapper
+
+  ```bash
+  $ pip install --user virtualenv
+  $ pip install --user virtualenvwrapper
+  ```
+
+2. Edit your ~/.bashrc or ~/.bash_profile
+
+  ```bash
+  export PATH="${HOME}/.local/bin:${PATH}"
+  export WORKON_HOME="${HOME}/.virtualenvs"
+  source ${HOME}/.local/bin/virtualenvwrapper.sh
+  ```
+
+3. Make an environment
+
+  ```bash
+  $ mkvirtualenv py27
+  ```
 
 ### Linux (debian-based, tested on Ubuntu 14.04)
 
@@ -14,19 +38,7 @@
   $ sudo apt-get install gcc make libffi-dev python-dev python-pip git
   ```
 
-3. Edit .bashrc or .bash_profile to add ENV variables.
-
-  ```bash
-  export PATH="${HOME}/.local/bin:${PATH}"
-  export WORKON_HOME="${HOME}/.virtualenvs"
-  source ${HOME}/.local/bin/virtualenvwrapper.sh
-  ```
-
-4. Source that.
-  ```bash
-  $ source ~/.bashrc
-  ```
-6. Install the client
+2. Install the client
 
   ```bash
   $ pip install round
@@ -53,7 +65,7 @@
 
 4. Pip install the client
   ```bash
-  $ pip round
+  $ pip install round
   ```
 
  [[back]](../README.md)
