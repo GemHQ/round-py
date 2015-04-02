@@ -53,11 +53,7 @@ class Context(dict):
                   u'usage': "client.authenticate_device(api_token, user_token, device_id, email)"},
             u'Gem-Identify':
                  {u'params': [u'api_token'],
-                  u'usage': "client.authenticate_identify(api_token)"},
-            u'Gem-MFA':
-                {u'params': [u'auth_token'],
-                  u'usage': "client.authenticate_mfa(auth_token, mfa_token)"}
-        }
+                  u'usage': "client.authenticate_identify(api_token)"}}
 
     def authorizer(self, schemes, resource, action, request_args):
         """Construct the Authorization header for a request.

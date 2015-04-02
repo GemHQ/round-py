@@ -22,6 +22,21 @@ class Updatable(object):
 class MFAable(object):
 
     def with_mfa(self, mfa_token):
+        """Set the MFA token for the next request.
+        `mfa_token`s are only good for one request. Use this method to chain into
+        the protected action you want to perform.
+
+        Note: Only useful for Application authentication.
+        Usage:
+          account.with_mfa(application.totp.now()).pay(...)
+
+        Args:
+          mfa_token (str): A valid TOTP mfa token derived from the `totp_secret`
+            on an Application.
+
+        Returns:
+          self
+        """
         self.context.mfa_token = mfa_token
         return self
 

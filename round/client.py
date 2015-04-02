@@ -17,7 +17,7 @@ from accounts import Account, Accounts
 from pprint import pprint as pp
 
 
-class Client(object):
+class Client(MFAable):
     """The Client object holds a connection to Gem and references to root-level
     objects.
 
@@ -26,6 +26,7 @@ class Client(object):
       resources (patchboard.Resources)
       users (round.Users)
     """
+
     def __init__(self, pb_client, network=DEFAULT_NETWORK):
         self.pb_client = pb_client
         try:
@@ -35,15 +36,28 @@ class Client(object):
             raise UnknownNetworkError(network)
         self.context = self.pb_client.context
         self.resources = self.pb_client.resources
-        self.developers = Developers(self.resources.developers, self)
         self.users = Users(self.resources.users, self)
 
-    def with_mfa(self, mfa_token):
-        self.context.mfa_token = mfa_token
-        return self
-
-    def authenticate_application(self, app_url, api_token, instance_id,
+    def authenticate_application(self, app_url, api_token, instance_token,
                                  override=False, fetch=True):
+        """Set credentials for Application authentication.
+        Important Note: Do not use Application auth on any end-user device.
+        Application auth provides read-access to all Users who have
+        authorized an Application. Use on a secure application server only.
+
+        Args:
+          app_url (str): URI for the Application in Gem's system.
+            (api.gem.co/applications/:key)
+          api_token (str): Token issued to your Application through the Gem
+            Developer Console.
+          instance_token (str): Token issued to run an instance of your App
+            THIS IS A SECRET.
+          override (boolean): Replace existing Application credentials.
+          fetch (boolean): Return the authenticated Application.
+
+        Returns:
+          An Application object if `fetch` is True.
+        """
         if (u'credential' in self.context.schemes[u'Gem-Application'] and
             not override):
             raise ValueError(u"This object already has Gem-Application authentication. To overwrite it call authenticate_application with override=True.")
@@ -52,7 +66,7 @@ class Client(object):
             not self.context.authorize(u'Gem-Application',
                                        app_url=app_url,
                                        api_token=api_token,
-                                       instance_id=instance_id)):
+                                       instance_token=instance_token)):
             raise ValueError(u"Usage: {}".format(
                 self.context.schemes[u'Gem-Application'][u'usage']))
 
@@ -60,6 +74,23 @@ class Client(object):
 
     def authenticate_device(self, api_token, user_token, device_id, email=None,
                             user_url=None, override=False, fetch=True):
+        """Set credentials for Device authentication.
+
+        Args:
+          api_token (str): Token issued to your Application through the Gem
+            Developer Console.
+          user_token (str): Token identifying a User. You receive this from a
+            users.create call, or as a query parameter in the redirect_uri after
+            a user authorizes a device.
+          device_id (str): Physical device identifier. You will receive this
+            from a user.devices.create call, or as a query parameter in the
+            redirect_uri after creating a user.
+          override (boolean): Replace existing Application credentials.
+          fetch (boolean): Return the authenticated User.
+
+        Returns:
+          An User object if `fetch` is True.
+        """
         if (u'credential' in self.context.schemes[u'Gem-Device'] and
             not override):
             raise ValueError(u"This object already has Gem-Device authentication. To overwrite it call authenticate_device with override=True.")
@@ -81,6 +112,13 @@ class Client(object):
             return True
 
     def authenticate_identify(self, api_token, override=True):
+        """Set credentials for Identify authentication.
+
+        Args:
+          api_token (str): Token issued to your Application through the Gem
+            Developer Console.
+          override (boolean): Replace existing Application credentials.
+        """
         if (u'credential' in self.context.schemes[u'Gem-Identify'] and
             not override):
             raise ValueError(u"This object already has Gem-Idnetify authentication. To overwrite it call authenticate_identify with override=True.")
@@ -91,19 +129,6 @@ class Client(object):
                 self.context.schemes[u'Gem-Identify'][u'usage']))
 
         return True
-
-    def authenticate_mfa(self, auth_token, override=True):
-        if (u'credential' in self.context.schemes[u'Gem-MFA'] and
-            not override):
-            raise ValueError(u"This object already has Gem-MFA authentication. To overwrite it call authenticate_mfa with override=True.")
-
-        if (not auth_token or
-            not self.context.authorize(u'Gem-MFA', auth_token=auth_token)):
-            raise ValueError(u"Usage: {}".format(
-                self.context.schemes[u'Gem-MFA'][u'usage']))
-
-        return True
-
 
     @property
     def application(self):
