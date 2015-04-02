@@ -1,4 +1,9 @@
 
+0.7.1 / 2015-04-02
+==================
+  * Updated with the live sandbox URL!
+  * Minor tweaks
+
 0.7.0 / 2015-04-01
 ==================
 
