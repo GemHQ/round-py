@@ -32,52 +32,49 @@ def generate(passphrase, network=DEFAULT_NETWORK, trees=[u'primary']):
        ['primary', 'backup'].
 
     Returns:
-      A list of dicts containing the network, serialized public master node, and
+      A dict of dicts containing the network, serialized public master node, and
        a sub-dict with the encrypted private seed for each tree in `trees`.
     """
-    seeds, multi_wallet = MultiWallet.generate(
-        trees, entropy=True, network=network)
+    seeds, multi_wallet = MultiWallet.generate(trees, entropy=True,
+                                               network=network)
 
-
-    [dict(name=tree,
-          private_seed=seeds[tree],
-          public_seed=multi_wallet.public_seed(tree)) for tree in trees]
-
-        # These are misnomers -- these are the pubkeys for the master nodes.
-        # A public "seed" isn't a real thing.
-    primary_public_seed = u'primary'
-
-    encrypted_seed = PassphraseBox.encrypt(passphrase, primary_seed)
-
-    return dict(network=GEM_NETWORK[network],
-                primary_public_seed=primary_public_seed,
-                primary_private_seed=encrypted_seed)
+    result = {}
+    for tree in trees:
+        result[tree] = dict(network=GEM_NETWORK[network],
+                            private_seed=seeds[tree],
+                            public_seed=multi_wallet.public_seed(tree),
+                            encrypted_seed=PassphraseBox.encrypt(passphrase, seeds[tree]))
+    return result
 
 
 class Wallets(DictWrapper):
     """A collection of round.Wallets objects."""
 
-    def create(self, name, **kwargs):
+    def create(self, name, passphrase=None, wallet_data=None):
         """Create a new Wallet object and add it to this Wallets collection.
 
         Args:
           name (str): wallet name
-          **kwargs: Should contain either a `passphrase` or the output from
-            round.wallets.generate
+          passphrase (str, optional): A passphrase with which to encrypt a user
+            wallet. If not supplied, wallet_data is mandatory.
+          wallet_data (dict): Output from wallets.generate. Only the primary tree
+            is used.
 
         Returns: The new round.Wallet
         """
-        if u'passphrase' not in kwargs and u'primary_public_seed' not in kwargs:
-            raise ValueError("Usage: wallets.create(passphrase='new-wallet-passphrase')")
-        elif u'passphrase' in kwargs:
-            kwargs = generate(kwargs['passphrase'],
-                              network=self.client.network)
+        if not passphrase and not wallet_data:
+            raise ValueError("Usage: wallets.create(name, passphrase [, wallet_data])")
+        elif passphrase:
+            wallet_data = generate(passphrase, network=self.client.network)
 
-        kwargs[u'name'] = name
-        resource = self.resource.create(kwargs)
+        wallet = dict(primary_private_seed=wallet_data[u'primary'][u'encrypted_seed'],
+                      primary_public_seed=wallet_data[u'primary'][u'public_seed'],
+                      network=wallet_data[u'primary'][u'network'],
+                      name=name)
+
+        resource = self.resource.create(wallet)
         wallet = self.wrap(resource)
-        self.add(wallet)
-        return wallet
+        return self.add(wallet)
 
     def wrap(self, resource):
         return Wallet(resource, self.client)
@@ -138,16 +135,15 @@ class Wallet(Wrapper, Updatable):
 
         Args:
           passphrase (str): The passphrase the User used to encrypt this wallet.
-          network (str): Bitcoin network (bitcoin, testnet3)
+          network (str, optional): Bitcoin network (bitcoin, testnet3)
 
         Returns:
           self
         """
         network = network if network else self.resource.network
         wallet = self.resource
-        primary_seed = PassphraseBox.decrypt(
-            passphrase,
-            wallet.primary_private_seed)
+        primary_seed = PassphraseBox.decrypt(passphrase,
+                                             wallet.primary_private_seed)
 
         self.multi_wallet = MultiWallet(
             private_seeds={u'primary': primary_seed},

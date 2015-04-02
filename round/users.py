@@ -12,14 +12,35 @@ import applications as apps
 import wallets
 
 class Users(DictWrapper):
+    """A collection of round.Users objects."""
 
-    def create(self, email, passphrase, device_name, redirect_uri=None, api_token=None, **kwargs):
+    def create(self, email, device_name, passphrase=None,
+               redirect_uri=None, api_token=None, **kwargs):
+        """Create a new User object and add it to this Users collection.
+
+        Args:
+          email (str)
+          device_name (str): Human-readable name for the device through which
+            your Application will be authorized to access the new User's account.
+          passphrase (str, optional): A passphrase with which to encrypt a user
+            wallet. If not provided, a default_wallet parameter must be passed in
+            kwargs.
+          redirect_uri (str, optional): A URI to which to redirect the User after
+            they confirm their Gem account.
+          api_token (str, optional): Your app's API token. This is optional if
+            and only if the Client which will be calling this function already
+            has Gem-Application or Gem-Identify authentication.
+          **kwargs
+
+        Returns: The new round.User
+        """
+
         if not passphrase and u'default_wallet' not in kwargs:
-            raise ValueError("Usage: users.create(email, passphrase='new-wallet-passphrase', device_name, device_id, api_token)")
+            raise ValueError("Usage: users.create(email, passphrase, device_name, redirect_uri, api_token)")
         elif passphrase:
-            default_wallet = wallets.generate(passphrase,
-                                              network=self.client.network)
-            default_wallet[u'name'] = u'default'
+            default_wallet = wallets.generate(
+                passphrase, network=self.client.network)[u'primary']
+            default_wallet[u'name'] = 'default'
 
         # If not supplied, we assume the client already has an api_token param.
         if api_token:
@@ -29,13 +50,14 @@ class Users(DictWrapper):
                          default_wallet=default_wallet,
                          redirect_uri=redirect_uri,
                          device_name=device_name)
+
         if u'first_name' in kwargs:
             user_data[u'first_name'] = kwargs[u'first_name']
         if u'last_name' in kwargs:
             user_data[u'last_name'] = kwargs[u'last_name']
+
         resource = self.resource.create(user_data)
-        user = self.wrap(resource)
-        return self.add(user)
+        return self.wrap(resource)
 
     def wrap(self, resource):
         return User(resource, self.client)
@@ -45,6 +67,24 @@ class Users(DictWrapper):
 
 
 class User(Wrapper, Updatable):
+    """A User represents an single *human* end-user.
+    A User will have sole access to their backup key, and will need to
+    communicate directly with Gem to provide MFA credentials for protected
+    actions (updating their User object, publishing transactions, approving
+    devices, etc).
+
+    For a custodial model where a Wallet is intended to hold assets of multiple
+    individuals or an organization, read the Gem docs regarding Application
+    wallets.
+
+    Attributes:
+      first_name (str)
+      last_name (str)
+      email (str)
+      phone_number (str)
+      default_wallet (round.Wallet)
+      wallets (round.Wallets)
+    """
 
     def update(self, **content):
         resource = self.resource.update(content)
