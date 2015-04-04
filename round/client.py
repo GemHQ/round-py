@@ -94,13 +94,11 @@ class Client(MFAable):
             not override):
             raise ValueError(u"This object already has Gem-Device authentication. To overwrite it call authenticate_device with override=True.")
 
-        if (not api_token or (not email and not user_url) or
-            not user_token or not device_id or
+        if (not api_token or (not email and not user_url) or not device_id or
             not self.context.authorize(u'Gem-Device',
                                        api_token=api_token,
                                        user_email=email,
                                        user_url=user_url,
-                                       user_token=user_token,
                                        device_id=device_id)):
             raise ValueError(u"Usage: {}".format(
                 self.context.schemes[u'Gem-Device'][u'usage']))

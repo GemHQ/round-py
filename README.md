@@ -119,7 +119,7 @@ In this step you will learn how to authenticate to the Gem API on a User's devic
 	full_user = client.authenticate_device(
 						api_token = api_token,
 						device_id = device_id,
-						user_email = email)
+						email = email)
 	```
 
 [[top]](README.md#getting-started-tutorial)
