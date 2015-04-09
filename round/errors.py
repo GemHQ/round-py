@@ -42,9 +42,24 @@ class AuthenticationError(RoundError):
 
     def __init__(self, context, schemes):
         error_message = u""
+        if isinstance(schemes, basestring):
+            schemes = [schemes]
         self.valid_schemes = schemes
         for scheme in schemes:
             if scheme in context.schemes:
                 error_message += context.schemes[scheme][u'usage'] + "\n"
 
         self.message = u"You must first authenticate this client with one of:\n{}".format(error_message)
+
+
+class OverrideError(RoundError):
+
+    def __init__(self, scheme, auth_function):
+         self.message = u"This client already has {} authentication. To overwrite it call {} with override=True.".format(scheme, auth_function)
+
+
+class AuthUsageError(RoundError):
+
+    def __init__(self, context, scheme):
+        self.message = u"Usage: {}".format(
+            context.schemes[scheme][u'usage'])

@@ -123,8 +123,9 @@ class Account(Wrapper, Updatable):
 
         # Update the tx with the signatures.
         transaction = dict(signatures=dict(inputs=signatures,
-                                           transaction_hash=coinoptx.hex_hash()),
-                           redirect_uri=redirect_uri)
+                                           transaction_hash=coinoptx.hex_hash()))
+        if redirect_uri:
+            transaction[u'redirect_uri'] = redirect_uri
 
         signed = txs.Transaction(unsigned.update(transaction), self.client)
 

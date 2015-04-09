@@ -38,7 +38,7 @@ class Client(MFAable):
         self.resources = self.pb_client.resources
         self.users = Users(self.resources.users, self)
 
-    def authenticate_application(self, app_url, api_token, instance_token,
+    def authenticate_application(self, api_token, instance_token,
                                  override=False, fetch=True):
         """Set credentials for Application authentication.
         Important Note: Do not use Application auth on any end-user device.
@@ -58,28 +58,25 @@ class Client(MFAable):
         Returns:
           An Application object if `fetch` is True.
         """
-        if (u'credential' in self.context.schemes[u'Gem-Application'] and
-            not override):
-            raise ValueError(u"This object already has Gem-Application authentication. To overwrite it call authenticate_application with override=True.")
+        if (self.context.schemes[u'Gem-Application'][u'set'] and not override):
+            raise OverrideError(u'Gem-Application', u'authenticate_application')
 
-        if (not app_url or not api_token or not instance_id or
+        if (not app_url or not api_token or not instance_token or
             not self.context.authorize(u'Gem-Application',
-                                       app_url=app_url,
                                        api_token=api_token,
                                        instance_token=instance_token)):
-            raise ValueError(u"Usage: {}".format(
-                self.context.schemes[u'Gem-Application'][u'usage']))
+            raise AuthUsageError(self.context, u'Gem-Application')
 
         return self.application if fetch else True
 
-    def authenticate_device(self, api_token, device_id, email=None, user_url=None,
-                            override=False, fetch=True):
+    def authenticate_device(self, api_token, device_token, email=None,
+                            user_url=None, override=False, fetch=True):
         """Set credentials for Device authentication.
 
         Args:
           api_token (str): Token issued to your Application through the Gem
             Developer Console.
-          device_id (str): Physical device identifier. You will receive this
+          device_token (str): Physical device identifier. You will receive this
             from a user.devices.create call or from users.create.
           email (str, optional): User's email address, required if user_url is
             not provided.
@@ -90,18 +87,19 @@ class Client(MFAable):
         Returns:
           An User object if `fetch` is True.
         """
-        if (u'credential' in self.context.schemes[u'Gem-Device'] and
-            not override):
-            raise ValueError(u"This object already has Gem-Device authentication. To overwrite it call authenticate_device with override=True.")
+        if (self.context.schemes[u'Gem-Device'][u'set'] and not override):
+            raise OverrideError(u'Gem-Device', u'authenticate_device')
 
-        if (not api_token or (not email and not user_url) or not device_id or
+        if (not api_token or
+            not device_token or
+            (not email and not user_url) or
             not self.context.authorize(u'Gem-Device',
                                        api_token=api_token,
                                        user_email=email,
                                        user_url=user_url,
-                                       device_id=device_id)):
-            raise ValueError(u"Usage: {}".format(
-                self.context.schemes[u'Gem-Device'][u'usage']))
+                                       device_token=device_token)):
+            raise AuthUsageError(self.context, u'Gem-Device')
+
         if fetch:
             user = self.user(email) if email else self.user()
             return user.refresh()
@@ -116,14 +114,12 @@ class Client(MFAable):
             Developer Console.
           override (boolean): Replace existing Application credentials.
         """
-        if (u'credential' in self.context.schemes[u'Gem-Identify'] and
-            not override):
-            raise ValueError(u"This object already has Gem-Idnetify authentication. To overwrite it call authenticate_identify with override=True.")
+        if (self.context.schemes[u'Gem-Identify'][u'set'] and not override):
+            raise OverrideError(u'Gem-Identify', u'authenticate_identify')
 
         if (not api_token or
             not self.context.authorize(u'Gem-Identify', api_token=api_token)):
-            raise ValueError(u"Usage: {}".format(
-                self.context.schemes[u'Gem-Identify'][u'usage']))
+            raise AuthUsageError(self.context, u'Gem-Identifiy')
 
         return True
 
@@ -131,12 +127,10 @@ class Client(MFAable):
     def application(self):
         if not hasattr(self, u'_application'):
             try:
-                app_resource = self.resources.application(self.context.app_url).get()
+                app_resource = self.resources.applications.get()
                 self._application = Application(app_resource, self)
             except AttributeError as e:
-                raise AttributeError(
-                    u"You must first authenticate this client with\n`{}`.".format(
-                        self.context.schemes[u'Gem-Application'][u'usage']))
+                raise AuthenticationError(self.context, u'Gem-Identify')
 
         return self._application
 
@@ -151,9 +145,7 @@ class Client(MFAable):
                 else:
                     user_resource = self.resources.user_query({u'email': self.context.user_email})
             except AttributeError as e:
-                raise AttributeError(
-                    u"You must first authenticate this client with\n`{}`.".format(
-                        self.context.schemes[u'Gem-Device'][u'usage']))
+                raise AuthenticationError(self.context, u'Gem-Device')
 
         elif email and (not hasattr(self._user, 'email') or
                         self._user.email != email):
