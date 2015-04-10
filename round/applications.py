@@ -26,10 +26,10 @@ class Applications(DictWrapper):
            A round.Application object if successful.
         """
         resource = self.resource.create(kwargs)
-        if u'instance_token' in kwargs:
+        if u'admin_token' in kwargs:
             resource.context.authorize(u'Gem-Application',
                                        api_token=resource.api_token,
-                                       instance_id=kwargs[u'instance_token'])
+                                       admin_token=kwargs[u'admin_token'])
         app = self.wrap(resource)
         return self.add(app)
 

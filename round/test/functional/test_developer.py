@@ -20,7 +20,7 @@ user_token = user_token()
 device_id = device_id()
 user_url = user_url()
 email = email()
-instance_id = instance_id()
+admin_token = admin_token()
 app_url = app_url()
 dev_email= dev_email()
 random_instance_name = random_instance_name()
@@ -66,7 +66,7 @@ class TestDeveloper:
     def test_instance_authentication(self):
         app = c.authenticate_application(app_url=app_url,
                                          api_token=api_token,
-                                         instance_id=instance_id)
+                                         admin_token=admin_token)
         assert len(app.users) > 0
 
         for u in app.users.itervalues():
@@ -79,7 +79,7 @@ class TestDeveloper:
     def test_app_instance_data_access(self):
         app = c.authenticate_application(app_url=app_url,
                                          api_token=api_token,
-                                         instance_id=instance_id,
+                                         admin_token=admin_token,
                                          override = True)
         # in app auth test you can get info about a user
         # wallet and the account but fail on creation

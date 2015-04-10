@@ -61,25 +61,25 @@ class TestClient:
         with raises(ValueError):
             d = client.authenticate_developer(developer.email, privkey=privkey())
 
-    def test_authenticate_application(self, client, app, instance_id):
+    def test_authenticate_application(self, client, app, admin_token):
         with raises(round.AuthenticationError):
             apps = app.users.list()
 
         client.authenticate_application(app.url, app.api_token,
-                                        instance_id, fetch=False)
+                                        admin_token, fetch=False)
 
-        cred = 'instance_id="{}", api_token="{}"'
+        cred = 'admin_token="{}", api_token="{}"'
         assert client.context.schemes[u'Gem-Application'][u'credential'] == cred.format(
-            instance_id,
+            admin_token,
             app.api_token)
 
         assert client.context.app_url == app.url
         assert client.context.api_token == app.api_token
-        assert client.context.instance_id == instance_id
+        assert client.context.admin_token == admin_token
 
         with raises(ValueError):
             client.authenticate_application(app.url, app.api_token,
-                                            instance_id, fetch=False)
+                                            admin_token, fetch=False)
 
     def test_authenticate_device(self, client, app, user, device_id, user_email,
                                  user_token):

@@ -38,7 +38,7 @@ class Client(MFAable):
         self.resources = self.pb_client.resources
         self.users = Users(self.resources.users, self)
 
-    def authenticate_application(self, api_token, instance_token,
+    def authenticate_application(self, api_token, admin_token,
                                  override=False, fetch=True):
         """Set credentials for Application authentication.
         Important Note: Do not use Application auth on any end-user device.
@@ -50,7 +50,7 @@ class Client(MFAable):
             (api.gem.co/applications/:key)
           api_token (str): Token issued to your Application through the Gem
             Developer Console.
-          instance_token (str): Token issued to run an instance of your App
+          admin_token (str): Token issued to run an instance of your App
             THIS IS A SECRET.
           override (boolean): Replace existing Application credentials.
           fetch (boolean): Return the authenticated Application.

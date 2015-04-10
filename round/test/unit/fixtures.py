@@ -39,7 +39,7 @@ def app(apps):
 
 
 @pytest.fixture(scope=u'function')
-def instance_id():
+def admin_token():
     return "bogus-instance-id"
 
 

@@ -62,7 +62,7 @@ def user_url():
 def email():
     return u'joshua+userJava06@gem.co'
 
-def instance_id():
+def admin_token():
     return u'JAuan0m4ePdwqU8VthUTeWu5J6uTthN9bEEfWSLl7XU'
 
 def app_url():
