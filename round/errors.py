@@ -48,8 +48,10 @@ class AuthenticationError(RoundError):
         for scheme in schemes:
             if scheme in context.schemes:
                 error_message += context.schemes[scheme][u'usage'] + "\n"
-
-        self.message = u"You must first authenticate this client with one of:\n{}".format(error_message)
+        if error_message == u"":
+            self.message = u"The requested action cannot be completed from this client. You may need to use the Gem User or Developer Console."
+        else:
+            self.message = u"You must first authenticate this client with one of:\n{}".format(error_message)
 
 
 class OverrideError(RoundError):

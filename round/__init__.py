@@ -82,7 +82,7 @@ class Context(dict):
         if not schemes:
             return u'', u''
         for scheme in schemes:
-            if scheme in self.schemes and has_auth_params(scheme):
+            if scheme in self.schemes and self.has_auth_params(scheme):
                 cred = Context.format_auth_params(self.schemes[scheme][u'params'])
                 if hasattr(self, 'mfa_token'):
                     cred = '{}, mfa_token="{}"'.format(cred, self.mfa_token)
@@ -112,7 +112,7 @@ class Context(dict):
 
         return True
 
-    def has_auth_params(scheme):
+    def has_auth_params(self, scheme):
         """Check whether all information required for a given auth scheme have
         been supplied.
 

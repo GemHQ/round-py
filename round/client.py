@@ -127,7 +127,7 @@ class Client(MFAable):
     def application(self):
         if not hasattr(self, u'_application'):
             try:
-                app_resource = self.resources.applications.get()
+                app_resource = self.resources.app.get()
                 self._application = Application(app_resource, self)
             except AttributeError as e:
                 raise AuthenticationError(self.context, u'Gem-Identify')
@@ -161,11 +161,3 @@ class Client(MFAable):
                 pass
 
         return self._user
-
-    def wallet(self, url):
-        wallet_resource = self.resources.wallet(url).get()
-        return Wallet(wallet_resource, self)
-
-    def account(self, url):
-        account_resource = self.resources.account(url)
-        return Account(account_resource, self)
