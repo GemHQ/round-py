@@ -54,8 +54,18 @@ class AuthenticationError(RoundError):
 
 class OverrideError(RoundError):
 
-    def __init__(self, scheme, auth_function):
-         self.message = u"This client already has {} authentication. To overwrite it call {} with override=True.".format(scheme, auth_function)
+    def __init__(self, scheme, message=None):
+        auth_function = "NOT IMPLEMENTED"
+        if scheme == u'Gem-Identify':
+            auth_function = 'authenticate_identify'
+        elif scheme == u'Gem-Device':
+            auth_function = 'authenticate_device'
+        elif scheme == u'Gem-Application':
+            auth_function = 'authenticate_application'
+
+        super(OverrideError, self).__init__(message or u"This client already has {} authentication. To overwrite it call {} with override=True.".format(scheme, auth_function))
+
+
 
 
 class AuthUsageError(RoundError):

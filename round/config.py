@@ -1,4 +1,4 @@
-DEFAULT_ENVIRONEMNT = u'sandbox'
+DEFAULT_ENVIRONMENT = u'sandbox'
 
 ENV_MAP = {u'sandbox': {u'network': u'testnet',
                         u'url': u'https://api-sandbox.gem.co'},

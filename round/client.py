@@ -27,7 +27,7 @@ class Client(MFAable):
       users (round.Users)
     """
 
-    def __init__(self, pb_client, network=DEFAULT_NETWORK):
+    def __init__(self, pb_client, network):
         self.pb_client = pb_client
         try:
             self.network = NETWORK_MAP[network]
@@ -58,13 +58,13 @@ class Client(MFAable):
         Returns:
           An Application object if `fetch` is True.
         """
-        if (self.context.schemes[u'Gem-Application'][u'set'] and not override):
-            raise OverrideError(u'Gem-Application', u'authenticate_application')
+        if (self.context.has_auth_params(u'Gem-Application') and not override):
+            raise OverrideError(u'Gem-Application')
 
-        if (not app_url or not api_token or not instance_token or
+        if (not app_url or not api_token or not admin_token or
             not self.context.authorize(u'Gem-Application',
                                        api_token=api_token,
-                                       instance_token=instance_token)):
+                                       admin_token=admin_token)):
             raise AuthUsageError(self.context, u'Gem-Application')
 
         return self.application if fetch else True
@@ -87,8 +87,8 @@ class Client(MFAable):
         Returns:
           An User object if `fetch` is True.
         """
-        if (self.context.schemes[u'Gem-Device'][u'set'] and not override):
-            raise OverrideError(u'Gem-Device', u'authenticate_device')
+        if (self.context.has_auth_params(u'Gem-Device') and not override):
+            raise OverrideError(u'Gem-Device')
 
         if (not api_token or
             not device_token or
@@ -114,8 +114,8 @@ class Client(MFAable):
             Developer Console.
           override (boolean): Replace existing Application credentials.
         """
-        if (self.context.schemes[u'Gem-Identify'][u'set'] and not override):
-            raise OverrideError(u'Gem-Identify', u'authenticate_identify')
+        if (self.context.has_auth_params(u'Gem-Identify') and not override):
+            raise OverrideError(u'Gem-Identify')
 
         if (not api_token or
             not self.context.authorize(u'Gem-Identify', api_token=api_token)):

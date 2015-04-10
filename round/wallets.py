@@ -13,7 +13,7 @@ from .accounts import Account, Accounts
 from .subscriptions import Subscription, Subscriptions
 
 
-def generate(passphrase, network=DEFAULT_NETWORK, trees=[u'primary']):
+def generate(passphrase, network, trees=[u'primary']):
     """Generate a seed for the primary tree of a Gem wallet.
 
     You may choose to store the passphrase for a user so the user doesn't have

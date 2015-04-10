@@ -10,6 +10,8 @@ from Crypto.PublicKey import RSA
 from Crypto.Hash import SHA256
 from Crypto.Signature import PKCS1_v1_5
 
+from copy import deepcopy
+
 from .client import Client
 from .config import *
 from .errors import *
@@ -22,16 +24,16 @@ def client(environment=DEFAULT_ENVIRONMENT, url=None, network=None):
     if _patchboard is None:
         _patchboard = {}
 
-    self.environment = ENV_MAP[environment]
-    if url:
-        self.environment[u'url'] = url
-    if network:
-        self.environment[u'network'] = network
+    environment = ENV_MAP[environment]
+    if not url:
+        url = environment[u'url']
+    if not network:
+        network = environment[u'network']
 
-    if environment[u'url'] not in _patchboard:
-        _patchboard[environment[u'url']] = patchboard.discover(
-            environment[u'url'], {u'default_context': Context})
-    return Client(_patchboard[environment[u'url']].spawn(), network)
+    if url not in _patchboard:
+        _patchboard[url] = patchboard.discover(
+            url, {u'default_context': Context})
+    return Client(_patchboard[url].spawn(), network)
 
 
 class Context(dict):
@@ -52,19 +54,14 @@ class Context(dict):
         self.schemes = {
             u'Gem-Application':
                  {u'params': {u'api_token': None,
-                              u'instance_token': None},
-                  u'set': False,
-                  u'usage': "client.authenticate_application(api_token, instance_token)"},
+                              u'admin_token': None},
+                  u'usage': "client.authenticate_application(api_token, admin_token)"},
             u'Gem-Device':
                  {u'params': {u'api_token': None,
-                              u'device_token': None,
-                              u'user_email': None,
-                              u'user_url': None},
-                  u'set': False,
-                  u'usage': "client.authenticate_device(api_token, device_token, [email OR user_url])"},
+                              u'device_token': None},
+                  u'usage': "client.authenticate_device(api_token, device_token, [email OR url])"},
             u'Gem-Identify':
                  {u'params': {u'api_token': None},
-                  u'set': False,
                   u'usage': "client.authenticate_identify(api_token)"}}
 
     def authorizer(self, schemes, resource, action, request_args):
@@ -85,7 +82,7 @@ class Context(dict):
         if not schemes:
             return u'', u''
         for scheme in schemes:
-            if scheme in self.schemes and self.schemes[scheme][u'set']:
+            if scheme in self.schemes and has_auth_params(scheme):
                 cred = Context.format_auth_params(self.schemes[scheme][u'params'])
                 if hasattr(self, 'mfa_token'):
                     cred = '{}, mfa_token="{}"'.format(cred, self.mfa_token)
@@ -108,13 +105,28 @@ class Context(dict):
         if scheme not in self.schemes:
             return False
 
-        for field in self.schemes[scheme]['params'].keys():
-            if field in params and params[field]:
-                setattr(self, field, params[field])
-                if field not in [u'user_email', u'user_url']:
-                    self.schemes[scheme]['params'][field] = params[field]
+        for field in params:
+            setattr(self, field, params[field])
+            if field in self.schemes[scheme][u'params'].keys() and params[field]:
+                self.schemes[scheme]['params'][field] = params[field]
 
         self.schemes[scheme][u'set'] = True
+        return True
+
+    def has_auth_params(scheme):
+        """Check whether all information required for a given auth scheme have
+        been supplied.
+
+        Args:
+          scheme (str): Name of the authentication scheme to check. One of
+            Gem-Identify, Gem-Device, Gem-Application
+
+        Returns:
+          True if all required parameters for the specified scheme are present
+          or False otherwise.
+        """
+        for k, v in self.schemes[scheme][u'params'].iteritems():
+            if not v: return False
         return True
 
     @staticmethod
