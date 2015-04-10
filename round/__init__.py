@@ -105,12 +105,11 @@ class Context(dict):
         if scheme not in self.schemes:
             return False
 
-        for field in params:
-            setattr(self, field, params[field])
-            if field in self.schemes[scheme][u'params'].keys() and params[field]:
-                self.schemes[scheme]['params'][field] = params[field]
+        for field, value in params.iteritems():
+            setattr(self, field, value)
+            if field in self.schemes[scheme][u'params'].keys() and value:
+                self.schemes[scheme][u'params'][field] = value
 
-        self.schemes[scheme][u'set'] = True
         return True
 
     def has_auth_params(scheme):
