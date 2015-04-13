@@ -67,15 +67,14 @@ class Application(Wrapper, Updatable):
             self._users = users.Users(users_resource, self.client)
         return self._users
 
-    def reset(self):
-        """Resets the `api_token` for this Application. This will cause all
-        subsequent requests using the old `api_token` to fail.
-
-        Returns:
-          The Application.
-        """
-        self.resource = self.resource.reset()
-        return self
+    @property
+    def wallets(self):
+        """Fetch and return Wallets associated with this application."""
+        if not hasattr(self, '_wallets'):
+            wallets_resource = self.resource.wallets
+            self._wallets = wallets.Wallets(wallets_resource,
+                                            self.client)
+        return self._wallets
 
     @property
     def subscriptions(self):
@@ -85,3 +84,13 @@ class Application(Wrapper, Updatable):
             self._subscriptions = Subscriptions(
                 subscriptions_resource, self.client)
         return self._subscriptions
+
+    def reset(self):
+        """Resets the `api_token` for this Application. This will cause all
+        subsequent requests using the old `api_token` to fail.
+
+        Returns:
+          The Application.
+        """
+        self.resource = self.resource.reset()
+        return self
