@@ -32,7 +32,7 @@ The round client is designed to interact with Gem's API to make building blockch
 #### Table of Contents
 * [Introduction](README.md#Introduction)
 * [1. Run the client](README.md#1-run-the-client)
-* [2. Configure your application and API token](README.md#2-configure-your-applicaiton-and-api-token)
+* [2. Configure your application and API token](README.md#2-configure-your-application-and-api-token)
 * [3. Create your User and Wallet](README.md#3-create-your-user-and-wallet)
 * [4. Authenticate your User](README.md#4-authenticate-your-user)
 * [5. Access the wallet and Default Account](README.md#5-access-the-wallet-and-default-account)
@@ -101,7 +101,7 @@ In this step you will create your own personal Gem user and wallet authorized on
 			email = "YOUR EMAIL ADDRESS",
 			passphrase = "aReallyStrongPassphrase",
 			device_name = "SOME DEVICE NAME",
-			api_token = "YOUR API TOKEN"
+			api_token = "YOUR API TOKEN",
             redirect_uri = "http://something/user-device-approved")
 	```
 
@@ -125,7 +125,7 @@ In this step you will learn how to authenticate to the Gem API on a User's devic
 [[top]](README.md#getting-started-tutorial)
 
 ### 5. Access the wallet and Default Account
-In this section you'll learn how to get to the default account of a wallet.  A wallet is a collection of accounts.  [Learn more about the wallet and acocunts]([docs/wallet-and-account-details.md)
+[Wallets and Accounts](docs/advanced.md#wallets-and-accounts)
 
 1. Get the default wallet and then default account
 
@@ -151,7 +151,7 @@ In this section you'll learn how to create an address to fund with testnet coins
 Payments have to be confirmed by the network and on Testnet that can be slow.  To monitor for confirmations: input the address into the following url `https://live.blockcypher.com/btc-testnet/address/<YOUR ADDRESS>`.  The current standard number of confirmations for a transaction to be considered safe is 6.
 
 You will be able to make a payment on a single confirmation.  While you wait for that to happen, feel free to read more details about:
-[Wallets and Accounts](docs/Advanced-Topics.md#More-About-Wallets-and-Accounts)
+[Wallets and Accounts](docs/advanced.md#wallets-and-accounts)
 
 [[top]](README.md#getting-started-tutorial)
 
