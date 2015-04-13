@@ -127,3 +127,20 @@ class User(Wrapper, Updatable):
             self._subscriptions = Subscriptions(
                 subscriptions_resource, self.client)
         return self._subscriptions
+
+    def send_mfa(self):
+        """Send an SMS MFA token to the user."""
+        return self.resource.send_mfa({})
+
+    def verify_mfa(mfa_token):
+        """Verify an SMS or TOTP MFA token for this user.
+
+        Args:
+          mfa_token (str): An alphanumeric code from either a User's TOTP
+            application or sent to them via SMS.
+
+        Returns:
+          True if the mfa_token is valid, False otherwise.
+        """
+        return self.resource.verify_mfa(
+            {u'mfa_token': mfa_token})[u'valid'] == 'true'

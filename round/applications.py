@@ -57,7 +57,8 @@ class Application(Wrapper, Updatable):
         self.totp = TOTP(totp_secret)
 
     def get_mfa(self):
-        self.totp.now()
+        """Return the currently-valid MFA token for this application."""
+        return self.totp.now()
 
     @property
     def users(self):
