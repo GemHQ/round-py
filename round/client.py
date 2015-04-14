@@ -147,8 +147,7 @@ class Client(MFAable):
             except AttributeError as e:
                 raise AuthenticationError(self.context, u'Gem-Device')
 
-        elif email and (not hasattr(self._user, 'email') or
-                        self._user.email != email):
+        elif email:
             user_resource = self.resources.user_query({u'email': email})
 
         if user_resource:
