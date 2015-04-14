@@ -3,7 +3,8 @@
 ==================
 
   *  updated DEFAULT_URLs to the point to the legacy stack (round <= 0.6.x is legacy and will not work with api.gem.co or api-sandbox.gem.co)
-  *  client.user always returns a wrapped UserQuery object if the email parameter is present
+  *  client.user always creates a wrapped UserQuery if email parameter is present
+  *  client.user takes an optional fetch boolean parameter (default True) which controls whether user.refresh() is run
 
 0.6.2 / 2015-03-04
 ==================
