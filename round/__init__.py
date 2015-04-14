@@ -24,7 +24,7 @@ def client(environment=DEFAULT_ENVIRONMENT, url=None, network=None):
     if _patchboard is None:
         _patchboard = {}
 
-    environment = ENV_MAP[environment]
+    environment = ENV_MAP[environment] if environment else {}
     if not url:
         url = environment[u'url']
     if not network:

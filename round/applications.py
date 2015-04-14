@@ -60,6 +60,16 @@ class Application(Wrapper, Updatable):
         """Return the currently-valid MFA token for this application."""
         return self.totp.now()
 
+    def reset(self):
+        """Resets the `api_token` for this Application. This will cause all
+        subsequent requests using the old `api_token` to fail.
+
+        Returns:
+          The Application.
+        """
+        self.resource = self.resource.reset()
+        return self
+
     @property
     def users(self):
         if not hasattr(self, u'_users'):
@@ -84,13 +94,3 @@ class Application(Wrapper, Updatable):
             self._subscriptions = Subscriptions(
                 subscriptions_resource, self.client)
         return self._subscriptions
-
-    def reset(self):
-        """Resets the `api_token` for this Application. This will cause all
-        subsequent requests using the old `api_token` to fail.
-
-        Returns:
-          The Application.
-        """
-        self.resource = self.resource.reset()
-        return self
