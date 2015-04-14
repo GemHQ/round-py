@@ -1,4 +1,10 @@
 
+0.6.3 / 2015-04-14
+==================
+
+  *  updated DEFAULT_URLs to the point to the legacy stack (round <= 0.6.x is legacy and will not work with api.gem.co or api-sandbox.gem.co)
+  *  client.user always returns a wrapped UserQuery object if the email parameter is present
+
 0.6.2 / 2015-03-04
 ==================
 
