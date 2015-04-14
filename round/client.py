@@ -118,8 +118,8 @@ class Client(object):
                                    device_id):
         try:
             self.context.schemes[u'Gem-OOB-OTP'][u'credential'] = 'api_token="{}"'.format(api_token)
-            reply = self.user(email).authorize_device({u'name': device_name,
-                                                       u'device_id': device_id})
+            reply = self.user(email, fetch=False).authorize_device(
+                {u'name': device_name, u'device_id': device_id})
         except ResponseError as e:
             try:
                 key = e.headers['WWW-Authenticate']['Gem-OOB-OTP'][u'key']
@@ -139,8 +139,8 @@ class Client(object):
             self.authenticate_otp(api_token=api_token,
                                   key=key, secret=secret)
 
-            r = self.user(email).authorize_device({u'name': device_name,
-                                                   u'device_id': device_id})
+            r = self.user(email, fetch=False).authorize_device(
+                {u'name': device_name, u'device_id': device_id})
 
         except ResponseError as e:
             try:
@@ -188,7 +188,7 @@ class Client(object):
 
         return self._application
 
-    def user(self, email=None):
+    def user(self, email=None, fetch=True):
         user_resource = False
         if not hasattr(self, '_user'):
             try:
@@ -211,7 +211,8 @@ class Client(object):
             # Fetch the user if we can. If not, we're probably just getting a
             # resource so we can do authorize_device.
             try:
-                self._user.refresh()
+                if fetch:
+                    self._user.refresh()
             except:
                 pass
 
