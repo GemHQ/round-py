@@ -203,8 +203,7 @@ class Client(object):
                     u"You must first authenticate this client with\n`{}`.".format(
                         self.context.schemes[u'Gem-Device'][u'usage']))
 
-        elif email and (not hasattr(self._user, 'email') or
-                        self._user.email != email):
+        elif email:
             user_resource = self.resources.user_query({u'email': email})
 
         if user_resource:
