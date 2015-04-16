@@ -9,6 +9,8 @@ from .config import *
 
 from .wrappers import *
 from .subscriptions import Subscriptions
+from .wallets import Wallets
+
 import users
 
 
@@ -60,9 +62,17 @@ class Application(Wrapper, Updatable):
         """Return the currently-valid MFA token for this application."""
         return self.totp.now()
 
-    def reset(self):
-        """Resets the `api_token` for this Application. This will cause all
-        subsequent requests using the old `api_token` to fail.
+    def reset(self, *args):
+        """Resets any of the tokens for this Application.
+        Note that you may have to reauthenticate afterwards.
+
+        Usage:
+          application.reset('api_token')
+          application.reset('api_token', 'totp_secret')
+
+        Args:
+          *args (list of str): one or more of
+            [u'api_token', u'subscription_token', u'totp_secret']
 
         Returns:
           The Application.
@@ -82,8 +92,8 @@ class Application(Wrapper, Updatable):
         """Fetch and return Wallets associated with this application."""
         if not hasattr(self, '_wallets'):
             wallets_resource = self.resource.wallets
-            self._wallets = wallets.Wallets(wallets_resource,
-                                            self.client)
+            self._wallets = Wallets(wallets_resource,
+                                    self.client)
         return self._wallets
 
     @property

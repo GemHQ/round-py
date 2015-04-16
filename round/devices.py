@@ -5,7 +5,7 @@
 
 from .config import *
 
-from .wrappers import wrapper
+from .wrappers import Wrapper
 from .errors import *
 
 class Devices(Wrapper):

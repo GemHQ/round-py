@@ -46,12 +46,10 @@ class Client(MFAable):
         authorized an Application. Use on a secure application server only.
 
         Args:
-          app_url (str): URI for the Application in Gem's system.
-            (api.gem.co/applications/:key)
           api_token (str): Token issued to your Application through the Gem
             Developer Console.
           admin_token (str): Token issued to run an instance of your App
-            THIS IS A SECRET.
+            THIS IS A SECRET. TREAT IT LIKE A SECRET.
           override (boolean): Replace existing Application credentials.
           fetch (boolean): Return the authenticated Application.
 
@@ -61,7 +59,7 @@ class Client(MFAable):
         if (self.context.has_auth_params(u'Gem-Application') and not override):
             raise OverrideError(u'Gem-Application')
 
-        if (not app_url or not api_token or not admin_token or
+        if (not api_token or not admin_token or
             not self.context.authorize(u'Gem-Application',
                                        api_token=api_token,
                                        admin_token=admin_token)):
