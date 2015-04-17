@@ -77,7 +77,7 @@ class Application(Wrapper, Updatable):
         Returns:
           The Application.
         """
-        self.resource = self.resource.reset()
+        self.resource = self.resource.reset(list(args))
         return self
 
     @property
@@ -93,7 +93,7 @@ class Application(Wrapper, Updatable):
         if not hasattr(self, '_wallets'):
             wallets_resource = self.resource.wallets
             self._wallets = Wallets(wallets_resource,
-                                    self.client)
+                                    self.client, self)
         return self._wallets
 
     @property

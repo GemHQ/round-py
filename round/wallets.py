@@ -50,6 +50,12 @@ def generate(passphrase, network, trees=[u'primary']):
 class Wallets(DictWrapper):
     """A collection of round.Wallets objects."""
 
+    def __init__(self, resource, client, application=False):
+        # This is less than awesome. Ideally a PB resource can learn whether it's
+        # an application_wallets or user_wallets object.
+        self.application = application
+        super(Wallets, self).__init__(resource, client)
+
     def create(self, name, passphrase=None, wallet_data=None):
         """Create a new Wallet object and add it to this Wallets collection.
 
@@ -57,27 +63,36 @@ class Wallets(DictWrapper):
           name (str): wallet name
           passphrase (str, optional): A passphrase with which to encrypt a user
             wallet. If not supplied, wallet_data is mandatory.
-          wallet_data (dict): Output from wallets.generate. Only the primary tree
-            is used.
+          wallet_data (dict): Output from wallets.generate.
+            For User Wallets, only the primary tree is used.
+            For Application Wallets, the primary and backup trees are used.
 
-        Returns: The new round.Wallet
+        Returns:
+          The new round.Wallet for User Wallets OR
+          A tuple of the (backup_private_seed, round.Wallet) for Application
+            Wallets.
         """
         if not passphrase and not wallet_data:
             raise ValueError("Usage: wallets.create(name, passphrase [, wallet_data])")
         elif passphrase:
-            wallet_data = generate(passphrase, network=self.client.network)
+            wallet_data = generate(
+                passphrase, network=self.client.network,
+                trees=([u'primary', u'backup'] if self.application else [u'primary']))
 
         wallet = dict(primary_private_seed=wallet_data[u'primary'][u'encrypted_seed'],
                       primary_public_seed=wallet_data[u'primary'][u'public_seed'],
                       network=wallet_data[u'primary'][u'network'],
                       name=name)
+        if self.application:
+            wallet[u'backup_public_seed'] = wallet_data[u'backup'][u'public_seed']
 
         resource = self.resource.create(wallet)
         wallet = self.wrap(resource)
-        return self.add(wallet)
+        return (wallet_data[u'backup'][u'private_seed'], self.add(wallet)) if (
+            self.application) else self.add(wallet)
 
     def wrap(self, resource):
-        return Wallet(resource, self.client)
+        return Wallet(resource, self.client, self.application)
 
 
 class Wallet(Wrapper, Updatable):
@@ -109,9 +124,10 @@ class Wallet(Wrapper, Updatable):
       client (round.Client)
     """
 
-    def __init__(self, resource, client):
+    def __init__(self, resource, client, application=None):
         super(Wallet, self).__init__(resource, client)
 
+        self.application = application
         self.multi_wallet = None
 
         account_resource = self.resource.accounts
