@@ -29,9 +29,9 @@ class Transaction(Wrapper):
 
     def approve(self, mfa_token=None):
         if mfa_token:
-            return self.with_mfa(mfa_token).resource.approve()
+            return self.with_mfa(mfa_token).resource.approve({})
 
-        return self.resource.approve()
+        return self.resource.approve({})
 
     def cancel(self):
         try:
