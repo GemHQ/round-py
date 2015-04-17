@@ -58,6 +58,8 @@ class Wallets(DictWrapper):
 
     def create(self, name, passphrase=None, wallet_data=None):
         """Create a new Wallet object and add it to this Wallets collection.
+        This is only available in this library for Application wallets. Users
+        must add additional wallets in their User Console
 
         Args:
           name (str): wallet name
@@ -68,9 +70,7 @@ class Wallets(DictWrapper):
             For Application Wallets, the primary and backup trees are used.
 
         Returns:
-          The new round.Wallet for User Wallets OR
-          A tuple of the (backup_private_seed, round.Wallet) for Application
-            Wallets.
+          A tuple of the (backup_private_seed, round.Wallet).
         """
         if not passphrase and not wallet_data:
             raise ValueError("Usage: wallets.create(name, passphrase [, wallet_data])")

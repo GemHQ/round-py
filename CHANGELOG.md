@@ -1,6 +1,17 @@
 
+0.7.2 / 2015-04-17
+==================
+
+  * Proper handling of Application wallets
+  * Added user.devices
+  * Added send_mfa and verify_mfa to User objects, for arbitrary MFA through Gem
+  * instance_id/instance_token normalized to new name: admin_token
+  * Cleaned up the context parameter storage in Context
+  * Various minor improvements and bug fixes
+
 0.7.1 / 2015-04-02
 ==================
+
   * Updated with the live sandbox URL!
   * Minor tweaks
 
