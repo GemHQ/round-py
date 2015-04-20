@@ -150,6 +150,7 @@ class Client(MFAable):
 
         if user_resource:
             self._user = User(user_resource, self)
+            setattr(user_resource, 'email', email)
             # Fetch the user if we can. If not, we're probably just getting a
             # resource so we can do authorize_device.
             try:
