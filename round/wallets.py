@@ -72,6 +72,8 @@ class Wallets(DictWrapper):
         Returns:
           A tuple of the (backup_private_seed, round.Wallet).
         """
+        if not self.application:
+            raise RoundError("User accounts are limited to one wallet. Make an account or shoot us an email <dev@gem.co> if you have a compelling use case for more.")
         if not passphrase and not wallet_data:
             raise ValueError("Usage: wallets.create(name, passphrase [, wallet_data])")
         elif passphrase:

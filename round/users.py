@@ -120,6 +120,11 @@ class User(Wrapper, Updatable):
         return self._devices
 
     @property
+    def wallet(self):
+        """Fetch and return this user's default (only) Wallet."""
+        return self.wallets['default']
+
+    @property
     def wallets(self):
         """Fetch and return Wallets associated with this user."""
         if not hasattr(self, '_wallets'):

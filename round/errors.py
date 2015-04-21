@@ -32,12 +32,6 @@ class UnknownKeyError(RoundError):
         self.message = "No OTP key found for user. A new key has been generated and a new secret has been delivered. Use key={} to call complete_device_authorization (you should catch this error and use error.key).".format(key)
 
 
-class OTPConflictError(RoundError):
-
-    def __init__(self):
-        self.message = "User does not exist or has too many outstanding device authorizations."
-
-
 class AuthenticationError(RoundError):
 
     def __init__(self, context, schemes):
