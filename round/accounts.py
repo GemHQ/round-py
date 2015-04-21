@@ -142,14 +142,18 @@ class Account(Wrapper, Updatable):
         Account.
 
         Args:
-          status (str): One of ["unsigned", "unapproved",
-                                "confirmed", "unconfirmed",
-                                "canceled", "denied"]
-          type (str): One of ["incoming", "outgoing"]
+          status (str or list, optional): One or a list of
+            ["unsigned", "unapproved",
+             "confirmed", "unconfirmed",
+             "canceled", "denied"]
+          type (str, optional): One of ["incoming", "outgoing"]
 
         Returns:
           A collection of matching Transactions
         """
+        if u'status' in query and isinstance(query[u'status'], list):
+            query[u'status'] = ','.join(map(str, query[u'status']))
+
         transaction_resource = self.resource.transactions(query)
         return txs.Transactions(transaction_resource, self.client)
 
