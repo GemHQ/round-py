@@ -16,7 +16,7 @@ class Users(DictWrapper):
     """A collection of round.Users objects."""
 
     def create(self, email, device_name, passphrase=None,
-               redirect_uri=None, api_token=None, **kwargs):
+               api_token=None, redirect_uri=None, **kwargs):
         """Create a new User object and add it to this Users collection.
 
         In addition to creating a user, this call will create a device for that
@@ -36,18 +36,18 @@ class Users(DictWrapper):
           passphrase (str, optional): A passphrase with which to encrypt a user
             wallet. If not provided, a default_wallet parameter must be passed in
             kwargs.
-          redirect_uri (str, optional): A URI to which to redirect the User after
-            they confirm their Gem account.
           api_token (str, optional): Your app's API token. This is optional if
             and only if the Client which will be calling this function already
             has Gem-Application or Gem-Identify authentication.
+          redirect_uri (str, optional): A URI to which to redirect the User after
+            they confirm their Gem account.
           **kwargs
 
         Returns: A tuple of (device_token, round.User)
         """
 
         if not passphrase and u'default_wallet' not in kwargs:
-            raise ValueError("Usage: users.create(email, passphrase, device_name, redirect_uri, api_token)")
+            raise ValueError("Usage: users.create(email, passphrase, device_name, api_token, redirect_uri)")
         elif passphrase:
             default_wallet = wallets.generate(
                 passphrase, network=self.client.network)[u'primary']
