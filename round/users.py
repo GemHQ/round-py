@@ -21,12 +21,18 @@ class Users(DictWrapper):
 
         In addition to creating a user, this call will create a device for that
         user, whose device_token will be returned from this call. Store the
-        device_token, as it's required to complete Gem-Device authentication after
-        the user approves the device at the end of their signup flow.
+        device_token, as it's required to complete Gem-Device authentication
+        after the user approves the device at the end of their signup flow.
 
-        After this call, be sure to redirect the user to the user.mfa_uri
-        location to complete their account. If you get a 409 Conflict error, then
-        the user already exists in the Gem system and you'll want to do a
+        If you lose the device_token returned from users.create, you'll have to
+        create a new device for the user to gain access to their account again.
+
+        Also, after this call, be sure to redirect the user to the location in
+        `mfa_uri` (second return value of this function) to complete their
+        account.
+
+        If you get a 409 Conflict error, then the user already exists in the Gem
+        system and you'll want to do a
         `client.user(email).devices.create(device_name)`
 
         Args:
@@ -43,7 +49,7 @@ class Users(DictWrapper):
             they confirm their Gem account.
           **kwargs
 
-        Returns: A tuple of (device_token, round.User)
+        Returns: A tuple of (device_token, mfa_uri)
         """
 
         if not passphrase and u'default_wallet' not in kwargs:
@@ -77,7 +83,7 @@ class Users(DictWrapper):
             user_data[u'last_name'] = kwargs[u'last_name']
 
         resource = self.resource.create(user_data)
-        return resource.attributes[u'device_token'], self.wrap(resource)
+        return resource.attributes[u'metadata'][u'device_token'], resource.attributes[u'mfa_uri']
 
     def wrap(self, resource):
         return User(resource, self.client)

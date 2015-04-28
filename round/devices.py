@@ -41,7 +41,7 @@ class Devices(Wrapper):
         if redirect_uri:
             data[u'redirect_uri'] = redirect_uri
 
-        device_resource = self.resource.create(data)
+        auth_request_resource = self.resource.create(data)
 
-        return (device_resource.attributes[u'device_token'],
-                device_resource.attributes[u'mfa_uri'])
+        return (auth_request_resource.attributes[u'metadata'][u'device_token'],
+                auth_request_resource.attributes[u'mfa_uri'])
