@@ -117,7 +117,7 @@ class Client(MFAable):
 
         if (not api_token or
             not self.context.authorize(u'Gem-Identify', api_token=api_token)):
-            raise AuthUsageError(self.context, u'Gem-Identifiy')
+            raise AuthUsageError(self.context, u'Gem-Identify')
 
         return True
 

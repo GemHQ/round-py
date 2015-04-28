@@ -49,7 +49,7 @@ class Users(DictWrapper):
             they confirm their Gem account.
           **kwargs
 
-        Returns: A tuple of (device_token, mfa_uri)
+        Returns: device_token
         """
 
         if not passphrase and u'default_wallet' not in kwargs:
@@ -83,7 +83,7 @@ class Users(DictWrapper):
             user_data[u'last_name'] = kwargs[u'last_name']
 
         resource = self.resource.create(user_data)
-        return resource.attributes[u'metadata'][u'device_token'], resource.attributes[u'mfa_uri']
+        return resource.attributes[u'metadata'][u'device_token']
 
     def wrap(self, resource):
         return User(resource, self.client)

@@ -47,6 +47,8 @@ class AuthenticationError(RoundError):
         else:
             self.message = u"You must first authenticate this client with one of:\n{}".format(error_message)
 
+class ConflictError(RoundError):
+    pass
 
 class OverrideError(RoundError):
 
