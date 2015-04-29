@@ -1,4 +1,15 @@
 
+0.7.3 / 2015-04-29
+==================
+
+  * Added simple little CLI sample project
+  * Updated client to work with the new authorization_request flow
+  * Reordered some parameters for consistency
+  * Users are limited to one wallet. (accessible through user.wallet)
+  * account.transactions now accepts a list of acceptable statuses as filters
+  * Various minor improvements and bug fixes
+
+
 0.7.2 / 2015-04-17
 ==================
 

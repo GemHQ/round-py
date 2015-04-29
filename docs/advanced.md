@@ -3,7 +3,7 @@
 ## Wallets and Accounts
 
 ### Wallets
-The wallet itself is a BIP32 hierarchical deterministic (HD) wallet.  The Gem wallet takes the approach of calling the root node a wallet.  Going to depth1 gets you to the Account nodes and depth2 the addresses underneath the accounts.  
+The wallet itself is a BIP32 hierarchical deterministic (HD) wallet.  The Gem wallet takes the approach of calling the root node a wallet.  Going to depth1 gets you to the Account nodes and depth2 the addresses underneath the accounts.
 
 The Gem wallet has convenience methods to make managing the wallet easy to do.  There are key methods to use off of the wallet object:
 
@@ -14,7 +14,7 @@ The Gem wallet has convenience methods to make managing the wallet easy to do.  
 [[top]](README.md#round-py-advanced-topics) [[back]](../README.md)
 
 ### Accounts
-A gem account is the main object to interact with.  The account is where payments are made from and where you access transaction collections.  The gem wallet can have many accounts.  As mentioned in the wallet section, a Gem account within a wallet is a collection of bitcoin addresses and the complexity of dealing with addresses is now abstracted away.  
+A gem account is the main object to interact with.  The account is where payments are made from and where you access transaction collections.  The gem wallet can have many accounts.  As mentioned in the wallet section, a Gem account within a wallet is a collection of bitcoin addresses and the complexity of dealing with addresses is now abstracted away.
 
 The key methods on an account to use are:
 
@@ -84,7 +84,7 @@ __If there are no convenience methods for attributes you use often, please file 
 [[top]](README.md#round-py-advanced-topics) [[back]](../README.md)
 
 ### Refresh()
-The data on objects are cached client-side for performance versuses having to make API calls for every single method.  What this also means is that if you have for example an instance method for an account, then the information on the account could get into a stale state.  You will have to trigger a refresh of the object with any changes from the API. 
+The data on objects are cached client-side for performance versuses having to make API calls for every single method.  What this also means is that if you have for example an instance method for an account, then the information on the account could get into a stale state.  You will have to trigger a refresh of the object with any changes from the API.
 
 When calling refresh, the object will be returned with the updated information.  Refresh can be called on individual objects as well as the corresponding collections.  For example:
 
@@ -109,7 +109,7 @@ Setting up a subscription on your application will allow you to be notified via 
 ### Webhook operations
 You will start to receive a webhook subscription at the provided url for incoming/outgoing transactions.  The payload of the subscription will contain information about the transaction, amount, and UIDs for the user/wallet/account information.  You’ll be able to use this information to query your app.
 
-For example - the following snippet will retrieve the user in a given subscription 
+For example - the following snippet will retrieve the user in a given subscription
 
 ```python
 generate the client
@@ -128,7 +128,7 @@ for u in app.users.itervalues():
 [[top]](README.md#round-py-advanced-topics) [[back]](../README.md)
 
 ##  Integrated 2FA
-Gem has built 2FA into the API but additionally built a system to add additional 2FA challenges to your app, so you don’t have to integrate yet another api.  You can ask Gem to send an sms challenge to the user to then pass back to your app.  The user will not get an SMS if the user has a TOTP app installed like Google Authenticator, Authy, Duo etc.  
+Gem has built 2FA into the API but additionally built a system to add additional 2FA challenges to your app, so you don’t have to integrate yet another api.  You can ask Gem to send an sms challenge to the user to then pass back to your app.  The user will not get an SMS if the user has a TOTP app installed like Google Authenticator, Authy, Duo etc.
 
 Example of how to incorporate 2FA into your app.
 
@@ -136,7 +136,7 @@ Example of how to incorporate 2FA into your app.
 def login_user(user):
 	user.send_mfa(phone_number = 5555551212)
 	verify_password()
-	unlock_account(user) if user.verify_mfa(USER_ENTERED_MFA) 
+	unlock_account(user) if user.verify_mfa(USER_ENTERED_MFA)
 ```
 
 [[top]](README.md#round-py-advanced-topics) [[back]](../README.md)
@@ -144,9 +144,9 @@ def login_user(user):
 ## Operational/Custodial Wallets
 There are certain scenarios where you want to implement a wallet that you are in posession of that is used for business or custodial purposes.  In the operational/custodial model you will have two keys, the primary used for daily signing and the backup used for recovery.  This means that you hold funds be it the business or your end users.
 
-### Configure 
+### Configure
 
-* Create a new instance token in the management console.  
+* Create a new instance token in the management console.
 	* Instance tokens are used in the application authentication scheme.  When authenticating as an application, you will have full control of the applications wallets and allows a read only view of end user data if your app supports both.
 * __Keep the token safe__
 
@@ -156,9 +156,9 @@ There are certain scenarios where you want to implement a wallet that you are in
 To authenticate as an application to get to an application wallet and/or pull information about the application call:
 
 ```python
-app = client.authenticate_application(app_url=app_url, 
-                                      api_token=api_token, 
-                                      instance_id=instance_id)
+app = client.authenticate_application(app_url=app_url,
+                                      api_token=api_token,
+                                      admin_token=admin_token)
 ```
 
 [[top]](README.md#round-py-advanced-topics) [[back]](../README.md)
@@ -177,7 +177,7 @@ app = client.authenticate_application(app_url=app_url,
 In this section you’ll learn how to make a payment for an operational/custodial wallet.
 
 1. Authenticate as the application
-	1. `app = client.authenticate_application(app_url, api_token, instance_token)`
+	1. `app = client.authenticate_application(app_url, api_token, admin_token)`
 1. Unlock the wallet.
 	1. `wallet.unlock(passphrase, top_secret)`
 1. make a payment

@@ -99,7 +99,7 @@ In this step you will create your own personal Gem user and wallet authorized on
 
     ```python
     #  Store the device token for future authentication
-    device_token, user = client.users.create(
+    device_token = client.users.create(
         first_name = "YOUR FIRST NAME",
         last_name = "YOUR LAST NAME",
         email = "YOUR EMAIL ADDRESS",
@@ -134,7 +134,7 @@ In this step you will learn how to authenticate to the Gem API on a User's devic
 1. Get the default wallet and then default account
 
     ```python
-    my_wallet = full_user.wallets['default']
+    my_wallet = full_user.wallet
     my_account = my_wallet.accounts['default']
     ```
 
