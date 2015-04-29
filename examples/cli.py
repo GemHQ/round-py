@@ -18,40 +18,53 @@
 # Every CLI needs argument parsing:
 import argparse
 from getpass import getpass #secure password entry
-
+from json import dumps, loads
+from os.path import expanduser
 import round # woo!
-
-API_TOKEN = 'C5Y2bFRPy9UgfEm8SlmJjkc3SnInDMAwlmhNCmkeTOo' #we'll need this
 
 
 parser = argparse.ArgumentParser(
     description="A simple Gem-back command-line bitcoin wallet.")
 parser.add_argument('email', help="Your email address")
+parser.add_argument('-a', '--api_token', help="Your api_token")
 parser.add_argument('-d', '--device_token', help="Your device_token")
 args = parser.parse_args()
 
-email = args.email
-print "Enter your passphrase or pick a new one if you don't have an account yet!"
-passphrase = getpass()
+# try:
+#     fh = open("{}/.gemcli".format(expanduser('~')), 'r')
+#     confargs = loads(fh.read())
+#     fh.close()
+# except:
+#     confargs = {}
 
+
+if args.api_token:
+    api_token = args.api_token
+if args.device_token:
+    device_token = args.device_token
+else:
+    device_token = None
+
+# if 'email' in confargs and args.email == confargs['email']:
+#     if 'device_token' in confargs:
+#         device_token = confargs['device_token']
+#     if 'api_token' in confargs:
+#         api_token = confargs['api_token']
+
+email = args.email
 
 # Now we need a client to talk to Gem.
 # I'm hitting our development stack to avoid cluttering the sandbox logs,
 # You can omit the url parameter and just do `round.client()`
-client = round.client(url="http://api-develop.gem.co")
+client = round.client(url="https://api-staging.gem.co")
 
 # Now we have to authenticate before sending requests:
-client.authenticate_identify(API_TOKEN)
+client.authenticate_identify(api_token)
 
-# If they pass a device_token in the arguments as above (-d) then we assume
-# they have an account.
-if args.device_token:
-    device_token = args.device_token
-else:
+if not device_token:
     try:
         # Let's try to get an existing user first. It'll throw an exception
         # if the account doesn't exist.
-
         user = client.user(email) # wow, such difficult
 
         # Since we don't have a device_token from them, we'll need to create
@@ -60,24 +73,31 @@ else:
 
         # Then they can visit the mfa_uri we receive back to authorize with their
         # 2FA authorization code.
-        print "Open this URL in your web browser to authorize this device: \n{}".format(mfa_uri)
+        raw_input("Open this URL in your web browser to authorize this device, then press enter: \n{}".format(mfa_uri))
     except:
         # Whoops, looks like they don't have an account! Let's make one.
+        print "Pick a secure passphrase > "
+        passphrase = getpass()
         device_token = client.users.create(email=email,
                                            passphrase=passphrase,
                                            device_name="Gem CLI")
-        raw_input("Check your email to confirm your new wallet, then press enter")
+        backup_seed  = raw_input("Check your email to confirm your new wallet, then enter your backup seed > ")
 
 # Cool, so now when execution continues, we'll have a device_token authorized on
 # our app, so we can authenticate as the user!
 
-# We're gonna want to save that backup seed!
-# phone dragon region unique region just hockey develop tag neutral secret tooth chest moon pipe guitar drip during present moon chat nature ball diesel
-# The device token would be good too: BWpo7FUpea6k969E7eX5Dm75rRwaY49CIBG9XbWcE-E
+# We're gonna want to save those creds,
+# * particularly the device_token and backup_seed *
 
-print "Store this device_token (if you lose it you'll have to authorize a new app):"
-print device_token
-user = client.authenticate_device(api_token=API_TOKEN,
+# yn = raw_input("Save your credentials to ~/.gemcli? [Y/n] ")
+# if yn.lower() == 'n':
+#     print "okay, but don't lose them! Here's your device_token:\n {}".format(device_token)
+# else:
+#     fh = open('{}/.gemcli'.format(expanduser('~')), 'w')
+#     fh.write(dumps(confargs))
+#     fh.close()
+
+user = client.authenticate_device(api_token=api_token,
                                   device_token=device_token,
                                   email=email)
 
@@ -110,8 +130,8 @@ Choose an action:
 
         dest_address = raw_input("destination address> ")
         amount = raw_input("Transaction amount (satoshis) >")
-        tx = user.wallet.accounts['default'].pay(payees=dict(address=dest_address,
-                                                             amount=amount))
+        tx = user.wallet.accounts['default'].pay(payees=[dict(address=dest_address,
+                                                              amount=int(amount))])
         print "\nVisit this URL to authorize this transaction:\n\t{}".format(
             tx.mfa_uri)
         raw_input("Press enter to continue or CTRL-C to quit")
