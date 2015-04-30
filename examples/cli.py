@@ -108,9 +108,9 @@ def print_wallet(user):
     print "\n{}, your wallet has a balance of {} satoshis".format(
         user.first_name, user.wallet.balance)
 
-    print "Account \t Balance (satoshis)"
+    print "Account \t Balance (satoshis) \t Pending Balance (satoshis)"
     for name, account in user.wallet.accounts.iteritems():
-        print "{} \t {}".format(name, account.balance)
+        print "{} \t {} \t {}".format(name, account.balance, account.pending_balance)
 
 print_wallet(user)
 
@@ -126,12 +126,15 @@ Choose an action:
         if user.wallet.is_locked():
             # unlocking a user wallet decrypts the primary private key
             # used to make signatures.
+            passphrase = getpass()
             user.wallet.unlock(passphrase)
 
         dest_address = raw_input("destination address> ")
         amount = raw_input("Transaction amount (satoshis) >")
         tx = user.wallet.accounts['default'].pay(payees=[dict(address=dest_address,
-                                                              amount=int(amount))])
+                                                              amount=int(amount))],
+                                                 utxo_confirmations=1)
+        print tx.__dict__
         print "\nVisit this URL to authorize this transaction:\n\t{}".format(
             tx.mfa_uri)
         raw_input("Press enter to continue or CTRL-C to quit")
