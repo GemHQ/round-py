@@ -6,6 +6,7 @@
 from .config import *
 
 from .wrappers import *
+from .errors import *
 from .subscriptions import Subscriptions
 from .devices import Devices
 
@@ -82,7 +83,13 @@ class Users(DictWrapper):
         if u'last_name' in kwargs:
             user_data[u'last_name'] = kwargs[u'last_name']
 
-        resource = self.resource.create(user_data)
+        try:
+            resource = self.resource.create(user_data)
+        except ResponseError as e:
+            if "conflict" in e.message:
+                raise ConflictError("This user already exists. Use client.user(email).devices.create(name) to request authorization from the user.")
+            raise e
+
         return resource.attributes[u'metadata'][u'device_token']
 
     def wrap(self, resource):

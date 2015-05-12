@@ -33,6 +33,10 @@ class Transaction(Wrapper):
 
         return self.resource.approve({})
 
+    @property
+    def mfa_uri(self):
+        return self.resource.__dict__[u'mfa_uri']
+
     def cancel(self):
         try:
             return self.resource.cancel()
