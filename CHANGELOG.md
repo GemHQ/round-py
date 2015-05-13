@@ -1,4 +1,10 @@
 
+0.7.4 / 2015-05-13
+==================
+
+  *  various improvements and bug fixes
+  *  new Error classes in the public interface
+
 0.7.3 / 2015-04-29
 ==================
 
