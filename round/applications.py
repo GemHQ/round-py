@@ -57,6 +57,7 @@ class Application(Wrapper, Updatable):
             Developer Console.
         """
         self.totp = TOTP(totp_secret)
+        return self
 
     def get_mfa(self):
         """Return the currently-valid MFA token for this application."""

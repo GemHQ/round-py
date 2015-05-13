@@ -50,6 +50,10 @@ class AuthenticationError(RoundError):
 class ConflictError(RoundError):
     pass
 
+class InvalidPassphraseError(RoundError):
+    def __init__(self, message="Decryption failed, check your passphrase"):
+        self.message = message
+
 class OverrideError(RoundError):
 
     def __init__(self, scheme, message=None):

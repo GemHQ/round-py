@@ -27,7 +27,14 @@ parser = argparse.ArgumentParser(
     description="A simple Gem-back command-line bitcoin wallet.")
 parser.add_argument('email', help="Your email address")
 parser.add_argument('-a', '--api_token', help="Your api_token")
-parser.add_argument('-d', '--device_token', help="Your device_token")
+
+parser.add_argument('-u', '--url',
+                    help="Gem API URL (https://api-sandbox.gem.co)",
+                    default="https://api-sandbox.gem.co")
+
+parser.add_argument('-d', '--device_token',
+                    help="Your device_token",
+                    default=None)
 args = parser.parse_args()
 
 # try:
@@ -38,12 +45,9 @@ args = parser.parse_args()
 #     confargs = {}
 
 
-if args.api_token:
-    api_token = args.api_token
-if args.device_token:
-    device_token = args.device_token
-else:
-    device_token = None
+api_token = args.api_token
+device_token = args.device_token
+url = args.url
 
 # if 'email' in confargs and args.email == confargs['email']:
 #     if 'device_token' in confargs:
@@ -54,9 +58,7 @@ else:
 email = args.email
 
 # Now we need a client to talk to Gem.
-# I'm hitting our development stack to avoid cluttering the sandbox logs,
-# You can omit the url parameter and just do `round.client()`
-client = round.client(url="https://api-staging.gem.co")
+client = round.client(url=url)
 
 # Now we have to authenticate before sending requests:
 client.authenticate_identify(api_token)
@@ -83,6 +85,8 @@ if not device_token:
                                            device_name="Gem CLI")
         backup_seed  = raw_input("Check your email to confirm your new wallet, then enter your backup seed > ")
 
+    print "device_token {}".format(device_token)
+
 # Cool, so now when execution continues, we'll have a device_token authorized on
 # our app, so we can authenticate as the user!
 
@@ -103,14 +107,12 @@ user = client.authenticate_device(api_token=api_token,
 
 # Now for the fun stuff.
 def print_wallet(user):
-    user.refresh()
-    # I wrote this beforehand:
-    print "\n{}, your wallet has a balance of {} satoshis".format(
-        user.first_name, user.wallet.balance)
-
-    print "Account \t Balance (satoshis) \t Pending Balance (satoshis)"
+    print "Account \t\t Balance \t Pending Balance"
     for name, account in user.wallet.accounts.iteritems():
-        print "{} \t {} \t {}".format(name, account.balance, account.pending_balance)
+        account = account.refresh()
+        print "{} \t {} \t {}".format(name,
+                                      account.balance,
+                                      account.pending_balance)
 
 print_wallet(user)
 
@@ -134,7 +136,6 @@ Choose an action:
         tx = user.wallet.accounts['default'].pay(payees=[dict(address=dest_address,
                                                               amount=int(amount))],
                                                  utxo_confirmations=1)
-        print tx.__dict__
         print "\nVisit this URL to authorize this transaction:\n\t{}".format(
             tx.mfa_uri)
         raw_input("Press enter to continue or CTRL-C to quit")

@@ -137,6 +137,9 @@ class Wallet(Wrapper, Updatable):
                                  client=self.client,
                                  wallet=self)
 
+    def default_account(self):
+        return self.accounts['default']
+
     def is_unlocked(self):
         """Return true if the wallet is unlocked."""
         return not self.is_locked()
@@ -160,8 +163,11 @@ class Wallet(Wrapper, Updatable):
         """
         network = network if network else self.resource.network
         wallet = self.resource
-        primary_seed = PassphraseBox.decrypt(passphrase,
-                                             wallet.primary_private_seed)
+        try:
+            primary_seed = PassphraseBox.decrypt(passphrase,
+                                                 wallet.primary_private_seed)
+        except:
+            raise InvalidPassphraseError()
 
         self.multi_wallet = MultiWallet(
             private_seeds={u'primary': primary_seed},

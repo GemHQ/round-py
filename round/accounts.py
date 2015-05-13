@@ -131,7 +131,8 @@ class Account(Wrapper, Updatable):
 
         # If this is an Application wallet, approve the transaction.
         if mfa_token and self.wallet.application:
-            return txs.Transaction(signed.with_mfa(mfa_token).approve())
+            return txs.Transaction(signed.with_mfa(mfa_token).approve(),
+                                   self.client)
 
         # Otherwise return the unapproved tx (now redirect the user to the
         # `mfa_uri` attribute to approve!)

@@ -5,6 +5,7 @@
 
 import abc
 import collections
+from patchboard.response import ResponseError
 
 from .config import *
 from .errors import *
@@ -49,13 +50,19 @@ class Wrapper(MFAable):
         self.client = client
 
     def __getattr__(self, name):
-        return getattr(self.resource, name)
+        try:
+            return getattr(self.resource, name)
+        except ResponseError as e:
+            raise RoundError(e.message)
 
     def __str__(self):
         return str(self.attributes)
 
     def refresh(self):
-        self.resource = self.resource.get()
+        try:
+            self.resource = self.resource.get()
+        except ResponseError as e:
+            raise RoundError(e.message)
         return self
 
 class DictWrapper(collections.Mapping):

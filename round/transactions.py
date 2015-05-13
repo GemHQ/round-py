@@ -27,6 +27,12 @@ class Transaction(Wrapper):
     def attributes(self):
         return self.resource.attributes
 
+    def __getattr__(self, name):
+        try:
+            return self.resource.attributes[name]
+        except:
+            return super(Transaction, self).__getattr__(name)
+
     def approve(self, mfa_token=None):
         if mfa_token:
             return self.with_mfa(mfa_token).resource.approve({})
@@ -35,7 +41,15 @@ class Transaction(Wrapper):
 
     @property
     def mfa_uri(self):
-        return self.resource.__dict__[u'mfa_uri']
+        try:
+            return self.resource.__dict__[u'mfa_uri']
+        except KeyError:
+            pass
+        try:
+            return self.resource.__dict__[u'attributes'][u'mfa_uri']
+        except KeyError:
+            pass
+        return None
 
     def cancel(self):
         try:

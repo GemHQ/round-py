@@ -159,7 +159,7 @@ class User(Wrapper, Updatable):
         """Send an SMS MFA token to the user."""
         return self.resource.send_mfa({})
 
-    def verify_mfa(mfa_token):
+    def verify_mfa(self, mfa_token):
         """Verify an SMS or TOTP MFA token for this user.
 
         Args:
@@ -169,5 +169,5 @@ class User(Wrapper, Updatable):
         Returns:
           True if the mfa_token is valid, False otherwise.
         """
-        return self.resource.verify_mfa(
-            {u'mfa_token': mfa_token})[u'valid'] == 'true'
+        response = self.resource.verify_mfa({u'mfa_token': mfa_token})
+        return (response['valid'] == True or response[u'valid'] == 'true')
