@@ -136,7 +136,7 @@ class Wallet(Wrapper, Updatable):
         self.accounts = Accounts(resource=account_resource,
                                  client=self.client,
                                  wallet=self)
-
+    @property
     def default_account(self):
         return self.accounts['default']
 
