@@ -17,11 +17,15 @@
 
 # Every CLI needs argument parsing:
 import argparse
-from getpass import getpass #secure password entry
+#secure password entry
+from getpass import getpass
 from json import dumps, loads
 from os.path import expanduser
-import round # woo!
 
+#for providing MFA tokens in a browser
+from webbrowser import open_new
+
+import round # woo!
 
 parser = argparse.ArgumentParser(
     description="A simple Gem-back command-line bitcoin wallet.")
@@ -63,6 +67,12 @@ client = round.client(url=url)
 # Now we have to authenticate before sending requests:
 client.authenticate_identify(api_token)
 
+
+def pop_a_browser(uri):
+    open_new(uri)
+    raw_input("Provide your MFA in the browser window to confirmt this action. Press enter when you're done ... ")
+
+
 if not device_token:
     try:
         # Let's try to get an existing user first. It'll throw an exception
@@ -75,7 +85,7 @@ if not device_token:
 
         # Then they can visit the mfa_uri we receive back to authorize with their
         # 2FA authorization code.
-        raw_input("Open this URL in your web browser to authorize this device, then press enter: \n{}".format(mfa_uri))
+        pop_a_browser(mfa_uri)
     except:
         # Whoops, looks like they don't have an account! Let's make one.
         print "Pick a secure passphrase > "
@@ -108,11 +118,14 @@ user = client.authenticate_device(api_token=api_token,
 # Now for the fun stuff.
 def print_wallet(user):
     print "Account \t\t Balance \t Pending Balance"
-    for name, account in user.wallet.accounts.iteritems():
-        account = account.refresh()
-        print "{} \t {} \t {}".format(name,
-                                      account.balance,
-                                      account.pending_balance)
+    try:
+        for name, account in user.wallet.accounts.iteritems():
+            account = account.refresh()
+            print "{} \t {} \t {}".format(name,
+                                          account.balance,
+                                          account.pending_balance)
+    except Exception as e:
+        print e
 
 print_wallet(user)
 
@@ -132,13 +145,11 @@ Choose an action:
             user.wallet.unlock(passphrase)
 
         dest_address = raw_input("destination address> ")
-        amount = raw_input("Transaction amount (satoshis) >")
+        amount = raw_input("Transaction amount (satoshis)> ")
         tx = user.wallet.accounts['default'].pay(payees=[dict(address=dest_address,
                                                               amount=int(amount))],
                                                  utxo_confirmations=1)
-        print "\nVisit this URL to authorize this transaction:\n\t{}".format(
-            tx.mfa_uri)
-        raw_input("Press enter to continue or CTRL-C to quit")
+        pop_a_browser(tx.mfa_uri)
 
     elif command == '2':
         # Generating an address is eeeeeasy
