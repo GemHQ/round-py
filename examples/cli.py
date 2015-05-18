@@ -41,24 +41,9 @@ parser.add_argument('-d', '--device_token',
                     default=None)
 args = parser.parse_args()
 
-# try:
-#     fh = open("{}/.gemcli".format(expanduser('~')), 'r')
-#     confargs = loads(fh.read())
-#     fh.close()
-# except:
-#     confargs = {}
-
-
 api_token = args.api_token
 device_token = args.device_token
 url = args.url
-
-# if 'email' in confargs and args.email == confargs['email']:
-#     if 'device_token' in confargs:
-#         device_token = confargs['device_token']
-#     if 'api_token' in confargs:
-#         api_token = confargs['api_token']
-
 email = args.email
 
 # Now we need a client to talk to Gem.
@@ -70,7 +55,7 @@ client.authenticate_identify(api_token)
 
 def pop_a_browser(uri):
     open_new(uri)
-    raw_input("Provide your MFA in the browser window to confirmt this action. Press enter when you're done ... ")
+    raw_input("Provide your MFA in the browser window to confirm this action. Press enter when you're done ... ")
 
 
 if not device_token:
