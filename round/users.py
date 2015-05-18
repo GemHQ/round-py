@@ -138,15 +138,6 @@ class User(Wrapper, Updatable):
         return self.wallets['default']
 
     @property
-    def wallets(self):
-        """Fetch and return Wallets associated with this user."""
-        if not hasattr(self, '_wallets'):
-            wallets_resource = self.resource.wallets
-            self._wallets = wallets.Wallets(wallets_resource,
-                                            self.client)
-        return self._wallets
-
-    @property
     def subscriptions(self):
         """Fetch and return Subscriptions associated with this user."""
         if not hasattr(self, '_subscriptions'):
