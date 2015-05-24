@@ -28,7 +28,7 @@ random_instance_name = random_instance_name()
 
 create = test_create_methods()
 
-c = round.client(url=round_url(), network='testnet')
+c = round.client(url=round_url())
 
 class TestUser:
     def test_user_creation(self):

@@ -13,7 +13,7 @@ from .accounts import Account, Accounts
 from .subscriptions import Subscription, Subscriptions
 
 
-def generate(passphrase, network, trees=[u'primary']):
+def generate(passphrase, trees=[u'primary']):
     """Generate a seed for the primary tree of a Gem wallet.
 
     You may choose to store the passphrase for a user so the user doesn't have
@@ -26,22 +26,19 @@ def generate(passphrase, network, trees=[u'primary']):
       passphrase (str): The passphrase that will be used to encrypt the seed
         before it's send to Gem. Key-stretching is done with PBDKF2 and
         encryption is done with nacl's SecretBox.
-      network (str): Bitcoin network (bitcoin, testnet3)
       trees (list of str): A list of names to generate trees for. For User
         Wallets this will be ['primary'], for Application Wallets it will be
        ['primary', 'backup'].
 
     Returns:
-      A dict of dicts containing the network, serialized public master node, and
+      A dict of dicts containing the serialized public master node, and
        a sub-dict with the encrypted private seed for each tree in `trees`.
     """
-    seeds, multi_wallet = MultiWallet.generate(trees, entropy=True,
-                                               network=network)
+    seeds, multi_wallet = MultiWallet.generate(trees, entropy=True)
 
     result = {}
     for tree in trees:
-        result[tree] = dict(network=GEM_NETWORK[network],
-                            private_seed=seeds[tree],
+        result[tree] = dict(private_seed=seeds[tree],
                             public_seed=multi_wallet.public_seed(tree),
                             encrypted_seed=PassphraseBox.encrypt(passphrase, seeds[tree]))
     return result
@@ -78,12 +75,11 @@ class Wallets(DictWrapper):
             raise ValueError("Usage: wallets.create(name, passphrase [, wallet_data])")
         elif passphrase:
             wallet_data = generate(
-                passphrase, network=self.client.network,
+                passphrase, 
                 trees=([u'primary', u'backup'] if self.application else [u'primary']))
 
         wallet = dict(primary_private_seed=wallet_data[u'primary'][u'encrypted_seed'],
                       primary_public_seed=wallet_data[u'primary'][u'public_seed'],
-                      network=wallet_data[u'primary'][u'network'],
                       name=name)
         if self.application:
             wallet[u'backup_public_seed'] = wallet_data[u'backup'][u'public_seed']
@@ -148,7 +144,7 @@ class Wallet(Wrapper, Updatable):
         """Return true if the wallet is locked."""
         return (self.multi_wallet is None)
 
-    def unlock(self, passphrase, network=None):
+    def unlock(self, passphrase):
         """Unlock the Wallet by decrypting the primary_private_seed with the
         supplied passphrase. Once unlocked, the private seed is accessible in
         memory and calls to `account.pay` will succeed. This is a necessary step
@@ -156,12 +152,9 @@ class Wallet(Wrapper, Updatable):
 
         Args:
           passphrase (str): The passphrase the User used to encrypt this wallet.
-          network (str, optional): Bitcoin network (bitcoin, testnet3)
-
         Returns:
           self
         """
-        network = network if network else self.resource.network
         wallet = self.resource
         try:
             primary_seed = PassphraseBox.decrypt(passphrase,
@@ -172,8 +165,7 @@ class Wallet(Wrapper, Updatable):
         self.multi_wallet = MultiWallet(
             private_seeds={u'primary': primary_seed},
             public={u'cosigner': wallet.cosigner_public_seed,
-                    u'backup': wallet.backup_public_seed},
-            network=NETWORK_MAP[network])
+                    u'backup': wallet.backup_public_seed})
         return self
 
     @property

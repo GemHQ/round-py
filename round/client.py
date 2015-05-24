@@ -27,13 +27,13 @@ class Client(MFAable):
       users (round.Users)
     """
 
-    def __init__(self, pb_client, network):
+    def __init__(self, pb_client):
         self.pb_client = pb_client
-        try:
-            self.network = NETWORK_MAP[network]
-            bitcoin.SelectParams(self.network)
-        except:
-            raise UnknownNetworkError(network)
+        #try:
+            #self.network = NETWORK_MAP[network]
+            #bitcoin.SelectParams(self.network)
+        #except:
+            #raise UnknownNetworkError(network)
         self.context = self.pb_client.context
         self.resources = self.pb_client.resources
         self.users = Users(self.resources.users, self)

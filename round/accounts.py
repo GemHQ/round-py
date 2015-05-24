@@ -30,7 +30,7 @@ class Accounts(DictWrapper):
         self.wallet = wallet
         super(Accounts, self).__init__(resource, client)
 
-    def create(self, name):
+    def create(self, name, network):
         """Create a new Account object and add it to this Accounts collection.
 
         Args:
@@ -38,7 +38,9 @@ class Accounts(DictWrapper):
 
         Returns: The new round.Account
         """
-        account = self.wrap(self.resource.create(dict(name=name)))
+        if not network in SUPPORTED_NETWORKS:
+            raise ValueError('Network not valid!')
+        account = self.wrap(self.resource.create(dict(name=name, network=network)))
         self.add(account)
         return account
 

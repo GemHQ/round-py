@@ -18,22 +18,16 @@ from .errors import *
 
 _patchboard = None
 
-def client(environment=DEFAULT_ENVIRONMENT, url=None, network=None):
+def client(url=None):
     global _patchboard
 
     if _patchboard is None:
         _patchboard = {}
 
-    environment = ENV_MAP[environment] if environment else {}
     if not url:
-        url = environment[u'url']
-    if not network:
-        network = environment[u'network']
+        url = 'https://api.gem.co'
 
-    if url not in _patchboard:
-        _patchboard[url] = patchboard.discover(
-            url, {u'default_context': Context})
-    return Client(_patchboard[url].spawn(), network)
+    return Client(_patchboard[url].spawn())
 
 
 class Context(dict):

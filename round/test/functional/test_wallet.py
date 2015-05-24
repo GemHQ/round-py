@@ -86,10 +86,3 @@ class TestWallet:
         w = u.wallets['default']
         with raises(round.AuthenticationError):
             w.subscriptions
-
-    def test_multi_wallet_network(self):
-        w = u.wallets['default']
-
-        mw = w.multi_wallet
-        assert isinstance(mw, MultiWallet)
-        assert mw.network == c.network

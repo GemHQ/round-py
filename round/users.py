@@ -56,8 +56,7 @@ class Users(DictWrapper):
         if not passphrase and u'default_wallet' not in kwargs:
             raise ValueError("Usage: users.create(email, passphrase, device_name, api_token, redirect_uri)")
         elif passphrase:
-            default_wallet = wallets.generate(
-                passphrase, network=self.client.network)[u'primary']
+            default_wallet = wallets.generate(passphrase)[u'primary']
         else:
             default_wallet = kwargs[u'default_wallet']
 

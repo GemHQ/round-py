@@ -20,7 +20,7 @@ class TestClient:
 
     def test_client_returns_a_Client(self, client):
         c1 = round.client(url=round_url())
-        c2 = round.client(network=u'testnet')
+        c2 = round.client
         for c in [client, c1, c2]:
             assert type(c) == RoundClient
 
@@ -30,14 +30,9 @@ class TestClient:
         with raises(patchboard.exception.PatchboardError):
             round.client(url=u'http://www.google.com/')
 
-    def test_client_fails_with_bad_network(self):
-        with raises(round.UnknownNetworkError):
-            round.client(network=u'bogus!')
-
     def test_client_has_properties(self, client, developers):
         pb = round._patchboard[round_url()]
         assert client.pb_client.main_pb is pb
-        assert client.network == round.config.DEFAULT_NETWORK
         assert type(client.context) == round.Context
         assert client.resources is client.pb_client.resources
         assert type(client.resources) == patchboard.endpoints.Endpoints
