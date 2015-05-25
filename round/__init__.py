@@ -27,6 +27,9 @@ def client(url=None):
     if not url:
         url = 'https://api.gem.co'
 
+    if url not in _patchboard:
+        _patchboard[url] = patchboard.discover(
+            url, {u'default_context': Context})
     return Client(_patchboard[url].spawn())
 
 
