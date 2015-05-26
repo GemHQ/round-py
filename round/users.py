@@ -9,9 +9,10 @@ from .wrappers import *
 from .errors import *
 from .subscriptions import Subscriptions
 from .devices import Devices
+from .wallets import generate, Wallet
 
 import applications as apps
-import wallets
+
 
 class Users(DictWrapper):
     """A collection of round.Users objects."""
@@ -56,7 +57,7 @@ class Users(DictWrapper):
         if not passphrase and u'default_wallet' not in kwargs:
             raise ValueError("Usage: users.create(email, passphrase, device_name, api_token, redirect_uri)")
         elif passphrase:
-            default_wallet = wallets.generate(passphrase)[u'primary']
+            default_wallet = generate(passphrase)[u'primary']
         else:
             default_wallet = kwargs[u'default_wallet']
 
@@ -134,7 +135,10 @@ class User(Wrapper, Updatable):
     @property
     def wallet(self):
         """Fetch and return this user's default (only) Wallet."""
-        return self.wallets['default']
+        if not hasattr(self, '_wallet'):
+            wallet_resource = self.default_wallet.get()
+            self._wallet = Wallet(wallet_resource, self.client)
+        return self._wallet
 
     @property
     def subscriptions(self):
