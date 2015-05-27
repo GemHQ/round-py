@@ -14,7 +14,7 @@ The Gem wallet has convenience methods to make managing the wallet easy to do.  
 [[top]](README.md#round-py-advanced-topics) [[back]](../README.md)
 
 ### Accounts
-A gem account is the main object to interact with.  The account is where payments are made from and where you access transaction collections.  The gem wallet can have many accounts.  As mentioned in the wallet section, a Gem account within a wallet is a collection of bitcoin addresses and the complexity of dealing with addresses is now abstracted away.
+A gem account is the main object to interact with.  The account is where payments are made from and where you access transaction collections.  The gem wallet can have many accounts, but each account is limited to one coin type (also called network).  As mentioned in the wallet section, a Gem account within a wallet is a collection of bitcoin addresses and the complexity of dealing with addresses is now abstracted away.
 
 The key methods on an account to use are:
 

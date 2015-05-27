@@ -1,9 +1,18 @@
 
+0.8.0 / 2015-05-26
+==================
+
+  * support for litecoin and dogecoin!
+  * removed network references and disabled sig_hash checking until we can eliminate python-bitcoinlib in coinop
+  * removed old user.wallets accessor
+  * various improvements and bug fixes
+  * examples/cli.py opens a browser for you when necessary
+
 0.7.4 / 2015-05-13
 ==================
 
-  *  various improvements and bug fixes
-  *  new Error classes in the public interface
+  * various improvements and bug fixes
+  * new Error classes in the public interface
 
 0.7.3 / 2015-04-29
 ==================

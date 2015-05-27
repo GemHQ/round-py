@@ -24,7 +24,7 @@ class PyTest(TestCommand):
         raise SystemExit(errno)
 
 setup(name='round',
-      version='0.7.4',
+      version='0.8.0',
       description='Python client for Gem.co',
       url='http://github.com/GemHQ/round-py',
       author='Dustin Laurence <dustin@gem.co>, Matt Smith <matt@gem.co>',
@@ -37,7 +37,7 @@ setup(name='round',
           'patchboard',
           'pyotp',
           'PyNaCl==0.3.0',
-          'coinop==0.1.3',
+          'coinop==0.2.0',
       ],
       tests_require=[
         'pytest',

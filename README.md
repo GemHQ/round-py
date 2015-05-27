@@ -1,7 +1,8 @@
 # round-py: A Python client for the Gem API
-The round client is designed to interact with Gem's API to make building blockchain apps drop dead simple.  All the complexity of the bitcoin protocol and crypto has been abstracted away so you can focus on building your product.  Here are a few of the many great things the API and clients provide:
+The round client is designed to interact with Gem's API to make building blockchain apps drop dead simple.  All the complexity of altcoin protocols and cryptography has been abstracted away so you can focus on building your product.  Here are a few of the many great things the API and clients provide:
 
 * Multi-signature wallets with Gem as a cosigner
+* Bitcoin, Testnet, Litecoin, and Dogecoin support (multisig for all!)
 * Webhook notifications automatically subscribed for you
 * Integrated 2FA solution with arbitrary endpoints to build into your app
 * Simplified balance inqueries
@@ -131,11 +132,17 @@ In this step you will learn how to authenticate to the Gem API on a User's devic
 ### 5. Access the wallet and Default Account
 [Wallets and Accounts](docs/advanced.md#wallets-and-accounts)
 
-1. Get the default wallet and then default account
+1. Get the default wallet and then default account (which is a bitcoin account)
 
     ```python
     my_wallet = full_user.wallet
     my_account = my_wallet.accounts['default']
+    ```
+
+2. Or create an altcoin account!
+
+    ```python
+    my_account = my_wallet.accounts.create(name='brand-new-account', network='litecoin')
     ```
 
 [[top]](README.md#getting-started-tutorial)
