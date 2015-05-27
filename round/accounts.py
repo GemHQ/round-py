@@ -100,7 +100,7 @@ class Account(Wrapper, Updatable):
           payees (list of dict): list of outputs in the form:
             [{'amount': 10000(satoshis),
               'address':'validbtcaddress'}, ...]
-          confirmations (int, optional): Required confirmations for UTXO
+          utxo_confirmations (int, optional): Required confirmations for UTXO
             selection ( > 0)
           mfa_token (str, optional): TOTP token for the Application owning this
             Account's wallet.
