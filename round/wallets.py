@@ -39,7 +39,7 @@ def generate(passphrase, trees=[u'primary']):
     result = {}
     for tree in trees:
         result[tree] = dict(private_seed=seeds[tree],
-                            public_seed=multi_wallet.public_seed(tree),
+                            public_seed=multi_wallet.public_wif(tree),
                             encrypted_seed=PassphraseBox.encrypt(passphrase, seeds[tree]))
     return result
 
@@ -70,17 +70,21 @@ class Wallets(DictWrapper):
           A tuple of the (backup_private_seed, round.Wallet).
         """
         if not self.application:
-            raise RoundError("User accounts are limited to one wallet. Make an account or shoot us an email <dev@gem.co> if you have a compelling use case for more.")
+            raise RoundError("User accounts are limited to one wallet. Make an "
+                             "account or shoot us an email <dev@gem.co> if you "
+                             "have a compelling use case for more.")
         if not passphrase and not wallet_data:
-            raise ValueError("Usage: wallets.create(name, passphrase [, wallet_data])")
+            raise ValueError("Usage: wallets.create(name, passphrase [, "
+                             "wallet_data])")
         elif passphrase:
-            wallet_data = generate(
-                passphrase, 
-                trees=([u'primary', u'backup'] if self.application else [u'primary']))
+            wallet_data = generate(passphrase,
+                                   trees=([u'primary', u'backup'] if (
+                                       self.application) else [u'primary']))
 
-        wallet = dict(primary_private_seed=wallet_data[u'primary'][u'encrypted_seed'],
-                      primary_public_seed=wallet_data[u'primary'][u'public_seed'],
-                      name=name)
+        wallet = dict(
+            primary_private_seed=wallet_data[u'primary'][u'encrypted_seed'],
+            primary_public_seed=wallet_data[u'primary'][u'public_seed'],
+            name=name)
         if self.application:
             wallet[u'backup_public_seed'] = wallet_data[u'backup'][u'public_seed']
 
@@ -184,13 +188,13 @@ class Wallet(Wrapper, Updatable):
           transaction (coinop.Transaction)
 
         Returns:
-          A list of signature dicts of the form [{'primary': 'base58signaturestring'}]
+          A list of signature dicts of the form
+            [ {'primary': 'base58signaturestring'},
+              ... ]
         """
         # TODO: output.metadata['type']['change']
         if not self.multi_wallet:
-            raise Exception("This wallet must be unlocked with wallet.unlock(passphrase)")
-        change_output = transaction.outputs[-1]
-        if self.multi_wallet.is_valid_output(change_output):
-            return self.multi_wallet.signatures(transaction)
-        else:
-            raise Exception('Problem with transaction: Invalid change address')
+            raise Exception("This wallet must be unlocked with "
+                            "wallet.unlock(passphrase)")
+
+        return self.multi_wallet.signatures(transaction)

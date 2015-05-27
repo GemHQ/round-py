@@ -125,7 +125,7 @@ class Account(Wrapper, Updatable):
 
         # Update the tx with the signatures.
         transaction = dict(signatures=dict(inputs=signatures,
-                                           transaction_hash=coinoptx.hex_hash()))
+                                           transaction_hash=coinoptx.hash))
         if redirect_uri:
             transaction[u'redirect_uri'] = redirect_uri
 
@@ -165,8 +165,8 @@ class Account(Wrapper, Updatable):
         """Fetch and return Subscriptions registered on this account."""
         if not hasattr(self, '_subscriptions'):
             subscriptions_resource = self.resource.subscriptions
-            self._subscriptions = Subscriptions(
-                subscriptions_resource, self.client)
+            self._subscriptions = Subscriptions(subscriptions_resource,
+                                                self.client)
         return self._subscriptions
 
     @property
