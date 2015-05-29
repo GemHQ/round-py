@@ -7,7 +7,6 @@ The wallet itself is a BIP32 hierarchical deterministic (HD) wallet.  The Gem wa
 
 The Gem wallet has convenience methods to make managing the wallet easy to do.  There are key methods to use off of the wallet object:
 
-* `wallet.balance`: returns the total balance of all accounts
 * `wallet.is_locked()`: returns True if locked
 * `wallet.accounts`: returns a collection of round accounts.
 
@@ -20,10 +19,11 @@ The key methods on an account to use are:
 
 * `account.balance`: returns the sum of all transactions with 1 or more confirmations
 * `account.pending_balance`: returns the sum of all incoming outgoing transactions with 0 confirmations
+* `account.available_balance`: returns the usable balance, nothing that is pending or claimed outputs for an outgoing transaction 
 * `account.pay(payees,confirmations,redirect_url)`: send bitcoin out of an account **must call [wallet.unlock()](advanced.md#wallets) first**
 * `account.transactions`: return the collections of transactions
 
-A pending_balance in Gem is any address involved in a transaction with 0 confirmations.  This means that in multiple transactions both incoming and outgoing will produce a net pending_balance.  As they confirm with a single confirmation, the account balance in the API reflects the change.  Objects get cached for speed in the client, so to fetch a new state of an account on the API, call account = account.refresh().
+A pending_balance in Gem is any address involved in a transaction with 0 confirmations.  This means that in multiple transactions both incoming and outgoing will produce a net pending_balance.  As they confirm with a single confirmation, the account balance in the API reflects the change.  Objects get cached for speed in the client, so to fetch a new state of an account on the API, call `account = account.refresh()`.
 
 [[top]](README.md#round-py-advanced-topics) [[back]](../README.md)
 
@@ -44,8 +44,8 @@ Example snippet to generate an unsigned transaction:
 account = w.accounts['default']
 toAddress = u'2N4MtK1rZ88UWXDGWWVf1gYz1Runj4FMDr7'
 payees = [{'address':toAddress, 'amount':483034}]
-content = dict(outputs=account.outputs_from_payees(payees))
-unsigned = account.resource.payments.create(content)
+content = dict(payees=payees, utxo_confirmations=1)
+unsigned = self.resource.transactions().create(content)
 
 unsigned['fee']
 ```
@@ -134,7 +134,7 @@ Example of how to incorporate 2FA into your app.
 
 ```python
 def login_user(user):
-	user.send_mfa(phone_number = 5555551212)
+	user.send_mfa()
 	verify_password()
 	unlock_account(user) if user.verify_mfa(USER_ENTERED_MFA)
 ```
@@ -167,7 +167,7 @@ app = client.authenticate_application(app_url=app_url,
 
 `backup_key, totp_secret, wallet = app.wallets.create(<PASSPHRASE>)`
 
-* The totp secret is to be stored in a config file on the server operating the round client for this wallet.  This will be a part of the payment process.
+* The Time-based One Time Password(TOTP) secret is to be stored in a config file on the server operating the round client for this wallet if you want to automate transactions.  Otherwise you could set up a mobile device with Authy, Google Authenticator etc to generate Multi-Factor-Authentication (MFA) tokens.  This will be a part of the payment process.
 * The backup key is the root node that can derive all accounts, addresses.  This key will only be returned once via this call.  __YOU MUST STORE IT IN A SAFE PLACE OFFLINE__.  If you loose the backup_key and then later forget the passphrase to unlock the primary key, you will not be able to recover the wallet.
 * The wallet is the full wallet.  You can generate the accounts, addresses etc same as an end user in the previous steps.
 
@@ -178,11 +178,13 @@ In this section you’ll learn how to make a payment for an operational/custodia
 
 1. Authenticate as the application
 	1. `app = client.authenticate_application(app_url, api_token, admin_token)`
+1. Set the TOTP secret on the application 
+	1. `app.set_totp(TOTP)`
 1. Unlock the wallet.
-	1. `wallet.unlock(passphrase, top_secret)`
+	1. `wallet.unlock(passphrase)`
 1. make a payment
-	1. `account.pay(payee,confirmations=4, app.totp_token.now())`
+	1. `account.pay(payee,confirmations=4, app.get_mfa())`
 
-The Gem client will use the top_secret to generate an MFA token that will be sent as part of the payment calls and verify on the Gem API side.
+The Gem client will use the totp_secret to generate an MFA token that will be sent as part of the payment calls and verify on the Gem API side.
 
 [[top]](README.md#round-py-advanced-topics) [[back]](../README.md)
