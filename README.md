@@ -69,11 +69,6 @@ In this step you will learn how to instantiate the API client for the given netw
     ```python
     # the default client is set to sandbox (the testnet environment)
     client = round.client()
-
-    # If you want to configure the client for mainnet
-    # transactions, use the production environment
-    # You can also change the default environment in config.py
-    client = round.client(environment='production')
     ```
 
 [[top]](README.md#getting-started-tutorial)
@@ -139,9 +134,10 @@ In this step you will learn how to authenticate to the Gem API on a User's devic
     my_account = my_wallet.accounts['default']
     ```
 
-2. Or create an altcoin account!
+2. Or create an account...say an altcoin!
 
     ```python
+    #network takes one of 'bitcoin', 'bitcoin_testnet', 'litecoin', 'dogecoin'
     my_account = my_wallet.accounts.create(name='brand-new-account', network='litecoin')
     ```
 
@@ -183,6 +179,11 @@ In this section you’ll learn how to create a payment a multi-signature payment
         utxo_confirmations = 1,
         redirect_uri='https://my.mobileapp.com/user_redirect')
     ```
+1. Direct the user to the Gem multi-factor authentication(MFA) url for user to confirm the tx
+
+   ```python
+   transaction.attributes[u'mfa_url']
+   ```
 
 The pay call takes a list of payee objects.  A payee is a dict of `{'address':ADDRESS, 'amount':amount}` where address is the bitcoin address and amount is the number of satoshis.  `utxo_confirmations` default to 6 and represents the number of confirmations an unspent output needs to have in order to be selected for the transaction.  The last argument is the redirect uri for Gem to send the user back to your application after the user submits their MFA challenge.
 
