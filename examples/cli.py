@@ -21,6 +21,7 @@ import argparse
 from getpass import getpass
 from json import dumps, loads
 from os.path import expanduser
+from pprint import pprint as pp
 
 #for providing MFA tokens in a browser
 from webbrowser import open_new
@@ -31,7 +32,6 @@ parser = argparse.ArgumentParser(
     description="A simple Gem-back command-line bitcoin wallet.")
 parser.add_argument('email', help="Your email address")
 parser.add_argument('-a', '--api_token', help="Your api_token")
-
 parser.add_argument('-u', '--url',
                     help="Gem API URL (https://api-sandbox.gem.co)",
                     default="https://api-sandbox.gem.co")
@@ -39,6 +39,7 @@ parser.add_argument('-u', '--url',
 parser.add_argument('-d', '--device_token',
                     help="Your device_token",
                     default=None)
+
 args = parser.parse_args()
 
 api_token = args.api_token
@@ -101,50 +102,91 @@ user = client.authenticate_device(api_token=api_token,
                                   email=email)
 
 # Now for the fun stuff.
-def print_wallet(user):
-    print "Account \t\t Balance \t Pending Balance"
+def print_wallet(fetch=True):
+    print "   Account(Network) \t Confirmed \t Pending \t Available"
     try:
+        count = 1
         for name, account in user.wallet.accounts.iteritems():
-            account = account.refresh()
-            print "{} \t {} \t {}".format(name,
-                                          account.balance,
-                                          account.pending_balance)
+            if fetch:
+                account = account.refresh()
+            print "{}. {}({}) \t {} \t {} \t {}".format(count, name,
+                account.network, account.balance, account.pending_balance,
+                account.available_balance)
+            count += 1
     except Exception as e:
         print e
 
-print_wallet(user)
+print_wallet()
+
+def select_account():
+    print_wallet(False)
+    acct_number = raw_input("\nEnter account number> ")
+    return user.wallet.accounts.values()[int(acct_number) - 1]
+
+NETWORKS = ['bitcoin', 'bitcoin_testnet', 'litecoin', 'dogecoin']
+def select_network():
+    prompt = "What kind of account?"
+    for i,v in enumerate(NETWORKS):
+        prompt = """{}
+{}. {}""".format(prompt, i + 1, v)
+
+    acct_number = raw_input("""
+{}
+> """.format(prompt))
+
+    return NETWORKS[int(acct_number) - 1]
 
 def process_command():
     command = raw_input("""
 Choose an action:
-1. Send bitcoin
-2. Receive bitcoin (generate a new address)
+1. Send coin
+2. Receive coin (generate a new address)
+3. List transactions
+4. Create new account
 > """)
 
-    # For this version we'll assume they want to use the default account.
-    if command == '1':
+    try:
+        command = int(command)
+    except:
+        print "[ Unknown command ]"
+        print_wallet()
+        return None
+
+    if command < 4:
+        account = select_account()
+
+    if command == 1:
         if user.wallet.is_locked():
             # unlocking a user wallet decrypts the primary private key
             # used to make signatures.
             passphrase = getpass()
             user.wallet.unlock(passphrase)
 
-        dest_address = raw_input("destination address> ")
-        amount = raw_input("Transaction amount (satoshis)> ")
-        tx = user.wallet.accounts['default'].pay(payees=[dict(address=dest_address,
-                                                              amount=int(amount))],
-                                                 utxo_confirmations=1)
+        dest_address = raw_input("\ndestination address> ")
+        amount = raw_input("\nTransaction amount (satoshis)> ")
+        tx = account.pay(payees=[dict(address=dest_address, amount=int(amount))],
+                         utxo_confirmations=1)
         pop_a_browser(tx.mfa_uri)
 
-    elif command == '2':
+    elif command == 2:
         # Generating an address is eeeeeasy
         print "Pay into this address: {}".format(
-            user.wallet.accounts['default'].addresses.create()['string'])
+            account.addresses.create()['string'])
         raw_input("Press enter to continue or CTRL-C to quit")
+
+    elif command == 3:
+        for tx in account.transactions():
+            print "{} {}"
+
+    elif command == 4:
+        network = select_network()
+        name = raw_input("Account name> ")
+        user.wallet.accounts.create(name=name, network=network)
+        print_wallet()
     else:
         # wat?
         print "[ Unknown command ]"
-        print_wallet(user)
+        print_wallet()
     print
 
 # off to the races! we hope...
