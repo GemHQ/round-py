@@ -35,6 +35,8 @@ class Accounts(DictWrapper):
 
         Args:
           name (str): Account name
+          network (str): Type of cryptocurrency.  Can be one of, 'bitcoin', '
+            bitcoin_testnet', 'litecoin', 'dogecoin'.
 
         Returns: The new round.Account
         """
