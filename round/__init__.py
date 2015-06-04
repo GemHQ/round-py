@@ -10,6 +10,7 @@ from Crypto.PublicKey import RSA
 from Crypto.Hash import SHA256
 from Crypto.Signature import PKCS1_v1_5
 
+from future.utils import iteritems
 from copy import deepcopy
 
 from .client import Client
@@ -102,7 +103,7 @@ class Context(dict):
         if scheme not in self.schemes:
             return False
 
-        for field, value in params.iteritems():
+        for field, value in iteritems(params):
             setattr(self, field, value)
             if field in self.schemes[scheme][u'params'].keys() and value:
                 self.schemes[scheme][u'params'][field] = value
@@ -121,7 +122,7 @@ class Context(dict):
           True if all required parameters for the specified scheme are present
           or False otherwise.
         """
-        for k, v in self.schemes[scheme][u'params'].iteritems():
+        for k, v in iteritems(self.schemes[scheme][u'params']):
             if not v: return False
         return True
 

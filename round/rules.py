@@ -4,7 +4,7 @@
 # Copyright 2014 BitVault, Inc. dba Gem
 
 from __future__ import unicode_literals
-
+from future.utils import iteritems
 import collections
 
 from .config import *
@@ -31,7 +31,7 @@ class Rules(collections.Mapping):
     def refresh(self):
         self.cache = self.resource.get()
         self.definitions = {}
-        for key, value in self.cache.definitions.iteritems():
+        for key, value in iteritems(self.cache.definitions):
             self.definitions[key] = self.wrap(value)
         return self
 
@@ -45,7 +45,7 @@ class Rules(collections.Mapping):
 class Rule(Wrapper):
 
     def set(self, content):
-        for name, spec in content.iteritems():
+        for name, spec in iteritems(content):
             if spec['type'] in ['wallet', 'account']:
                 resource = spec['value']
                 spec['value'] = dict(url=resource['url'])
