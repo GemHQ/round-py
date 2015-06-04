@@ -12,6 +12,7 @@ setup(name = 'round',
       license = 'MIT',
       packages = find_packages(exclude=[
           u'*.tests', u'*.tests.*', u'tests.*', u'tests']),
+      scripts = [ 'gemcli' ],
       install_requires = [
           'PyYAML',
           'patchboard',
