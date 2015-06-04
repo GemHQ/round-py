@@ -3,6 +3,8 @@
 #
 # Copyright 2015 BitVault, Inc. dba Gem
 
+from __future__ import unicode_literals
+
 from .config import *
 
 from .wrappers import *
@@ -20,8 +22,8 @@ class Subscriptions(ListWrapper):
         Returns:
            A round.Subscription object if successful.
         """
-        resource = self.resource.create({u'subscribed_to': u'address',
-                                         u'callback_url': callback_url})
+        resource = self.resource.create({'subscribed_to': 'address',
+                                         'callback_url': callback_url})
         subscription = self.wrap(resource)
         self.add(subscription)
         return subscription

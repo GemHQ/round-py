@@ -3,6 +3,8 @@
 #
 # Copyright 2014 BitVault, Inc. dba Gem
 
+from __future__ import unicode_literals
+
 from .config import *
 
 from .wrappers import Wrapper
@@ -39,9 +41,9 @@ class Devices(Wrapper):
 
         data = dict(name=name)
         if redirect_uri:
-            data[u'redirect_uri'] = redirect_uri
+            data['redirect_uri'] = redirect_uri
 
         auth_request_resource = self.resource.create(data)
 
-        return (auth_request_resource.attributes[u'metadata'][u'device_token'],
-                auth_request_resource.attributes[u'mfa_uri'])
+        return (auth_request_resource.attributes['metadata']['device_token'],
+                auth_request_resource.attributes['mfa_uri'])

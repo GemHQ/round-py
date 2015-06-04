@@ -3,16 +3,17 @@
 #
 # Copyright 2014 BitVault, Inc. dba Gem
 
+from __future__ import unicode_literals
+from .config import *
+
+from patchboard.response import ResponseError
+from coinop.transaction import Transaction as Tx
+
 import abc
 import collections
-from patchboard.response import ResponseError
 
-from .config import *
 from .errors import *
 
-from coinop.bit.transaction import Transaction as Tx
-
-from pprint import pprint as pp
 
 class Updatable(object):
 
@@ -87,7 +88,7 @@ class DictWrapper(collections.Mapping):
         return repr(self.data.items())
 
     def populate(self):
-        if hasattr(self.resource, u'list'):
+        if hasattr(self.resource, 'list'):
             resources = self.resource.list()
             for resource in resources:
                 wrapper = self.wrap(resource)
@@ -137,7 +138,7 @@ class ListWrapper(collections.Sequence):
         return repr(self.data)
 
     def populate(self):
-        if hasattr(self.resource, u'list'):
+        if hasattr(self.resource, 'list'):
             resources = self.resource.list()
             for resource in resources:
                 wrapper = self.wrap(resource)

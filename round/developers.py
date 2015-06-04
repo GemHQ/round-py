@@ -3,10 +3,12 @@
 #
 # Copyright 2014 BitVault, Inc. dba Gem
 
+from __future__ import unicode_literals
+
 from .config import *
 
 from .wrappers import *
-import applications as apps
+import round.applications as apps
 
 
 class Developers(object):

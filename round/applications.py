@@ -3,6 +3,8 @@
 #
 # Copyright 2014 BitVault, Inc. dba Gem
 
+from __future__ import unicode_literals
+
 from pyotp import TOTP
 
 from .config import *
@@ -11,7 +13,7 @@ from .wrappers import *
 from .subscriptions import Subscriptions
 from .wallets import Wallets
 
-import users
+import round.users
 
 
 class Applications(DictWrapper):
@@ -28,10 +30,10 @@ class Applications(DictWrapper):
            A round.Application object if successful.
         """
         resource = self.resource.create(kwargs)
-        if u'admin_token' in kwargs:
-            resource.context.authorize(u'Gem-Application',
+        if 'admin_token' in kwargs:
+            resource.context.authorize('Gem-Application',
                                        api_token=resource.api_token,
-                                       admin_token=kwargs[u'admin_token'])
+                                       admin_token=kwargs['admin_token'])
         app = self.wrap(resource)
         return self.add(app)
 
@@ -73,7 +75,7 @@ class Application(Wrapper, Updatable):
 
         Args:
           *args (list of str): one or more of
-            [u'api_token', u'subscription_token', u'totp_secret']
+            ['api_token', 'subscription_token', 'totp_secret']
 
         Returns:
           The Application.
@@ -83,7 +85,7 @@ class Application(Wrapper, Updatable):
 
     @property
     def users(self):
-        if not hasattr(self, u'_users'):
+        if not hasattr(self, '_users'):
             users_resource = self.resource.users
             self._users = users.Users(users_resource, self.client)
         return self._users

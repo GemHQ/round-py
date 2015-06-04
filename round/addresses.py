@@ -3,9 +3,11 @@
 #
 # Copyright 2014 BitVault, Inc. dba Gem
 
+from __future__ import unicode_literals
+
 from .config import *
 
-from wrappers import ListWrapper
+from .wrappers import ListWrapper
 
 class Addresses(ListWrapper):
 

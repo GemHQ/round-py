@@ -3,8 +3,11 @@
 #
 # Copyright 2014 BitVault, Inc. dba Gem
 
+from __future__ import unicode_literals
+
 from patchboard.response import ResponseError
-from config import *
+
+from .config import *
 
 
 class RoundError(Exception):
@@ -41,7 +44,7 @@ class AuthenticationError(RoundError):
         self.valid_schemes = schemes
         for scheme in schemes:
             if scheme in context.schemes:
-                error_message += context.schemes[scheme][u'usage'] + "\n"
+                error_message += context.schemes[scheme]['usage'] + "\n"
         if error_message == u"":
             self.message = u"The requested action cannot be completed from this client. You may need to use the Gem User or Developer Console."
         else:
@@ -54,15 +57,19 @@ class InvalidPassphraseError(RoundError):
     def __init__(self, message="Decryption failed, check your passphrase"):
         self.message = message
 
+class DecryptionError(RoundError):
+    def __init__(self, message="Decryption failed, you may have to update your wallet or check your passphrase."):
+        self.message = message
+
 class OverrideError(RoundError):
 
     def __init__(self, scheme, message=None):
         auth_function = "NOT IMPLEMENTED"
-        if scheme == u'Gem-Identify':
+        if scheme == 'Gem-Identify':
             auth_function = 'authenticate_identify'
-        elif scheme == u'Gem-Device':
+        elif scheme == 'Gem-Device':
             auth_function = 'authenticate_device'
-        elif scheme == u'Gem-Application':
+        elif scheme == 'Gem-Application':
             auth_function = 'authenticate_application'
 
         super(OverrideError, self).__init__(message or u"This client already has {} authentication. To overwrite it call {} with override=True.".format(scheme, auth_function))
@@ -74,4 +81,4 @@ class AuthUsageError(RoundError):
 
     def __init__(self, context, scheme):
         self.message = u"Usage: {}".format(
-            context.schemes[scheme][u'usage'])
+            context.schemes[scheme]['usage'])

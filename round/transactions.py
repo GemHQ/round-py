@@ -3,6 +3,8 @@
 #
 # Copyright 2014 BitVault, Inc. dba Gem
 
+from __future__ import unicode_literals
+
 from .config import *
 
 from .wrappers import *
@@ -42,11 +44,11 @@ class Transaction(Wrapper):
     @property
     def mfa_uri(self):
         try:
-            return self.resource.__dict__[u'mfa_uri']
+            return self.resource.__dict__['mfa_uri']
         except KeyError:
             pass
         try:
-            return self.resource.__dict__[u'attributes'][u'mfa_uri']
+            return self.resource.__dict__['attributes']['mfa_uri']
         except KeyError:
             pass
         return None

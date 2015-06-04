@@ -3,19 +3,19 @@
 #
 # Copyright 2014 BitVault, Inc. dba Gem
 
+from __future__ import unicode_literals
+
 import bitcoin
 
 from .config import *
-from wrappers import *
-from errors import *
-from developers import Developer, Developers
-from users import User, Users
-from applications import Application, Applications
-from wallets import Wallet, Wallets
-from accounts import Account, Accounts
 
-from pprint import pprint as pp
-
+from .wrappers import *
+from .errors import *
+from .developers import Developer, Developers
+from .users import User, Users
+from .applications import Application, Applications
+from .wallets import Wallet, Wallets
+from .accounts import Account, Accounts
 
 class Client(MFAable):
     """The Client object holds a connection to Gem and references to root-level
@@ -56,14 +56,14 @@ class Client(MFAable):
         Returns:
           An Application object if `fetch` is True.
         """
-        if (self.context.has_auth_params(u'Gem-Application') and not override):
-            raise OverrideError(u'Gem-Application')
+        if (self.context.has_auth_params('Gem-Application') and not override):
+            raise OverrideError('Gem-Application')
 
         if (not api_token or not admin_token or
-            not self.context.authorize(u'Gem-Application',
+            not self.context.authorize('Gem-Application',
                                        api_token=api_token,
                                        admin_token=admin_token)):
-            raise AuthUsageError(self.context, u'Gem-Application')
+            raise AuthUsageError(self.context, 'Gem-Application')
 
         return self.application if fetch else True
 
@@ -85,18 +85,18 @@ class Client(MFAable):
         Returns:
           An User object if `fetch` is True.
         """
-        if (self.context.has_auth_params(u'Gem-Device') and not override):
-            raise OverrideError(u'Gem-Device')
+        if (self.context.has_auth_params('Gem-Device') and not override):
+            raise OverrideError('Gem-Device')
 
         if (not api_token or
             not device_token or
             (not email and not user_url) or
-            not self.context.authorize(u'Gem-Device',
+            not self.context.authorize('Gem-Device',
                                        api_token=api_token,
                                        user_email=email,
                                        user_url=user_url,
                                        device_token=device_token)):
-            raise AuthUsageError(self.context, u'Gem-Device')
+            raise AuthUsageError(self.context, 'Gem-Device')
 
         if fetch:
             user = self.user(email) if email else self.user()
@@ -112,23 +112,23 @@ class Client(MFAable):
             Developer Console.
           override (boolean): Replace existing Application credentials.
         """
-        if (self.context.has_auth_params(u'Gem-Identify') and not override):
-            raise OverrideError(u'Gem-Identify')
+        if (self.context.has_auth_params('Gem-Identify') and not override):
+            raise OverrideError('Gem-Identify')
 
         if (not api_token or
-            not self.context.authorize(u'Gem-Identify', api_token=api_token)):
-            raise AuthUsageError(self.context, u'Gem-Identify')
+            not self.context.authorize('Gem-Identify', api_token=api_token)):
+            raise AuthUsageError(self.context, 'Gem-Identify')
 
         return True
 
     @property
     def application(self):
-        if not hasattr(self, u'_application'):
+        if not hasattr(self, '_application'):
             try:
                 app_resource = self.resources.app.get()
                 self._application = Application(app_resource, self)
             except AttributeError as e:
-                raise AuthenticationError(self.context, u'Gem-Identify')
+                raise AuthenticationError(self.context, 'Gem-Identify')
 
         return self._application
 
@@ -137,16 +137,16 @@ class Client(MFAable):
         if not hasattr(self, '_user'):
             try:
                 if email:
-                    user_resource = self.resources.user_query({u'email': email})
-                elif hasattr(self.context, u'user_url'):
-                    user_resource = self.resources.user({u'url': self.context.user_url})
+                    user_resource = self.resources.user_query({'email': email})
+                elif hasattr(self.context, 'user_url'):
+                    user_resource = self.resources.user({'url': self.context.user_url})
                 else:
-                    user_resource = self.resources.user_query({u'email': self.context.user_email})
+                    user_resource = self.resources.user_query({'email': self.context.user_email})
             except AttributeError as e:
-                raise AuthenticationError(self.context, u'Gem-Device')
+                raise AuthenticationError(self.context, 'Gem-Device')
 
         elif email:
-            user_resource = self.resources.user_query({u'email': email})
+            user_resource = self.resources.user_query({'email': email})
 
         if user_resource:
             self._user = User(user_resource, self)

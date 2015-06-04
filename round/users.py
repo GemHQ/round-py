@@ -3,6 +3,8 @@
 #
 # Copyright 2014 BitVault, Inc. dba Gem
 
+from __future__ import unicode_literals
+
 from .config import *
 
 from .wrappers import *
@@ -10,8 +12,6 @@ from .errors import *
 from .subscriptions import Subscriptions
 from .devices import Devices
 from .wallets import generate, Wallet
-
-import applications as apps
 
 
 class Users(DictWrapper):
@@ -57,16 +57,16 @@ class Users(DictWrapper):
         if not passphrase and u'default_wallet' not in kwargs:
             raise ValueError("Usage: users.create(email, passphrase, device_name, api_token, redirect_uri)")
         elif passphrase:
-            default_wallet = generate(passphrase, [u'primary'])[u'primary']
+            default_wallet = generate(passphrase, ['primary'])['primary']
         else:
-            default_wallet = kwargs[u'default_wallet']
+            default_wallet = kwargs['default_wallet']
 
-        default_wallet[u'name'] = 'default'
-        default_wallet[u'primary_private_seed'] = default_wallet[u'encrypted_seed']
-        default_wallet[u'primary_public_seed'] = default_wallet[u'public_seed']
-        del default_wallet[u'encrypted_seed']
-        del default_wallet[u'public_seed']
-        del default_wallet[u'private_seed']
+        default_wallet['name'] = 'default'
+        default_wallet['primary_private_seed'] = default_wallet['encrypted_seed']
+        default_wallet['primary_public_seed'] = default_wallet['public_seed']
+        del default_wallet['encrypted_seed']
+        del default_wallet['public_seed']
+        del default_wallet['private_seed']
 
         # If not supplied, we assume the client already has an api_token param.
         if api_token:
@@ -77,11 +77,11 @@ class Users(DictWrapper):
                          device_name=device_name)
 
         if redirect_uri:
-            user_data[u'redirect_uri'] = redirect_uri
-        if u'first_name' in kwargs:
-            user_data[u'first_name'] = kwargs[u'first_name']
-        if u'last_name' in kwargs:
-            user_data[u'last_name'] = kwargs[u'last_name']
+            user_data['redirect_uri'] = redirect_uri
+        if 'first_name' in kwargs:
+            user_data['first_name'] = kwargs['first_name']
+        if 'last_name' in kwargs:
+            user_data['last_name'] = kwargs['last_name']
 
         try:
             resource = self.resource.create(user_data)
@@ -90,7 +90,7 @@ class Users(DictWrapper):
                 raise ConflictError("This user already exists. Use client.user(email).devices.create(name) to request authorization from the user.")
             raise e
 
-        return resource.attributes[u'metadata'][u'device_token']
+        return resource.attributes['metadata']['device_token']
 
     def wrap(self, resource):
         return User(resource, self.client)
@@ -163,5 +163,5 @@ class User(Wrapper, Updatable):
         Returns:
           True if the mfa_token is valid, False otherwise.
         """
-        response = self.resource.verify_mfa({u'mfa_token': mfa_token})
-        return (response['valid'] == True or response[u'valid'] == 'true')
+        response = self.resource.verify_mfa({'mfa_token': mfa_token})
+        return (response['valid'] == True or response['valid'] == 'true')

@@ -3,22 +3,24 @@
 #
 # Copyright 2014 BitVault, Inc. dba Gem
 
+from __future__ import unicode_literals
+
 from .config import *
 
-from coinop.crypto.passphrasebox import PassphraseBox
-from coinop.bit.multiwallet import MultiWallet
+from coinop.passphrasebox import PassphraseBox
+from coinop.multiwallet import MultiWallet
 
 from .wrappers import *
+from .errors import *
 from .accounts import Account, Accounts
 from .subscriptions import Subscription, Subscriptions
 
-
-def generate(passphrase, trees=[u'primary']):
+def generate(passphrase, trees=['primary']):
     """Generate a seed for the primary tree of a Gem wallet.
 
     You may choose to store the passphrase for a user so the user doesn't have
-    to type it in every time. This is okay (although the security risks should be
-    obvious) but Gem strongly discourages storing even the encrypted private
+    to type it in every time. This is okay (although the security risks should
+    be obvious) but Gem strongly discourages storing even the encrypted private
     seed, and storing both the passphrase and the private seed is completely
     insane. Don't do it.
 
@@ -40,7 +42,8 @@ def generate(passphrase, trees=[u'primary']):
     for tree in trees:
         result[tree] = dict(private_seed=seeds[tree],
                             public_seed=multi_wallet.public_wif(tree),
-                            encrypted_seed=PassphraseBox.encrypt(passphrase, seeds[tree]))
+                            encrypted_seed=PassphraseBox.encrypt(passphrase,
+                                                                 seeds[tree]))
     return result
 
 
@@ -78,19 +81,19 @@ class Wallets(DictWrapper):
                              "wallet_data])")
         elif passphrase:
             wallet_data = generate(passphrase,
-                                   trees=([u'primary', u'backup'] if (
-                                       self.application) else [u'primary']))
+                                   trees=(['primary', 'backup'] if (
+                                       self.application) else ['primary']))
 
         wallet = dict(
-            primary_private_seed=wallet_data[u'primary'][u'encrypted_seed'],
-            primary_public_seed=wallet_data[u'primary'][u'public_seed'],
+            primary_private_seed=wallet_data['primary']['encrypted_seed'],
+            primary_public_seed=wallet_data['primary']['public_seed'],
             name=name)
         if self.application:
-            wallet[u'backup_public_seed'] = wallet_data[u'backup'][u'public_seed']
+            wallet['backup_public_seed'] = wallet_data['backup']['public_seed']
 
         resource = self.resource.create(wallet)
         wallet = self.wrap(resource)
-        return (wallet_data[u'backup'][u'private_seed'], self.add(wallet)) if (
+        return (wallet_data['backup']['private_seed'], self.add(wallet)) if (
             self.application) else self.add(wallet)
 
     def wrap(self, resource):
@@ -160,6 +163,13 @@ class Wallet(Wrapper, Updatable):
           self
         """
         wallet = self.resource
+        if wallet.primary_private_seed['nonce']:
+            raise DecryptionError(
+                "This wallet must be reencrypted with Gem's new wallet "
+                "encryption scheme. For application wallets, use "
+                "`https://github.com/GemHQ/gem-migrator` to migrate. For "
+                "user wallets, the user should log into `http://my.gem.co`")
+
         try:
             primary_seed = PassphraseBox.decrypt(passphrase,
                                                  wallet.primary_private_seed)
@@ -167,9 +177,9 @@ class Wallet(Wrapper, Updatable):
             raise InvalidPassphraseError()
 
         self.multi_wallet = MultiWallet(
-            private_seeds={u'primary': primary_seed},
-            public={u'cosigner': wallet.cosigner_public_seed,
-                    u'backup': wallet.backup_public_seed})
+            private_seeds={'primary': primary_seed},
+            public={'cosigner': wallet.cosigner_public_seed,
+                    'backup': wallet.backup_public_seed})
         return self
 
     @property
@@ -194,7 +204,7 @@ class Wallet(Wrapper, Updatable):
         """
         # TODO: output.metadata['type']['change']
         if not self.multi_wallet:
-            raise Exception("This wallet must be unlocked with "
-                            "wallet.unlock(passphrase)")
+            raise DecryptionError("This wallet must be unlocked with "
+                                  "wallet.unlock(passphrase)")
 
         return self.multi_wallet.signatures(transaction)

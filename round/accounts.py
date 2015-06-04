@@ -3,15 +3,17 @@
 #
 # Copyright 2014 BitVault, Inc. dba Gem
 
+from __future__ import unicode_literals
+
 from .config import *
 
-from coinop.bit.transaction import Transaction as CoinopTx
+from coinop.transaction import Transaction as CoinopTx
 
 from .wrappers import *
 from .subscriptions import Subscriptions
 
-import transactions as txs
-import addresses
+import round.transactions as txs
+import round.addresses
 
 
 class Accounts(DictWrapper):
@@ -129,7 +131,7 @@ class Account(Wrapper, Updatable):
         transaction = dict(signatures=dict(inputs=signatures,
                                            transaction_hash=coinoptx.hash))
         if redirect_uri:
-            transaction[u'redirect_uri'] = redirect_uri
+            transaction['redirect_uri'] = redirect_uri
 
         signed = txs.Transaction(unsigned.update(transaction), self.client)
 
@@ -156,8 +158,8 @@ class Account(Wrapper, Updatable):
         Returns:
           A collection of matching Transactions
         """
-        if u'status' in query and isinstance(query[u'status'], list):
-            query[u'status'] = ','.join(map(str, query[u'status']))
+        if 'status' in query and isinstance(query['status'], list):
+            query['status'] = ','.join(map(str, query['status']))
 
         transaction_resource = self.resource.transactions(query)
         return txs.Transactions(transaction_resource, self.client)

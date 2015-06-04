@@ -3,6 +3,8 @@
 #
 # Copyright 2014 BitVault, Inc. dba Gem
 
+from __future__ import unicode_literals
+
 import collections
 
 from .config import *
@@ -44,9 +46,9 @@ class Rule(Wrapper):
 
     def set(self, content):
         for name, spec in content.iteritems():
-            if spec[u'type'] in [u'wallet', u'account']:
-                resource = spec[u'value']
-                spec[u'value'] = dict(url=resource[u'url'])
+            if spec['type'] in ['wallet', 'account']:
+                resource = spec['value']
+                spec['value'] = dict(url=resource['url'])
         return self.resource.set(content)
 
     def delete(self):
