@@ -27,7 +27,7 @@ from shutil import move
 from tabulate import tabulate
 
 # Every CLI needs argument parsing
-import argparse
+from argparse import ArgumentParser
 
 #secure password entry
 from getpass import getpass
@@ -39,7 +39,7 @@ from round import client as roundclient # woo!
 
 config_filename = expanduser('~/.gemwallet')
 
-parser = argparse.ArgumentParser(
+parser = ArgumentParser(
     description="A simple Gem-back command-line bitcoin wallet.",
     fromfile_prefix_chars='@')
 parser.add_argument('-a', '--api_token', help="Your api_token")
