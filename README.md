@@ -20,13 +20,13 @@ The round client is designed to interact with Gem's API to make building blockch
 
 ## Installing round-py:
 ### Prerequisites:
-* Python 2.7
-* Git and a python extension build environment.
-* libffi
+* Python 2.7/3.3+
+* Git
 * [virtualenv](http://pypi.python.org/pypi/virtualenv)/[virtualenvwrapper](https://virtualenvwrapper.readthedocs.org/en/latest/) or a similar virtual environment solution is recommended. (`sudo` is bad)
 
 #### [Linux (debian-based, tested on Ubuntu 14.04)](docs/install.md#linux-debian-based-tested-on-ubuntu-1404)
 #### [Mac OSX](docs/install.md#mac-osx)
+#### [Windows](docs/install.md#windows)
 #### [Heroku](docs/install.md#heroku)
 
 ## Getting Started Tutorial
@@ -62,6 +62,8 @@ In this step you will learn how to instantiate the API client for the given netw
     >>> import round
     # If you need access to the round builtin, then import as something else:
     >>> import round as gemlib
+    # Or just import the client factory:
+    >>> from round import client
     ```
 
 1. Create the client object using the sandbox environment

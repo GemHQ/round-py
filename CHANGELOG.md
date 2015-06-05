@@ -1,4 +1,10 @@
 
+0.9.0 / 2015-06-04
+==================
+
+  * Python3.3+ compatible!
+  * Support Gem's new key encryption scheme (no more libsodium!)
+
 0.8.0 / 2015-05-26
 ==================
 
