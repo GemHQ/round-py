@@ -13,7 +13,7 @@ from .wrappers import *
 from .subscriptions import Subscriptions
 
 import round.transactions as txs
-import round.addresses
+import round.addresses as addresses
 
 
 class Accounts(DictWrapper):

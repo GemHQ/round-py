@@ -43,6 +43,8 @@ parser = ArgumentParser(
     description="A simple Gem-back command-line bitcoin wallet.",
     fromfile_prefix_chars='@')
 parser.add_argument('-a', '--api_token', help="Your api_token")
+parser.add_argument('-m', '--admin_token',
+                    help="Your admin_token (for application wallets)")
 parser.add_argument('-u', '--url',
                     help="Gem API URL (https://api.gem.co)",
                     default="https://api.gem.co")
