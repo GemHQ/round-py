@@ -137,8 +137,14 @@ class Account(Wrapper, Updatable):
 
         # If this is an Application wallet, approve the transaction.
         if mfa_token and self.wallet.application:
-            return txs.Transaction(signed.with_mfa(mfa_token).approve(),
-                                   self.client)
+            try:
+                return txs.Transaction(signed.with_mfa(mfa_token).approve(),
+                                       self.client)
+            except Exception as e:
+                signed.cancel()
+                print(e.message)
+                print("If you are having trouble with MFA tokens, make sure "
+                      "your system time is accurate with `date -u`!")
 
         # Otherwise return the unapproved tx (now redirect the user to the
         # `mfa_uri` attribute to approve!)
