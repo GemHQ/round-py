@@ -87,7 +87,7 @@ if not device_token:
         pop_a_browser(mfa_uri)
     except:
         # Whoops, looks like they don't have an account! Let's make one.
-        print "Pick a secure passphrase: "
+        print("Pick a secure passphrase: ")
         passphrase = getpass()
         device_token = client.users.create(email=email,
                                            passphrase=passphrase,
@@ -95,7 +95,7 @@ if not device_token:
         backup_seed  = raw_input("Check your email to confirm your new wallet, "
                                  "then enter your backup seed: ")
 
-    print "device_token {}".format(device_token)
+    print("device_token {}".format(device_token))
 
 
 # Cool, so now when execution continues, we'll have a device_token authorized on
@@ -133,9 +133,9 @@ def print_wallet(fetch=True):
                            account.pending_balance,
                            account.available_balance ])
             count += 1
-        print "\n" + tabulate(table)
+        print("\n" + tabulate(table))
     except Exception as e:
-        print e
+        print(e)
 
 print_wallet()
 
@@ -168,7 +168,7 @@ Choose an action:
     try:
         command = int(command)
     except:
-        print "\n[ Unknown command ]"
+        print("\n[ Unknown command ]")
         print_wallet()
         return None
 
@@ -190,8 +190,8 @@ Choose an action:
 
     elif command == 2:
         # Generating an address is eeeeeasy
-        print "Pay into this address: {}".format(
-            account.addresses.create()['string'])
+        print("Pay into this address: {}".format(
+            account.addresses.create()['string']))
         raw_input("Press enter to continue or CTRL-C to quit")
 
     elif command == 3:
@@ -205,7 +205,7 @@ Choose an action:
         print_wallet()
     else:
         # wat?
-        print "\n[ Unknown command ]"
+        print("\n[ Unknown command ]")
         print_wallet()
     print
 
@@ -214,4 +214,4 @@ while True:
     try:
         process_command()
     except Exception as e:
-        print "Uh oh... something broke? {}\n".format(e.message)
+        print("Uh oh... something broke? {}\n".format(e.message))

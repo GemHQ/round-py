@@ -30,7 +30,7 @@ def client(url=None):
 
     if url not in _patchboard:
         _patchboard[url] = patchboard.discover(
-            url, {u'default_context': Context})
+            url, {'default_context': Context})
     return Client(_patchboard[url].spawn())
 
 
