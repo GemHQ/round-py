@@ -18,7 +18,8 @@ setup(name = 'round',
           'patchboard==0.5.1',
           'pyotp',
           'coinop==0.3.0',
-          'future'
+          'future',
+          'tabulate'
       ],
       tests_require = [
           'pytest',
