@@ -162,7 +162,8 @@ Choose an action:
 1. Send coin
 2. Receive coin (generate a new address)
 3. List transactions
-4. Create new account
+4. Cancel unapproved transactions
+5. Create new account
 > """)
 
     try:
@@ -172,7 +173,7 @@ Choose an action:
         print_wallet()
         return None
 
-    if command < 4:
+    if command < 5:
         account = select_account()
 
     if command == 1:
@@ -199,6 +200,11 @@ Choose an action:
             pp(tx.attributes)
 
     elif command == 4:
+        for tx in account.transactions(type='outgoing',
+                                       status=['unsigned', 'unapproved']):
+            tx.cancel()
+
+    elif command == 5:
         network = select_network()
         name = raw_input("Account name> ")
         user.wallet.accounts.create(name=name, network=network)
