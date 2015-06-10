@@ -118,6 +118,11 @@ class Account(Wrapper, Updatable):
           An "unconfirmed" Transaction -- if called with Gem-Application auth
           (and an `mfa_token` was supplied).
         """
+        # Check that wallet is unlocked
+        if self.wallet.is_locked():
+            raise DecryptionError("This wallet must be unlocked with "
+                                  "wallet.unlock(passphrase)")
+
         # First create the unsigned tx.
         content = dict(payees=payees,
                        utxo_confirmations=utxo_confirmations)
