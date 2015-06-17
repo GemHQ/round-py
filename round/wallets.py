@@ -8,6 +8,8 @@ from __future__ import unicode_literals
 from .config import *
 
 from coinop.passphrasebox import PassphraseBox
+from coinop.crypto.passphrasebox import PassphraseBox as NaclPassphraseBox
+
 from coinop.multiwallet import MultiWallet
 
 from .wrappers import *
@@ -163,16 +165,13 @@ class Wallet(Wrapper, Updatable):
           self
         """
         wallet = self.resource
-        if wallet.primary_private_seed['nonce']:
-            raise DecryptionError(
-                "This wallet must be reencrypted with Gem's new wallet "
-                "encryption scheme. For application wallets, use "
-                "`https://github.com/GemHQ/gem-migrator` to migrate. For "
-                "user wallets, the user should log into `http://my.gem.co`")
-
         try:
-            primary_seed = PassphraseBox.decrypt(passphrase,
-                                                 wallet.primary_private_seed)
+            if wallet.primary_private_seed['nonce']:
+                primary_seed = NaclPassphraseBox.decrypt(
+                    passphrase, wallet.primary_private_seed)
+            else:
+                primary_seed = PassphraseBox.decrypt(
+                    passphrase, wallet.primary_private_seed)
         except:
             raise InvalidPassphraseError()
 
