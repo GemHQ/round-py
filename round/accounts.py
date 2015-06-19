@@ -106,8 +106,12 @@ class Account(Wrapper, Updatable):
               'address':'validbtcaddress'}, ...]
           utxo_confirmations (int, optional): Required confirmations for UTXO
             selection ( > 0)
-          mfa_token (str, optional): TOTP token for the Application owning this
-            Account's wallet.
+          mfa_token (str/function, optional): TOTP token for the Application
+            owning this Account's wallet OR a callable/function which will
+            generate such a token. The latter is suggested
+            (e.g. application.get_mfa) as otherwise, the token might be
+            invalidated by the time tx.create and tx.update complete (before
+            the tx.approve call which actually requires the mfa_token).
           redirect_uri (str, optional): URI to redirect a user to after they
             input an mfa token on the page referenced by the `mfa_uri` returned
             by this function.
@@ -142,6 +146,8 @@ class Account(Wrapper, Updatable):
 
         # If this is an Application wallet, approve the transaction.
         if mfa_token and self.wallet.application:
+            if hasattr(mfa_token, '__call__'): # callable() is unsupported by 3.1 and 3.2
+                mfa_token = mfa_token.__call__()
             try:
                 return txs.Transaction(signed.with_mfa(mfa_token).approve(),
                                        self.client)
