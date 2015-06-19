@@ -5,6 +5,13 @@
   * Python3.3+ compatible!
   * Support Gem's new key encryption scheme (no more libsodium!)
 
+0.8.1 / 2015-06-17
+==================
+
+  * Backporting py3 support from 0.9.0
+  * Allow `account.pay` to take a callable instead of a string for `mfa_token`
+  * Support old and new encryption schemes
+
 0.8.0 / 2015-05-26
 ==================
 
