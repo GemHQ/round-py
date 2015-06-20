@@ -5,6 +5,11 @@
   * Python3.3+ compatible!
   * Support Gem's new key encryption scheme (no more libsodium!)
 
+0.8.2 / 2015-06-19
+==================
+
+  * Bugfix: Use NaclPassphraseBox to create users for 0.8.x (was using the ppbox from 0.9.x)
+
 0.8.1 / 2015-06-17
 ==================
 
