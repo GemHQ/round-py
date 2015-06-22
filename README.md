@@ -14,7 +14,7 @@ The round client is designed to interact with Gem's API to make building blockch
 ## Support information
 * __Support email__: [support@gem.co](mailto:support@gem.co)
 * __Issues__:  Use github issues
-* __Slack room__:  Send email to support requesting access to the slack room for this client
+* __Slack room__:[![](https://gem-support-slackin.herokuapp.com/badge.svg)](https://gem-support-slackin.herokuapp.com)
 * __Detailed API Docs__:  [Gem API Docs](http://guide.gem.co)
 
 ## Installing round-py:
