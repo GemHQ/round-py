@@ -12,8 +12,7 @@ from .config import *
 from .wrappers import *
 from .subscriptions import Subscriptions
 from .wallets import Wallets
-
-import round.users
+from .users import Users
 
 
 class Applications(DictWrapper):
@@ -87,7 +86,7 @@ class Application(Wrapper, Updatable):
     def users(self):
         if not hasattr(self, '_users'):
             users_resource = self.resource.users
-            self._users = users.Users(users_resource, self.client)
+            self._users = Users(users_resource, self.client)
         return self._users
 
     @property
