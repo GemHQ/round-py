@@ -153,7 +153,7 @@ class Wallet(Wrapper, Updatable):
         """Return true if the wallet is locked."""
         return (self.multi_wallet is None)
 
-    def unlock(self, passphrase):
+    def unlock(self, passphrase, encrypted_seed=None):
         """Unlock the Wallet by decrypting the primary_private_seed with the
         supplied passphrase. Once unlocked, the private seed is accessible in
         memory and calls to `account.pay` will succeed. This is a necessary step
@@ -161,17 +161,30 @@ class Wallet(Wrapper, Updatable):
 
         Args:
           passphrase (str): The passphrase the User used to encrypt this wallet.
+          encrypted_seed (dict): A dictionary of the form
+            {'ciphertext': longhexvalue,
+             'iterations': integer of pbkdf2 derivations,
+             'nonce': 24-byte hex value
+             'salt': 16-byte hex value}
+            this dict represents an private seed (not a master key) encrypted
+            with the `passphrase` using pbkdf2. You can obtain this value with
+            wallet.generate. If this value is supplied, it overwrites (locally
+            only) the encrypted primary_private_seed value, allowing you to load
+            in a primary key that you didn't store with Gem. Note that the key
+            MUST match the pubkey that this wallet was created with.
         Returns:
           self
         """
         wallet = self.resource
+        if not encrypted_seed:
+            encrypted_seed = wallet.primary_private_seed
         try:
-            if wallet.primary_private_seed['nonce']:
+            if encrypted_seed['nonce']:
                 primary_seed = NaclPassphraseBox.decrypt(
-                    passphrase, wallet.primary_private_seed)
+                    passphrase, encrypted_seed)
             else:
                 primary_seed = PassphraseBox.decrypt(
-                    passphrase, wallet.primary_private_seed)
+                    passphrase, encrypted_seed)
         except:
             raise InvalidPassphraseError()
 
