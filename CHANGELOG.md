@@ -5,6 +5,11 @@
   * Python3.3+ compatible!
   * Support Gem's new key encryption scheme (no more libsodium!)
 
+0.8.3 / 2015-06-25
+==================
+
+  * Accept an optional encrypted_seed parameter in unlock to allow applications to store their own primary private keys.
+
 0.8.2 / 2015-06-19
 ==================
 
