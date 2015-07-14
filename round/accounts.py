@@ -129,7 +129,9 @@ class Account(Wrapper, Updatable):
 
         # First create the unsigned tx.
         content = dict(payees=payees,
-                       utxo_confirmations=utxo_confirmations)
+                       utxo_confirmations=utxo_confirmations,
+                       remainder_account=self.resource.attributes['key'],
+                       network=self.network)
         unsigned = self.resource.transactions().create(content)
 
         # Sign the tx with the primary private key.
