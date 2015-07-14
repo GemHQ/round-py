@@ -51,11 +51,16 @@ parser.add_argument('-u', '--url',
 parser.add_argument('-d', '--device_token',
                     help="Your device_token",
                     default=None)
+parser.add_argument('-b', '--backup_seed',
+                    help="Your backup seed",
+                    default=None)
 parser.add_argument('-e', '--email', help="Gem user email address")
 
 args = parser.parse_args(['@{}'.format(config_filename)] + argv[1:])
 api_token = args.api_token
 device_token = args.device_token
+admin_token = args.admin_token
+backup_seed = args.backup_seed
 url = args.url
 email = args.email
 
@@ -64,7 +69,7 @@ client = roundclient(url=url)
 
 # Now we have to authenticate before sending requests:
 client.authenticate_identify(api_token)
-backup_seed = None
+
 
 
 def pop_a_browser(uri):
@@ -109,10 +114,12 @@ if yn.lower() == 'y':
     move(config_filename, "{}.bak".format(config_filename))
     fh = open(config_filename, 'w')
     fh.write(("-a{}\n"
+              "-m{}\n"
+              "-u{}\n"
               "-d{}\n"
               "-e{}\n"
-              "#backup seed:{}").format(
-                  api_token, device_token, email, backup_seed))
+              "-b{}").format(
+                  api_token, admin_token, url, device_token, email, backup_seed))
     fh.close()
 
 user = client.authenticate_device(api_token=api_token,
