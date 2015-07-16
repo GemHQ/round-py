@@ -121,12 +121,12 @@ class DictWrapper(collections.Mapping):
 
 class ListWrapper(collections.Sequence):
 
-    def __init__(self, resource, client):
+    def __init__(self, resource, client, populate=True):
         self.resource = resource
         self.context = client.context
         self.client = client
         self.data = []
-        self.populate()
+        if populate: self.populate()
 
     def __getitem__(self, name):
         return self.data.__getitem__(name)

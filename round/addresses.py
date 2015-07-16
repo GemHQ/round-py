@@ -11,8 +11,8 @@ from .wrappers import ListWrapper
 
 class Addresses(ListWrapper):
 
-    def __init__(self, resource, client):
-        super(Addresses, self).__init__(resource, client)
+    def __init__(self, resource, client, populate=True):
+        super(Addresses, self).__init__(resource, client, populate)
 
     def add(self, address):
         self.data.append(address)

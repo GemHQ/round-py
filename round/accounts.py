@@ -194,6 +194,14 @@ class Account(Wrapper, Updatable):
 
     @property
     def addresses(self):
-        """Fetch and return Addresses inside this Account."""
+        """Fetch and return an updated list of Addresses inside this Account."""
         address_resource = self.resource.addresses
         return addresses.Addresses(address_resource, self.client)
+
+    def get_addresses(self, fetch=True):
+        """Return the memoized _addresses list, refreshing it if fetch is True"""
+        if not hasattr(self, '_addresses'):
+            self._addresses =  addresses.Addresses(self.resource.addresses,
+                                                   self.client,
+                                                   False)
+        return self._addresses.refresh() if fetch else self._addresses
