@@ -47,8 +47,8 @@ def generate(passphrase, trees=['primary']):
     for tree in trees:
         result[tree] = dict(private_seed=seeds[tree],
                             public_seed=multi_wallet.public_wif(tree),
-                            encrypted_seed=NaclPassphraseBox.encrypt(passphrase,
-                                                                     seeds[tree]))
+                            encrypted_seed=PassphraseBox.encrypt(passphrase,
+                                                                 seeds[tree]))
     return result
 
 
