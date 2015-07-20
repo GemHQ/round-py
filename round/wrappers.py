@@ -33,13 +33,16 @@ class MFAable(object):
           account.with_mfa(application.totp.now()).pay(...)
 
         Args:
-          mfa_token (str): A valid TOTP mfa token derived from the `totp_secret`
-            on an Application.
+          mfa_token (str/function, optional): TOTP token for the Application
+            OR a callable/function which will generate such a token when called.
 
         Returns:
           self
         """
-        self.context.mfa_token = mfa_token
+        if hasattr(mfa_token, '__call__'): # callable() is unsupported by 3.1 and 3.2
+            self.context.mfa_token = mfa_token.__call__()
+        else:
+            self.context.mfa_token = mfa_token
         return self
 
 

@@ -148,8 +148,6 @@ class Account(Wrapper, Updatable):
 
         # If this is an Application wallet, approve the transaction.
         if mfa_token and self.wallet.application:
-            if hasattr(mfa_token, '__call__'): # callable() is unsupported by 3.1 and 3.2
-                mfa_token = mfa_token.__call__()
             try:
                 return txs.Transaction(signed.with_mfa(mfa_token).approve(),
                                        self.client)
