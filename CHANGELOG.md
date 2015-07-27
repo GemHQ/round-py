@@ -1,3 +1,11 @@
+
+0.9.2 / 2015-07-24
+==================
+
+  * Default to encrypting with AES+SHA256HMAC - NaCl will be removed in 0.9.3
+  * Make with_mfa accept callables from anywhere
+  * Memoize addresses - added account.get_addresses to provide an optional refresh (fetch) parameter
+
 0.9.1 / 2015-07-14
 ==================
 
