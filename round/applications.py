@@ -62,7 +62,12 @@ class Application(Wrapper, Updatable):
 
     def get_mfa(self):
         """Return the currently-valid MFA token for this application."""
-        return self.totp.now()
+        token = str(self.totp.now())
+        # PyOTP doesn't pre-pad tokens shorter than 6 characters
+        # ROTP does, so we have to.
+        while len(token) < 6:
+            token = '0{}'.format(token)
+        return token
 
     def reset(self, *args):
         """Resets any of the tokens for this Application.
