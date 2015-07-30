@@ -32,9 +32,9 @@ class Accounts(DictWrapper):
       The new round.Accounts object.
     """
 
-    def __init__(self, resource, client, wallet=None, populate=False):
+    def __init__(self, resource, client, wallet=None, page=0, populate=False):
         self.wallet = wallet
-        super(Accounts, self).__init__(resource, client, populate)
+        super(Accounts, self).__init__(resource, client, page, populate)
 
     def __getitem__(self, name):
         if name in self._data: return self._data.__getitem__(name)
@@ -208,7 +208,7 @@ class Account(Wrapper, Updatable):
         return self.resource.available(
             {'utxo_confirmations': utxo_confirmations}).__dict__['data']
 
-    def transactions(self, **query):
+    def transactions(self, page=0, **query):
         """Fetch and return Transactions involving any Address inside this
         Account.
         Note that this call is not cached. If you want to store a copy, you
@@ -216,6 +216,7 @@ class Account(Wrapper, Updatable):
         updated data
 
         Args:
+          page (int >= 0): Index of the page of results (sets of 100) to return.
           status (str or list, optional): One or a list of
             ["unsigned", "unapproved",
              "confirmed", "unconfirmed",
@@ -228,8 +229,8 @@ class Account(Wrapper, Updatable):
         if 'status' in query and isinstance(query['status'], list):
             query['status'] = ','.join(map(str, query['status']))
 
-        transaction_resource = self.resource.transactions(query)
-        return Transactions(transaction_resource, self.client, populate=True)
+        return Transactions(self.resource.transactions, self.client,
+                            page=page, populate=True, **query)
 
     @property
     @cacheable
@@ -248,9 +249,10 @@ class Account(Wrapper, Updatable):
         """Fetch and return an updted list of Addresses inside this Account."""
         return self.get_addresses()
 
-    def get_addresses(self, fetch=False):
+    def get_addresses(self, page=0, fetch=False):
         """Return the Account's addresses object, populating it if fetch is True."""
-        return Addresses(self.resource.addresses, self.client, populate=fetch)
+        return Addresses(self.resource.addresses, self.client,
+                         page=page, populate=fetch)
 
     @property
     @cacheable
@@ -258,6 +260,7 @@ class Account(Wrapper, Updatable):
         """Fetch and return an updated list of NetkiNames inside this Account."""
         return self.get_netki_names()
 
-    def get_netki_names(self, fetch=False):
+    def get_netki_names(self, page=0, fetch=False):
         """Return the Account's NetkiNames object, populating it if fetch is True."""
-        return NetkiNames(self.resource.netki_names, self.client, populate=fetch)
+        return NetkiNames(self.resource.netki_names, self.client,
+                          page=page, populate=fetch)

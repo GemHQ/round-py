@@ -11,13 +11,15 @@ from .wrappers import ListWrapper
 
 class Addresses(ListWrapper):
 
-    def __init__(self, resource, client, populate=False):
-        super(Addresses, self).__init__(resource, client, populate)
+    def __init__(self, resource, client, page=0, populate=False):
+        super(Addresses, self).__init__(resource, client,
+                                        page=page, populate=populate)
 
     def wrap(self, address):
         return address
 
     def create(self):
         address = self.resource.create()
-        self.add(address)
+        if len(self) < PAGE_LIMIT:
+            self.add(address)
         return address

@@ -15,6 +15,11 @@ logger = logging.getLogger(__name__)
 
 class Transactions(ListWrapper):
 
+    def __init__(self, resource, client, page=0, populate=True, **query):
+        self._data = []
+        super(ListWrapper, self).__init__(resource, client, page,
+                                          populate=populate, **query)
+
     def wrap(self, resource):
         return Transaction(resource, self.client)
 

@@ -93,10 +93,10 @@ class Application(Wrapper, Updatable):
         """Returned the cached Users associated with this application."""
         return self.get_users()
 
-    def get_users(self, fetch=True):
+    def get_users(self, page=0, fetch=True):
         """Return this Applications's users object, populating it if fetch
         is True."""
-        return Users(self.resource.users, self.client, populate=fetch)
+        return Users(self.resource.users, self.client, page=page, populate=fetch)
 
     @property
     @cacheable
@@ -104,11 +104,11 @@ class Application(Wrapper, Updatable):
         """Returned the cached Wallets associated with this application."""
         return self.get_wallets()
 
-    def get_wallets(self, fetch=False):
+    def get_wallets(self, page=0, fetch=False):
         """Return this Applications's wallets object, populating it if fetch
         is True."""
-        return Wallets(
-            self.resource.wallets, self.client, populate=fetch, application=self)
+        return Wallets(self.resource.wallets, self.client,
+                       page=page, populate=fetch, application=self)
 
     @property
     @cacheable
@@ -116,11 +116,11 @@ class Application(Wrapper, Updatable):
         """Return the cached Subscriptions object for this Application."""
         return self.get_subscriptions()
 
-    def get_subscriptions(self, fetch=True):
+    def get_subscriptions(self, page=0, fetch=True):
         """Return this Application's subscriptions object, populating it if
         fetch is True."""
         return Subscriptions(
-            self.resource.subscriptions, self.client, populate=fetch)
+            self.resource.subscriptions, self.client, page=page, populate=fetch)
 
     def wallet(self, key):
         return self.client.wallet(key, application=self)
@@ -132,8 +132,8 @@ class Application(Wrapper, Updatable):
         Application."""
         return self.get_netki_domains()
 
-    def get_netki_domains(self, fetch=False):
+    def get_netki_domains(self, page=0, fetch=False):
         """Return the Applications NetkiDomains object, populating it if fetch
         is True."""
         return NetkiDomains(
-            self.resource.netki_domains, self.client, populate=fetch)
+            self.resource.netki_domains, self.client, page=page, populate=fetch)

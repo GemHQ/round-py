@@ -39,6 +39,6 @@ class Developer(Wrapper):
     def applications(self):
         return self.get_applications()
 
-    def get_applications(self, fetch=False):
+    def get_applications(self, page=0, fetch=False):
         return apps.Applications(
-            self.resource.applications, self.client, populate=fetch)
+            self.resource.applications, self.client, page, populate=fetch)
