@@ -55,11 +55,13 @@ def generate(passphrase, trees=['primary']):
 class Wallets(DictWrapper):
     """A collection of round.Wallets objects."""
 
-    def __init__(self, resource, client, application=False):
+    def __init__(self, resource, client,
+                 page=0, populate=True, application=False):
         # This is less than awesome. Ideally a PB resource can learn whether it's
         # an application_wallets or user_wallets object.
         self.application = application
-        super(Wallets, self).__init__(resource, client)
+        super(Wallets, self).__init__(
+            resource, client, page=page, populate=populate)
 
     def create(self, name, passphrase=None, wallet_data=None):
         """Create a new Wallet object and add it to this Wallets collection.
@@ -140,15 +142,6 @@ class Wallet(Wrapper, Updatable):
         self.application = application
         self.multi_wallet = None
 
-        account_resource = self.resource.accounts
-        self.accounts = Accounts(resource=account_resource,
-                                 client=self.client,
-                                 wallet=self)
-
-    @property
-    def default_account(self):
-        return self.accounts['default']
-
     def dump_addresses(self, network, filename=None):
         """Return a list of address dictionaries for each address in all of the
         accounts in this wallet of the network specified by `network`
@@ -210,15 +203,6 @@ class Wallet(Wrapper, Updatable):
             public={'cosigner': wallet.cosigner_public_seed,
                     'backup': wallet.backup_public_seed})
         return self
-
-    @property
-    def subscriptions(self):
-        """Fetch and return Subscriptions associated with this wallet."""
-        if not hasattr(self, '_subscriptions'):
-            subscriptions_resource = self.resource.subscriptions
-            self._subscriptions = Subscriptions(
-                subscriptions_resource, self.client)
-        return self._subscriptions
 
 
     def pay(self, payees, remainder_account, payers=None,
@@ -346,3 +330,29 @@ class Wallet(Wrapper, Updatable):
                                   "wallet.unlock(passphrase)")
 
         return self.multi_wallet.signatures(transaction)
+
+    # @property
+    # @cacheable
+    # def subscriptions(self):
+    #     """Return the cached first page of Subscriptions registered on this
+    #     wallet.
+    #     """
+    #     return self.get_subscriptions()
+    # def get_subscriptions(self, page=0, fetch=True):
+    #     """Return the specified page of Subscriptions owned by this wallet."""
+    #     return Subscriptions(
+    #         self.resource.subscriptions, self.client, page=page, populate=fetch)
+
+    @property
+    @cacheable
+    def accounts(self):
+        """Return the cached first page of accounts owned by this wallet."""
+        return self.get_accounts()
+    def get_accounts(self, page=0, fetch=True):
+        """Return the specified page of accounts owned by this wallet."""
+        return Accounts(self.resource.accounts, self.client,
+                        wallet=self, page=page, populate=fetch)
+
+    @property
+    def default_account(self):
+        return self.accounts['default']

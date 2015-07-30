@@ -88,26 +88,38 @@ class Application(Wrapper, Updatable):
         return self
 
     @property
+    @cacheable
     def users(self):
-        if not hasattr(self, '_users'):
-            users_resource = self.resource.users
-            self._users = Users(users_resource, self.client)
-        return self._users
+        """Return the cached first page of users who have authorized this
+        application.
+        """
+        return self.get_users()
+    def get_users(self, page=0, fetch=True):
+        """Return the specified page of users who have authorized this
+        application.
+        """
+        return Users(self.resource.users, self.client, page=page, populate=fetch)
 
     @property
+    @cacheable
     def wallets(self):
-        """Fetch and return Wallets associated with this application."""
-        if not hasattr(self, '_wallets'):
-            wallets_resource = self.resource.wallets
-            self._wallets = Wallets(wallets_resource,
-                                    self.client, self)
-        return self._wallets
+        """Return the cached first page of wallets owned by this application."""
+        return self.get_wallets()
+    def get_wallets(self, page=0, fetch=True):
+        """Return the specified page of wallets owned by this application."""
+        return Wallets(self.resource.wallets, self.client,
+                       page=page, populate=fetch, application=self)
 
     @property
+    @cacheable
     def subscriptions(self):
-        """Fetch and return Subscriptions associated with this account."""
-        if not hasattr(self, '_subscriptions'):
-            subscriptions_resource = self.resource.subscriptions
-            self._subscriptions = Subscriptions(
-                subscriptions_resource, self.client)
-        return self._subscriptions
+        """Return the cached first page of subscriptions associated with this
+        application.
+        """
+        return self.get_subscriptions()
+    def get_subscriptions(self, page=0, fetch=True):
+        """Return the specified page of subscriptions associated with this
+        application.
+        """
+        return Subscriptions(
+            self.resource.subscriptions, self.client, page, populate=fetch)

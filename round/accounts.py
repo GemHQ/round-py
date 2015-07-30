@@ -28,9 +28,9 @@ class Accounts(DictWrapper):
       The new round.Accounts object.
     """
 
-    def __init__(self, resource, client, wallet):
+    def __init__(self, resource, client, wallet=None, page=0, populate=True):
         self.wallet = wallet
-        super(Accounts, self).__init__(resource, client)
+        super(Accounts, self).__init__(resource, client, page, populate)
 
     def create(self, name, network):
         """Create a new Account object and add it to this Accounts collection.
@@ -44,7 +44,8 @@ class Accounts(DictWrapper):
         """
         if not network in SUPPORTED_NETWORKS:
             raise ValueError('Network not valid!')
-        account = self.wrap(self.resource.create(dict(name=name, network=network)))
+        account = self.wrap(self.resource.create(dict(name=name,
+                                                      network=network)))
         self.add(account)
         return account
 
@@ -161,11 +162,12 @@ class Account(Wrapper, Updatable):
         # `mfa_uri` attribute to approve!)
         return signed
 
-    def transactions(self, **query):
+    def transactions(self, page=0, **query):
         """Fetch and return Transactions involving any Address inside this
         Account.
 
         Args:
+          page (int >= 0): Index of the page of results (sets of 100) to return.
           status (str or list, optional): One or a list of
             ["unsigned", "unapproved",
              "confirmed", "unconfirmed",
@@ -178,28 +180,29 @@ class Account(Wrapper, Updatable):
         if 'status' in query and isinstance(query['status'], list):
             query['status'] = ','.join(map(str, query['status']))
 
-        transaction_resource = self.resource.transactions(query)
-        return txs.Transactions(transaction_resource, self.client)
+        return txs.Transactions(
+            self.resource.transactions, self.client, page=page, **query)
+
+    # @property
+    # @cacheable
+    # def subscriptions(self):
+    #     """Return the cached first page of Subscriptions registered on this
+    #     account.
+    #     """
+    #     return self.get_subscriptions()
+    # def get_subscriptions(self, page=0, fetch=True):
+    #     """Return the specified page of Subscriptions owned by this account."""
+    #     return Subscriptions(
+    #         self.resource.subscriptions, self.client, page=page, populate=fetch)
 
     @property
-    def subscriptions(self):
-        """Fetch and return Subscriptions registered on this account."""
-        if not hasattr(self, '_subscriptions'):
-            subscriptions_resource = self.resource.subscriptions
-            self._subscriptions = Subscriptions(subscriptions_resource,
-                                                self.client)
-        return self._subscriptions
-
-    @property
+    @cacheable
     def addresses(self):
-        """Fetch and return an updated list of Addresses inside this Account."""
-        address_resource = self.resource.addresses
-        return addresses.Addresses(address_resource, self.client)
-
-    def get_addresses(self, fetch=True):
-        """Return the memoized _addresses list, refreshing it if fetch is True"""
-        if not hasattr(self, '_addresses'):
-            self._addresses =  addresses.Addresses(self.resource.addresses,
-                                                   self.client,
-                                                   False)
-        return self._addresses.refresh() if fetch else self._addresses
+        """Return the cached first page of Addresses inside this account."""
+        return self.get_addresses()
+    def get_addresses(self, page=0, fetch=True):
+        """Fetch and return the specified page of Addresses inside this
+        account.
+        """
+        return addresses.Addresses(
+            self.resource.addresses, self.client, page, populate=fetch)

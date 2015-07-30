@@ -12,28 +12,16 @@ from .wrappers import *
 
 class Transactions(ListWrapper):
 
-    def __init__(self, resource, client):
-        self.collection_list = []
-        super(Transactions, self).__init__(resource, client)
-
-    def add(self, wrapper):
-        self.collection_list.append(wrapper)
+    def __init__(self, resource, client, page=0, populate=True, **query):
+        self._data = []
+        super(ListWrapper, self).__init__(resource, client, page,
+                                          populate=populate, **query)
 
     def wrap(self, resource):
         return Transaction(resource, self.client)
 
 
 class Transaction(Wrapper):
-
-    @property
-    def attributes(self):
-        return self.resource.attributes
-
-    def __getattr__(self, name):
-        try:
-            return self.resource.attributes[name]
-        except:
-            return super(Transaction, self).__getattr__(name)
 
     def approve(self, mfa_token=None):
         if mfa_token:

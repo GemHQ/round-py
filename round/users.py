@@ -124,31 +124,6 @@ class User(Wrapper, Updatable):
         resource = self.resource.update(content)
         return User(resource, self.client)
 
-    @property
-    def devices(self):
-        if not hasattr(self, '_devices'):
-            devices_resource = self.client.resources.devices_query(
-                dict(email=self.email))
-            self._devices = Devices(devices_resource, self.client)
-        return self._devices
-
-    @property
-    def wallet(self):
-        """Fetch and return this user's default (only) Wallet."""
-        if not hasattr(self, '_wallet'):
-            wallet_resource = self.default_wallet.get()
-            self._wallet = Wallet(wallet_resource, self.client)
-        return self._wallet
-
-    @property
-    def subscriptions(self):
-        """Fetch and return Subscriptions associated with this user."""
-        if not hasattr(self, '_subscriptions'):
-            subscriptions_resource = self.resource.subscriptions
-            self._subscriptions = Subscriptions(
-                subscriptions_resource, self.client)
-        return self._subscriptions
-
     def send_mfa(self):
         """Send an SMS MFA token to the user."""
         return self.resource.send_mfa({})
@@ -165,3 +140,32 @@ class User(Wrapper, Updatable):
         """
         response = self.resource.verify_mfa({'mfa_token': mfa_token})
         return (response['valid'] == True or response['valid'] == 'true')
+
+    @property
+    @cacheable
+    def wallet(self):
+        """Fetch and return this user's default (only) Wallet."""
+        return Wallet(self.default_wallet.get(), self.client)
+
+    @property
+    @cacheable
+    def devices(self):
+        """Return the cached first page of devices associated with this user."""
+        return self.get_devices()
+    def get_devices(self, page=0, fetch=True):
+        """Return the specified page of devices associated with this user."""
+        return Devices(self.resource.devices, self.client, page, populate=fetch)
+
+    @property
+    @cacheable
+    def subscriptions(self):
+        """Return the cached first page of subscriptions associated with this
+        user.
+        """
+        return self.get_subscriptions()
+    def get_subscriptions(self, page=0, fetch=True):
+        """Return the specified page of subscriptions associated with this
+        user.
+        """
+        return Subscriptions(
+            self.resource.subscriptions, self.client, page, populate=fetch)

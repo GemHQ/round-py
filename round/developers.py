@@ -34,10 +34,17 @@ class Developer(Wrapper):
 
         return Developer(resource, self.client)
 
+    def get_applications(self, page=0, fetch=True):
+        """Fetch and return the specified page of Applications owned by this
+        Developer.
+        """
+        return apps.Applications(
+            self.resource.applications, self.client, page, populate=fetch)
+
     @property
+    @cacheable
     def applications(self):
-        if not hasattr(self, '_applications'):
-            apps_resource = self.resource.applications
-            self._applications = apps.Applications(apps_resource,
-                                                   self.client)
-        return self._applications
+        """Return the cached first page of Applications owned by this
+        Developer.
+        """
+        return self.get_applications()
