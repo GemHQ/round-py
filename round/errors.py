@@ -24,6 +24,10 @@ class RoundError(Exception):
         return self.message
 
 
+class PageError(RoundError, KeyError):
+    def __init__(self, i=None):
+        self.message = "No page at index: {}".format(i)
+
 class UnknownNetworkError(RoundError):
     def __init__(self, network):
         self.message = (
@@ -44,7 +48,7 @@ class AuthenticationError(RoundError):
         if error_message == "":
             self.message = (
                 "The requested action cannot be completed from this "
-                "client. You may need to use the Gem User or Developer Console.")
+                "client. You may need to use the Gem Web Console.")
         else:
             self.message = (
                 "You must first authenticate this client with one of:\n{}"

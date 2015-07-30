@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-#
 # wrappers.py
 #
 # Copyright 2014-2015 BitVault, Inc. dba Gem
@@ -92,18 +91,65 @@ class Wrapper(MFAable):
         return self
 
 
-class DictWrapper(MFAable, collections.Mapping):
+class Pageable(object):
 
-    def __init__(self, resource, client, populate=False):
-        self.resource = resource
+    def __init__(self, resource, client, page, populate=True, **query):
         self.client = client
-        self._data = {}
+        self._resource = resource
+        self._page = page
+        if hasattr(resource, '__call__'):
+            query.update({'limit': str(PAGE_LIMIT),
+                          'offset': str(page * PAGE_LIMIT)})
+            self.resource = resource(query)
+        else:
+            self.resource = resource
+
         self._populated = False
         if populate: self.populate()
 
+    def page(self, page):
+        if self.page <= 0:
+            raise PageError(page)
+
+        p = self.__class__(
+            self._resource, self.client, page=page, populate=True)
+
+        if len(p) < 1:
+            raise PageError(page)
+        return p
+
+    @property
+    def next_page(self):
+        return self.page(self._page + 1)
+
+    @property
+    def previous_page(self):
+        if self.page <= 0:
+            raise PageError(self._page - 1)
+        return self.page(self._page - 1)
+
+    @property
+    def context(self):
+        return self.client.context
+
+class DictWrapper(Pageable, MFAable, collections.Mapping):
+
+    def __init__(self, resource, client, page=0, populate=False):
+        self._data = {}
+        super(DictWrapper, self).__init__(resource, client, page, populate)
+
     def __getitem__(self, name):
         if name not in self._data and not self._populated: self.populate()
-        return self._data.__getitem__(name)
+        try:
+            return self._data.__getitem__(name)
+        except KeyError as e:
+            # We only search forward in pages to avoid having to keep references
+            # to all pages in the collection, which arguably we should do,
+            # rather than relying on resource.query methods (when they're
+            # available)
+            if len(self._data) >= (PAGE_LIMIT - 1):
+                return self.next_page.__getitem__(name)
+            raise e
 
     def __iter__(self):
         self.populate()
@@ -147,14 +193,11 @@ class DictWrapper(MFAable, collections.Mapping):
         pass
 
 
-class ListWrapper(collections.Sequence):
+class ListWrapper(Pageable, MFAable, collections.Sequence):
 
     def __init__(self, resource, client, populate=False):
-        self.resource = resource
-        self.client = client
         self._data = []
-        self._populated = False
-        if populate: self.populate()
+        super(ListWrapper, self).__init__(resource, client, page, populate)
 
     def __getitem__(self, index):
         return self._data[index]
