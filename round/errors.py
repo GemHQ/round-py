@@ -24,22 +24,15 @@ class RoundError(Exception):
         return self.message
 
 
+class PageError(RoundError, KeyError):
+    def __init__(self, i=None):
+        self.message = "No page at index: {}".format(i)
+
 class UnknownNetworkError(RoundError):
     def __init__(self, network):
         self.message = (
             "Invalid network: `{}`. Please specify one of our "
             "supported networks: {}").format(network, SUPPORTED_NETWORKS)
-
-
-class UnknownKeyError(RoundError):
-
-    def __init__(self, key):
-        self.key = key
-        self.message = (
-            "No OTP key found for user. A new key has been generated and a new "
-            "secret has been delivered. Use key={} to call "
-            "complete_device_authorization (you should catch this error and "
-            "use error.key).").format(key)
 
 
 class AuthenticationError(RoundError):
@@ -55,7 +48,7 @@ class AuthenticationError(RoundError):
         if error_message == "":
             self.message = (
                 "The requested action cannot be completed from this "
-                "client. You may need to use the Gem User or Developer Console.")
+                "client. You may need to use the Gem Web Console.")
         else:
             self.message = (
                 "You must first authenticate this client with one of:\n{}"
@@ -88,8 +81,6 @@ class OverrideError(RoundError):
             message or ("This client already has {} authentication. To "
                         "overwrite it call {} with override=True.").format(
                             scheme, auth_function))
-
-
 
 
 class AuthUsageError(RoundError):
