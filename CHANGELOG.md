@@ -1,4 +1,11 @@
 
+0.10.0 / 2015-08-03
+==================
+
+  * Removed support for nacl-encrypted wallets and eliminated PyNaCl dependency
+  * Introduced the Pageable class and cacheable decorator. Long resource lists now default to pages of 100 results.
+  * Pad PyOTP tokens to match ROTP
+
 0.9.2 / 2015-07-24
 ==================
 
