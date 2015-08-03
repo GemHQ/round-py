@@ -128,10 +128,10 @@ user = client.authenticate_device(api_token=api_token,
 
 # Now for the fun stuff.
 def print_wallet(fetch=True):
-    headers = ['#', 'Account', 'Network', 'Confirmed', 'Pending', 'Available']
     try:
         count = 1
-        table = []
+        headers = ['#', 'Account', 'Network', 'Confirmed', 'Pending', 'Available']
+        table = [headers]
         for name, account in user.wallet.accounts.iteritems():
             if fetch:
                 account = account.refresh()
