@@ -17,7 +17,7 @@ setup(name = 'round',
           'PyYAML',
           'patchboard==0.5.1',
           'pyotp',
-          'coinop==0.2.1',
+          'coinop==0.3.1',
           'future',
           'tabulate'
       ],

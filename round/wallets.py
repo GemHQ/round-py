@@ -9,7 +9,6 @@ from future.utils import iteritems
 from .config import *
 
 from coinop.passphrasebox import PassphraseBox
-from coinop.crypto.passphrasebox import PassphraseBox as NaclPassphraseBox
 
 from coinop.multiwallet import MultiWallet
 from coinop.transaction import Transaction as CoinopTx
@@ -174,7 +173,7 @@ class Wallet(Wrapper, Updatable):
           encrypted_seed (dict): A dictionary of the form
             {'ciphertext': longhexvalue,
              'iterations': integer of pbkdf2 derivations,
-             'nonce': 24-byte hex value
+             'iv': 24-byte hex value
              'salt': 16-byte hex value}
             this dict represents an private seed (not a master key) encrypted
             with the `passphrase` using pbkdf2. You can obtain this value with
@@ -189,12 +188,7 @@ class Wallet(Wrapper, Updatable):
         if not encrypted_seed:
             encrypted_seed = wallet.primary_private_seed
         try:
-            if encrypted_seed['nonce']:
-                primary_seed = NaclPassphraseBox.decrypt(
-                    passphrase, encrypted_seed)
-            else:
-                primary_seed = PassphraseBox.decrypt(
-                    passphrase, encrypted_seed)
+            primary_seed = PassphraseBox.decrypt(passphrase, encrypted_seed)
         except:
             raise InvalidPassphraseError()
 

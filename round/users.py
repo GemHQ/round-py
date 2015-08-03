@@ -145,7 +145,7 @@ class User(Wrapper, Updatable):
     @cacheable
     def wallet(self):
         """Fetch and return this user's default (only) Wallet."""
-        return Wallet(self.default_wallet.get(), self.client)
+        return Wallet(self.resource.default_wallet, self.client)
 
     @property
     @cacheable
