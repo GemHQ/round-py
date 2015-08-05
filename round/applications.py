@@ -111,3 +111,6 @@ class Application(Wrapper, Updatable):
             self._subscriptions = Subscriptions(
                 subscriptions_resource, self.client)
         return self._subscriptions
+
+    def wallet(self, key):
+        return self.client.wallet(key, application=self)

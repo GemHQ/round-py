@@ -149,6 +149,9 @@ class Wallet(Wrapper, Updatable):
     def default_account(self):
         return self.accounts['default']
 
+    def account(self, key):
+        return self.client.account(key, wallet=self)
+
     def dump_addresses(self, network, filename=None):
         """Return a list of address dictionaries for each address in all of the
         accounts in this wallet of the network specified by `network`
