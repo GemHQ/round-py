@@ -5,6 +5,7 @@ from setuptools import setup, find_packages
 
 setup(name = 'round',
       version = '0.9.2',
+      version = '0.9.3',
       description = 'Python client for Gem.co',
       url = 'http://github.com/GemHQ/round-py',
       author = 'Matt Smith <matt@gem.co>, Dustin Laurence <dustin@gem.co>',

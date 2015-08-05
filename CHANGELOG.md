@@ -1,4 +1,10 @@
 
+0.9.3 / 2015-08-05
+==================
+
+  * provider user, wallet, and account calls that accept a key parameter for notification convenience
+  * pad pyotp tokens to six characters
+
 0.9.2 / 2015-07-24
 ==================
 
