@@ -132,7 +132,11 @@ class Client(MFAable):
 
         return self._application
 
-    def user(self, email=None):
+    def user(self, email=None, key=None):
+        if key:
+            res = self.resources.user('https://api.gem.co/users/{}'.format(key)).get()
+            return User(res, self)
+
         user_resource = False
         if not hasattr(self, '_user'):
             try:
@@ -159,3 +163,11 @@ class Client(MFAable):
                 pass
 
         return self._user
+
+    def wallet(self, key, application=None):
+        res = self.resources.wallet('https://api.gem.co/wallets/{}'.format(key)).get()
+        return Wallet(res, self, application=application)
+
+    def account(self, key, wallet=None):
+        res = self.resources.account('https://api.gem.co/accounts/{}'.format(key)).get()
+        return Account(res, self, wallet=wallet)
