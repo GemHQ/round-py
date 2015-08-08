@@ -5,6 +5,7 @@
 
 from __future__ import unicode_literals
 from future.utils import iteritems
+import logging
 
 from .config import *
 
@@ -19,6 +20,8 @@ from .errors import *
 from .accounts import Account, Accounts
 from .subscriptions import Subscription, Subscriptions
 import round.transactions as txs
+
+logger = logging.getLogger(__name__)
 
 def generate(passphrase, trees=['primary']):
     """Generate a seed for the primary tree of a Gem wallet.
@@ -324,9 +327,9 @@ class Wallet(Wrapper, Updatable):
                                        self.client)
             except Exception as e:
                 signed.cancel()
-                print(e.message)
-                print("If you are having trouble with MFA tokens, make sure "
-                      "your system time is accurate with `date -u`!")
+                logger.debug(e.message)
+                logger.debug("If you are having trouble with MFA tokens, make "
+                             "sure your system time is accurate with `date -u`!")
 
         # Otherwise return the unapproved tx (now redirect the user to the
         # `mfa_uri` attribute to approve!)

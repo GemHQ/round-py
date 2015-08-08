@@ -4,10 +4,13 @@
 # Copyright 2014 BitVault, Inc. dba Gem
 
 from __future__ import unicode_literals
+import logging
 
 from .config import *
 
 from .wrappers import *
+
+logger = logging.getLogger(__name__)
 
 
 class Transactions(ListWrapper):
@@ -57,4 +60,4 @@ class Transaction(Wrapper):
         try:
             return self.resource.cancel()
         except Exception as e:
-            print(e)
+            logger.debug(e)
