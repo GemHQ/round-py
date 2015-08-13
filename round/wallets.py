@@ -150,7 +150,7 @@ class Wallet(Wrapper, Updatable):
     @property
     def accounts(self):
         if not hasattr(self, '_accounts'):
-            account_resource = self.resource.accounts
+            accounts_resource = self.resource.accounts
             self._accounts = Accounts(accounts_resource, self.client, wallet=self)
         return self._accounts
 
