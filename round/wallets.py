@@ -143,14 +143,16 @@ class Wallet(Wrapper, Updatable):
         self.application = application
         self.multi_wallet = None
 
-        account_resource = self.resource.accounts
-        self.accounts = Accounts(resource=account_resource,
-                                 client=self.client,
-                                 wallet=self)
-
     @property
     def default_account(self):
         return self.accounts['default']
+
+    @property
+    def accounts(self):
+        if not hasattr(self, '_accounts'):
+            account_resource = self.resource.accounts
+            self._accounts = Accounts(accounts_resource, self.client, wallet=self)
+        return self._accounts
 
     def account(self, key):
         return self.client.account(key, wallet=self)
