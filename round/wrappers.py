@@ -4,6 +4,7 @@
 # Copyright 2014 BitVault, Inc. dba Gem
 
 from __future__ import unicode_literals
+from functools import wraps
 from .config import *
 
 from patchboard.response import ResponseError

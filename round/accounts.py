@@ -12,9 +12,9 @@ from coinop.transaction import Transaction as CoinopTx
 
 from .wrappers import *
 from .subscriptions import Subscriptions
-
-import round.transactions as txs
-import round.addresses as addresses
+from .addresses import Addresses
+from .netki import NetkiNames
+from .transactions import Transaction, Transactions
 
 logger = logging.getLogger(__name__)
 
@@ -147,12 +147,12 @@ class Account(Wrapper, Updatable):
         if redirect_uri:
             transaction['redirect_uri'] = redirect_uri
 
-        signed = txs.Transaction(unsigned.update(transaction), self.client)
+        signed = Transaction(unsigned.update(transaction), self.client)
 
         # If this is an Application wallet, approve the transaction.
         if mfa_token and self.wallet.application:
             try:
-                return txs.Transaction(signed.with_mfa(mfa_token).approve(),
+                return Transaction(signed.with_mfa(mfa_token).approve(),
                                        self.client)
             except Exception as e:
                 signed = signed.cancel()
@@ -182,7 +182,7 @@ class Account(Wrapper, Updatable):
             query['status'] = ','.join(map(str, query['status']))
 
         transaction_resource = self.resource.transactions(query)
-        return txs.Transactions(transaction_resource, self.client)
+        return Transactions(transaction_resource, self.client)
 
     @property
     @cacheable
@@ -203,5 +203,14 @@ class Account(Wrapper, Updatable):
 
     def get_addresses(self, fetch=True):
         """Return the Account's addresses object, populating it if fetch is True."""
-        return addresses.Addresses(
-            self.resource.addresses, self.client, populate=fetch)
+        return Addresses(self.resource.addresses, self.client, populate=fetch)
+
+    @property
+    @cacheable
+    def netki_names(self):
+        """Fetch and return an updated list of NetkiNames inside this Account."""
+        return self.get_netki_names()
+
+    def get_netki_names(self, fetch=True):
+        """Return the Account's NetkiNames object, populating it if fetch is True."""
+        return NetkiNames(self.resource.netki_names, self.client, populate=fetch)

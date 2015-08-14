@@ -124,3 +124,16 @@ class Application(Wrapper, Updatable):
 
     def wallet(self, key):
         return self.client.wallet(key, application=self)
+
+    @property
+    @cacheable
+    def netki_domains(self):
+        """Fetch and return an updated list of NetkiDomains inside this
+        Application."""
+        return self.get_netki_domains()
+
+    def get_netki_domains(self, fetch=True):
+        """Return the Applications NetkiDomains object, populating it if fetch
+        is True."""
+        return NetkiDomains(
+            self.resource.netki_domains, self.client, populate=fetch)
