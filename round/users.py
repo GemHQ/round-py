@@ -136,7 +136,7 @@ class User(Wrapper, Updatable):
     def wallet(self):
         """Fetch and return this user's default (only) Wallet."""
         if not hasattr(self, '_wallet'):
-            wallet_resource = self.default_wallet.get()
+            wallet_resource = self.resource.default_wallet.get()
             self._wallet = Wallet(wallet_resource, self.client)
         return self._wallet
 
