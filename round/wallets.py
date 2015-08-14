@@ -64,6 +64,15 @@ class Wallets(DictWrapper):
         self.application = application
         super(Wallets, self).__init__(resource, client, populate)
 
+    def __getitem__(self, name):
+        if name in self._data: return self._data.__getitem__(name)
+        try:
+            return self.wrap(
+                self.application.resource.wallet_query(dict(name=name)).get())
+        except Exception as e:
+            logger.debug(e)
+            raise KeyError(name)
+
     def create(self, name, passphrase=None, wallet_data=None):
         """Create a new Wallet object and add it to this Wallets collection.
         This is only available in this library for Application wallets. Users

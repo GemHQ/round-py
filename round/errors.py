@@ -31,17 +31,6 @@ class UnknownNetworkError(RoundError):
             "supported networks: {}").format(network, SUPPORTED_NETWORKS)
 
 
-class UnknownKeyError(RoundError):
-
-    def __init__(self, key):
-        self.key = key
-        self.message = (
-            "No OTP key found for user. A new key has been generated and a new "
-            "secret has been delivered. Use key={} to call "
-            "complete_device_authorization (you should catch this error and "
-            "use error.key).").format(key)
-
-
 class AuthenticationError(RoundError):
 
     def __init__(self, context, schemes):
@@ -61,17 +50,21 @@ class AuthenticationError(RoundError):
                 "You must first authenticate this client with one of:\n{}"
             ).format(error_message)
 
+
 class ConflictError(RoundError):
     pass
+
 
 class InvalidPassphraseError(RoundError):
     def __init__(self, message="Decryption failed, check your passphrase"):
         self.message = message
 
+
 class DecryptionError(RoundError):
     def __init__(self, message=("Decryption failed, you may have to update "
                                 "your wallet or check your passphrase.")):
         self.message = message
+
 
 class OverrideError(RoundError):
 
@@ -88,8 +81,6 @@ class OverrideError(RoundError):
             message or ("This client already has {} authentication. To "
                         "overwrite it call {} with override=True.").format(
                             scheme, auth_function))
-
-
 
 
 class AuthUsageError(RoundError):

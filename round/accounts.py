@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 
 import logging
 from .config import *
+from .errors import *
 
 from coinop.transaction import Transaction as CoinopTx
 
@@ -33,6 +34,15 @@ class Accounts(DictWrapper):
     def __init__(self, resource, client, wallet=None, populate=True):
         self.wallet = wallet
         super(Accounts, self).__init__(resource, client, populate)
+
+    def __getitem__(self, name):
+        if name in self._data: return self._data.__getitem__(name)
+        try:
+            return self.wrap(
+                self.wallet.resource.account_query(dict(name=name)).get())
+        except RoundError as e:
+            logger.debug(e)
+            raise KeyError(name)
 
     def create(self, name, network):
         """Create a new Account object and add it to this Accounts collection.
