@@ -30,9 +30,9 @@ class Accounts(DictWrapper):
       The new round.Accounts object.
     """
 
-    def __init__(self, resource, client, wallet):
+    def __init__(self, resource, client, wallet=None, populate=True):
         self.wallet = wallet
-        super(Accounts, self).__init__(resource, client)
+        super(Accounts, self).__init__(resource, client, populate)
 
     def create(self, name, network):
         """Create a new Account object and add it to this Accounts collection.
@@ -46,7 +46,8 @@ class Accounts(DictWrapper):
         """
         if not network in SUPPORTED_NETWORKS:
             raise ValueError('Network not valid!')
-        account = self.wrap(self.resource.create(dict(name=name, network=network)))
+        account = self.wrap(self.resource.create(dict(name=name,
+                                                      network=network)))
         self.add(account)
         return account
 
@@ -154,7 +155,7 @@ class Account(Wrapper, Updatable):
                 return txs.Transaction(signed.with_mfa(mfa_token).approve(),
                                        self.client)
             except Exception as e:
-                signed.cancel()
+                signed = signed.cancel()
                 logger.debug(e.message)
                 logger.debug("If you are having trouble with MFA tokens, make "
                              "sure your system time is accurate with `date -u`!")
@@ -184,24 +185,23 @@ class Account(Wrapper, Updatable):
         return txs.Transactions(transaction_resource, self.client)
 
     @property
+    @cacheable
     def subscriptions(self):
-        """Fetch and return Subscriptions registered on this account."""
-        if not hasattr(self, '_subscriptions'):
-            subscriptions_resource = self.resource.subscriptions
-            self._subscriptions = Subscriptions(subscriptions_resource,
-                                                self.client)
-        return self._subscriptions
+        """Return the cached Subscriptions object for this Account."""
+        return self.get_subscriptions()
+
+    def get_subscriptions(self, fetch=True):
+        """Return this Account's subscriptions object, populating it if fetch is True."""
+        return Subscriptions(
+            self.resource.subscriptions, self.client, populate=fetch)
 
     @property
+    @cacheable
     def addresses(self):
         """Fetch and return an updated list of Addresses inside this Account."""
-        address_resource = self.resource.addresses
-        return addresses.Addresses(address_resource, self.client)
+        return self.get_addresses()
 
     def get_addresses(self, fetch=True):
-        """Return the memoized _addresses list, refreshing it if fetch is True"""
-        if not hasattr(self, '_addresses'):
-            self._addresses =  addresses.Addresses(self.resource.addresses,
-                                                   self.client,
-                                                   False)
-        return self._addresses.refresh() if fetch else self._addresses
+        """Return the Account's addresses object, populating it if fetch is True."""
+        return addresses.Addresses(
+            self.resource.addresses, self.client, populate=fetch)

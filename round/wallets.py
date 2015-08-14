@@ -58,11 +58,11 @@ def generate(passphrase, trees=['primary']):
 class Wallets(DictWrapper):
     """A collection of round.Wallets objects."""
 
-    def __init__(self, resource, client, application=False):
+    def __init__(self, resource, client, populate=True, application=False):
         # This is less than awesome. Ideally a PB resource can learn whether it's
         # an application_wallets or user_wallets object.
         self.application = application
-        super(Wallets, self).__init__(resource, client)
+        super(Wallets, self).__init__(resource, client, populate)
 
     def create(self, name, passphrase=None, wallet_data=None):
         """Create a new Wallet object and add it to this Wallets collection.
@@ -143,33 +143,6 @@ class Wallet(Wrapper, Updatable):
         self.application = application
         self.multi_wallet = None
 
-    @property
-    def default_account(self):
-        return self.accounts['default']
-
-    @property
-    def accounts(self):
-        if not hasattr(self, '_accounts'):
-            accounts_resource = self.resource.accounts
-            self._accounts = Accounts(accounts_resource, self.client, wallet=self)
-        return self._accounts
-
-    def account(self, key):
-        return self.client.account(key, wallet=self)
-
-    def dump_addresses(self, network, filename=None):
-        """Return a list of address dictionaries for each address in all of the
-        accounts in this wallet of the network specified by `network`
-        """
-        addrs =  [addr.data for a in self.accounts.values() if a.network == network
-                            for addr in a.addresses]
-        if filename:
-            from json import dump
-            with open(filename, 'w') as f:
-                dump(addrs, f)
-
-        return addrs
-
     def is_unlocked(self):
         """Return true if the wallet is unlocked."""
         return not self.is_locked()
@@ -220,13 +193,45 @@ class Wallet(Wrapper, Updatable):
         return self
 
     @property
+    @cacheable
+    def accounts(self):
+        """Return the cached Accounts object for this Wallet."""
+        return self.get_accounts()
+
+    def get_accounts(self, fetch=True):
+        """Return this Wallet's accounts object, populating it if fetch is True."""
+        return Accounts(self.resource.accounts, self.client, populate=fetch)
+
+    @property
+    def default_account(self):
+        return self.accounts['default']
+
+    def account(self, key):
+        return self.client.account(key, wallet=self)
+
+    def dump_addresses(self, network, filename=None):
+        """Return a list of address dictionaries for each address in all of the
+        accounts in this wallet of the network specified by `network`
+        """
+        addrs =  [addr.data for a in self.accounts.values() if a.network == network
+                            for addr in a.addresses]
+        if filename:
+            from json import dump
+            with open(filename, 'w') as f:
+                dump(addrs, f)
+
+        return addrs
+
+    @property
+    @cacheable
     def subscriptions(self):
-        """Fetch and return Subscriptions associated with this wallet."""
-        if not hasattr(self, '_subscriptions'):
-            subscriptions_resource = self.resource.subscriptions
-            self._subscriptions = Subscriptions(
-                subscriptions_resource, self.client)
-        return self._subscriptions
+        """Return the cached Subscriptions object for this Wallet."""
+        return self.get_subscriptions()
+
+    def get_subscriptions(self, fetch=True):
+        """Return this Wallet's subscriptions object, populating it if fetch is True."""
+        return Subscriptions(
+            self.resource.subscriptions, self.client, populate=fetch)
 
 
     def pay(self, payees, remainder_account, payers=None,

@@ -88,29 +88,39 @@ class Application(Wrapper, Updatable):
         return self
 
     @property
+    @cacheable
     def users(self):
-        if not hasattr(self, '_users'):
-            users_resource = self.resource.users
-            self._users = Users(users_resource, self.client)
-        return self._users
+        """Returned the cached Users associated with this application."""
+        return self.get_users()
+
+    def get_users(self, fetch=True):
+        """Return this Applications's users object, populating it if fetch
+        is True."""
+        return Users(self.resource.users, self.client, populate=fetch)
 
     @property
+    @cacheable
     def wallets(self):
-        """Fetch and return Wallets associated with this application."""
-        if not hasattr(self, '_wallets'):
-            wallets_resource = self.resource.wallets
-            self._wallets = Wallets(wallets_resource,
-                                    self.client, self)
-        return self._wallets
+        """Returned the cached Wallets associated with this application."""
+        return self.get_wallets()
+
+    def get_wallets(self, fetch=True):
+        """Return this Applications's wallets object, populating it if fetch
+        is True."""
+        return Wallets(
+            self.resource.wallets, self.client, populate=fetch, application=self)
 
     @property
+    @cacheable
     def subscriptions(self):
-        """Fetch and return Subscriptions associated with this account."""
-        if not hasattr(self, '_subscriptions'):
-            subscriptions_resource = self.resource.subscriptions
-            self._subscriptions = Subscriptions(
-                subscriptions_resource, self.client)
-        return self._subscriptions
+        """Return the cached Subscriptions object for this Application."""
+        return self.get_subscriptions()
+
+    def get_subscriptions(self, fetch=True):
+        """Return this Application's subscriptions object, populating it if
+        fetch is True."""
+        return Subscriptions(
+            self.resource.subscriptions, self.client, populate=fetch)
 
     def wallet(self, key):
         return self.client.wallet(key, application=self)
