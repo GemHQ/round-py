@@ -201,8 +201,27 @@ class Wallet(Wrapper, Updatable):
                     'backup': wallet.backup_public_seed})
         return self
 
-    def balances_at(self, utxo_confirmations=6):
-        return self.resource.available({'utxo_confirmations': utxo_confirmations}).__dict__['data']
+    def balances_at(self, utxo_confirmations=6, network=None):
+        """Return the confirmed, claimed (reserved for a pending, unsigned
+        transaction), and available balances, where the threshold for
+        confirmed is the value of `utxo_confirmations`.
+
+        Args:
+          utxo_confirmations (int): the # of confirmations to use when computing
+            balances.
+          network (str): Type of cryptocurrency.  Can be one of, 'bitcoin', '
+            bitcoin_testnet', 'litecoin', 'dogecoin'.
+
+        Returns:
+          A dict of form { u'available_balance': 0,
+                           u'claimed_balance': 0,
+                           u'confirmed_balance': 0,
+                           u'utxo_confirmations': 0 }
+        """
+        if not network in SUPPORTED_NETWORKS:
+            raise ValueError('Network not valid!')
+        return self.resource.available({'utxo_confirmations': utxo_confirmations,
+                                        'network': network}).__dict__['data']
 
     @property
     @cacheable

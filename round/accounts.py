@@ -18,7 +18,6 @@ from .netki import NetkiNames
 from .transactions import Transaction, Transactions
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.DEBUG)
 
 class Accounts(DictWrapper):
     """A collection of round.Accounts objects.
@@ -176,7 +175,22 @@ class Account(Wrapper, Updatable):
         return signed
 
     def balances_at(self, utxo_confirmations=6):
-        return self.resource.available({'utxo_confirmations': utxo_confirmations}).__dict__['data']
+        """Return the confirmed, claimed (reserved for a pending, unsigned
+        transaction), and available balances, where the threshold for
+        confirmed is the value of `utxo_confirmations`.
+
+        Args:
+          utxo_confirmations (int): the # of confirmations to use when computing
+            balances.
+
+        Returns:
+          A dict of form { u'available_balance': 0,
+                           u'claimed_balance': 0,
+                           u'confirmed_balance': 0,
+                           u'utxo_confirmations': 0 }
+        """
+        return self.resource.available(
+            {'utxo_confirmations': utxo_confirmations}).__dict__['data']
 
     def transactions(self, **query):
         """Fetch and return Transactions involving any Address inside this
