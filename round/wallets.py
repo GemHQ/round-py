@@ -22,6 +22,7 @@ from .subscriptions import Subscription, Subscriptions
 import round.transactions as txs
 
 logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG)
 
 def generate(passphrase, trees=['primary']):
     """Generate a seed for the primary tree of a Gem wallet.
@@ -265,7 +266,7 @@ class Wallet(Wrapper, Updatable):
             self.resource.subscriptions, self.client, populate=fetch)
 
 
-    def pay(self, payees, remainder_account, payers=None,
+    def pay(self, payees, remainder_account, payers=None, network=None,
             utxo_confirmations=6, mfa_token=None, redirect_uri=None):
         """Create, verify, and sign a new Transaction.
 
@@ -318,6 +319,8 @@ class Wallet(Wrapper, Updatable):
           payers (list of dict, optional): list of input accounts in the form:
             [{'amount': 10000(satoshis),
               'account': ('accountname'||accountInstance)}, ...]
+          network (str): Type of cryptocurrency.  Can be one of, 'bitcoin', '
+            bitcoin_testnet', 'litecoin', 'dogecoin'.
           utxo_confirmations (int, optional): Required confirmations for UTXO
             selection ( > 0)
           mfa_token (str/function, optional): TOTP token for the Application
@@ -350,9 +353,10 @@ class Wallet(Wrapper, Updatable):
         # First create the unsigned tx.
         content = dict(payees=payees,
                        utxo_confirmations=utxo_confirmations,
-                       network=get_account_attr(remainder_account, 'network'))
+                       network=network)
 
         if remainder_account is not None:
+            content['network'] = get_account_attr(remainder_account, 'network')
             if payers: raise Exception(
                     "Invalid payers: either supply a remainder_account "
                     "or omit the payers parameter")
