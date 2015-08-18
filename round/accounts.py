@@ -18,6 +18,7 @@ from .netki import NetkiNames
 from .transactions import Transaction, Transactions
 
 logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG)
 
 class Accounts(DictWrapper):
     """A collection of round.Accounts objects.
@@ -163,7 +164,7 @@ class Account(Wrapper, Updatable):
         if mfa_token and self.wallet.application:
             try:
                 return Transaction(signed.with_mfa(mfa_token).approve(),
-                                       self.client)
+                                   self.client)
             except Exception as e:
                 signed = signed.cancel()
                 logger.debug(e.message)
@@ -173,6 +174,9 @@ class Account(Wrapper, Updatable):
         # Otherwise return the unapproved tx (now redirect the user to the
         # `mfa_uri` attribute to approve!)
         return signed
+
+    def balances_at(self, utxo_confirmations=6):
+        return self.resource.available({'utxo_confirmations': utxo_confirmations}).__dict__['data']
 
     def transactions(self, **query):
         """Fetch and return Transactions involving any Address inside this
@@ -208,7 +212,7 @@ class Account(Wrapper, Updatable):
     @property
     @cacheable
     def addresses(self):
-        """Fetch and return an updated list of Addresses inside this Account."""
+        """Fetch and return an updted list of Addresses inside this Account."""
         return self.get_addresses()
 
     def get_addresses(self, fetch=True):

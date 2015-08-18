@@ -201,6 +201,9 @@ class Wallet(Wrapper, Updatable):
                     'backup': wallet.backup_public_seed})
         return self
 
+    def balances_at(self, utxo_confirmations=6):
+        return self.resource.available({'utxo_confirmations': utxo_confirmations}).__dict__['data']
+
     @property
     @cacheable
     def accounts(self):
@@ -209,7 +212,7 @@ class Wallet(Wrapper, Updatable):
 
     def get_accounts(self, fetch=True):
         """Return this Wallet's accounts object, populating it if fetch is True."""
-        return Accounts(self.resource.accounts, self.client, populate=fetch)
+        return Accounts(self.resource.accounts, self.client, wallet=self, populate=fetch)
 
     @property
     def default_account(self):
@@ -273,12 +276,26 @@ class Wallet(Wrapper, Updatable):
         included in this call and the Transaction will be automatically approved
         and published to the blockchain.
 
+        ********************************* NOTE *********************************
+
+        Additionally, if your use-case does not require keeping precise values
+        in your Accounts, you may want to create a transaction without limiting
+        your UTXO selection to specific Accounts.
+
+        To do this, you must explicitly pass in `None` as the value for
+        `remainder_account` and omit the `payers` parameter. This is to prevent
+        accidental spends out of incorrect accounts.
+
+        ************************************************************************
+
         Args:
           payees (list of dict): list of outputs in the form:
             [{'amount': 10000(satoshis),
               'address':'validbtcaddress'}, ...]
-          remainder_account (str or Account): an Account to handle the difference
-            between payer and payee sums as well as tx fees
+          remainder_account (str or Account or None): an Account to handle the
+            difference between payer and payee sums as well as tx fees
+            (if set to None, a transaction will be created that potentially
+             uses UTXOs from every Account belonging to this wallet)
           payers (list of dict, optional): list of input accounts in the form:
             [{'amount': 10000(satoshis),
               'account': ('accountname'||accountInstance)}, ...]
@@ -313,12 +330,18 @@ class Wallet(Wrapper, Updatable):
 
         # First create the unsigned tx.
         content = dict(payees=payees,
-                       remainder_account=get_account_attr(remainder_account),
                        utxo_confirmations=utxo_confirmations,
                        network=get_account_attr(remainder_account, 'network'))
-        if payers:
-            content['payers'] = \
-                [ dict(p, account=get_account_attr(p['account'])) for p in payers ]
+
+        if remainder_account is not None:
+            if payers: raise Exception(
+                    "Invalid payers: either supply a remainder_account "
+                    "or omit the payers parameter")
+
+            content['remainer_account'] = get_account_attr(remainder_account)
+
+        if payers: content['payers'] = \
+           [ dict(p, account=get_account_attr(p['account'])) for p in payers ]
 
         unsigned = self.resource.transactions().create(content)
 

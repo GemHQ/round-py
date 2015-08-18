@@ -15,7 +15,7 @@ class Addresses(ListWrapper):
         super(Addresses, self).__init__(resource, client, populate)
 
     def add(self, address):
-        self.data.append(address)
+        self._data.append(address)
 
     def wrap(self, address):
         return address
