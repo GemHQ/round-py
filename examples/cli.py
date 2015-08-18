@@ -73,14 +73,14 @@ def select_wallet():
     print_wallets()
     try:
         wallet_number = raw_input("\nEnter wallet number: ")
-        print_wallet(wallets.values()[int(wallet_number) - 1])
+        print_wallet(wallets.values()[int(wallet_number) - 1], fetch=False)
         return wallets.values()[int(wallet_number) - 1]
     except:
         print("Invalid selection: {}\n".format(wallet_number))
         return thewallet if thewallet else select_wallet()
 
 def select_account(wallet):
-    print_wallet(wallet)
+    print_wallet(wallet, fetch=False)
     acct_number = raw_input("\nEnter account number: ")
     return wallet.accounts.values()[int(acct_number) - 1]
 
@@ -121,7 +121,7 @@ Choose an action:
         print_wallet(thewallet)
         return None
 
-    if command > 1 and command < 6:
+    if command > 0 and command < 6:
         theaccount = select_account(thewallet)
 
     if command == 0:
@@ -134,13 +134,22 @@ Choose an action:
             passphrase = getpass()
             thewallet.unlock(passphrase)
 
+        if thewallet.application and not hasattr(thewallet.application, 'totp'):
+            thewallet.application.set_totp(
+                getpass(prompt="Enter your application's totp secret: "))
+
+
         dest_address = raw_input("\nDestination address: ")
         amount = raw_input("\nTransaction amount (satoshis): ")
         tx = theaccount.pay(
             payees=[dict(address=dest_address, amount=int(amount))],
             utxo_confirmations=1)
 
-        pop_a_browser(tx.mfa_uri)
+        if thewallet.application:
+            tx.approve(thewallet.application.get_mfa)
+            print("\nTransaction approved!")
+        else:
+            pop_a_browser(tx.mfa_uri)
 
     elif command == 2:
         # Generating an address is eeeeeasy
