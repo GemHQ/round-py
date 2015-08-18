@@ -22,7 +22,6 @@ from .subscriptions import Subscription, Subscriptions
 import round.transactions as txs
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.DEBUG)
 
 def generate(passphrase, trees=['primary']):
     """Generate a seed for the primary tree of a Gem wallet.
