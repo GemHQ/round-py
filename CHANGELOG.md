@@ -1,4 +1,17 @@
 
+0.9.4 / 2015-08-17
+==================
+
+  * Support for application wallet management through the CLI
+  * Wallet.pay now supports paying from all accounts without specifying explicit payer values
+  * Support application wallets in the CLI
+  * Added `balances_at` which queries for balance as a function of required confirmations
+  * Added support for wallet and account_query (to reduce unnecessary list calls)
+  * Added netki support!
+  * Backporting cacheable from 0.10.0
+  * Replaced print statements with logging
+  * Minor bugfixes
+
 0.9.3 / 2015-08-05
 ==================
 
