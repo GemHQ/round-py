@@ -162,6 +162,9 @@ class ListWrapper(collections.Sequence):
     def __repr__(self):
         return repr(self._data)
 
+    def add(self, value):
+        self._data.append(value)
+
     def populate(self):
         if hasattr(self.resource, 'list'):
             resources = self.resource.list()
