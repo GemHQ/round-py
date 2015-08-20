@@ -8,6 +8,7 @@ from __future__ import unicode_literals
 import logging
 from .config import *
 from .errors import *
+from patchboard.response import ResponseError
 
 from coinop.transaction import Transaction as CoinopTx
 
@@ -145,7 +146,12 @@ class Account(Wrapper, Updatable):
                        utxo_confirmations=utxo_confirmations,
                        remainder_account=self.resource.attributes['key'],
                        network=self.network)
-        unsigned = self.resource.transactions().create(content)
+        try:
+            unsigned = self.resource.transactions().create(content)
+        except ResponseError as e:
+            if "cannot cover" in e.message:
+                raise BalanceError(e.message)
+            raise e
 
         # Sign the tx with the primary private key.
         coinoptx = CoinopTx(data=unsigned.attributes)

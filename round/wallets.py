@@ -356,16 +356,24 @@ class Wallet(Wrapper, Updatable):
 
         if remainder_account is not None:
             content['network'] = get_account_attr(remainder_account, 'network')
-            if payers: raise Exception(
+            if payers: raise TypeError(
                     "Invalid payers: either supply a remainder_account "
                     "or omit the payers parameter")
 
             content['remainer_account'] = get_account_attr(remainder_account)
+        elif not payers and not network:
+            raise TypeError("Missing network: network is required if "
+                            "remainder_account is not specified")
 
         if payers: content['payers'] = \
            [ dict(p, account=get_account_attr(p['account'])) for p in payers ]
 
-        unsigned = self.resource.transactions().create(content)
+        try:
+            unsigned = self.resource.transactions().create(content)
+        except ResponseError as e:
+            if "cannot cover" in e.message:
+                raise BalanceError(e.message)
+            raise e
 
         # Sign the tx with the primary private key.
         coinoptx = CoinopTx(data=unsigned.attributes)

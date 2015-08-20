@@ -54,6 +54,9 @@ class AuthenticationError(RoundError):
 class ConflictError(RoundError):
     pass
 
+class BalanceError(RoundError):
+    pass
+
 
 class InvalidPassphraseError(RoundError):
     def __init__(self, message="Decryption failed, check your passphrase"):
