@@ -13,7 +13,7 @@ from .wrappers import *
 from .subscriptions import Subscriptions
 from .wallets import Wallets
 from .users import Users
-
+from .netki import NetkiDomains
 
 class Applications(DictWrapper):
     """A collection of Application objects"""
