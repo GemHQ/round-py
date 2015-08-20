@@ -43,7 +43,7 @@ class Accounts(DictWrapper):
                 self.wallet.resource.account_query(dict(name=name)).get())
             self.add(account)
             return account
-        except RoundError, ResponseError as e:
+        except (RoundError, ResponseError) as e:
             logger.debug(e)
             raise KeyError(name)
 
