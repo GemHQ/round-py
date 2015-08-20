@@ -39,9 +39,11 @@ class Accounts(DictWrapper):
     def __getitem__(self, name):
         if name in self._data: return self._data.__getitem__(name)
         try:
-            return self.wrap(
+            account = self.wrap(
                 self.wallet.resource.account_query(dict(name=name)).get())
-        except RoundError as e:
+            self.add(account)
+            return account
+        except RoundError, ResponseError as e:
             logger.debug(e)
             raise KeyError(name)
 

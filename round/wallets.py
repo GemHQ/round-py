@@ -67,8 +67,10 @@ class Wallets(DictWrapper):
     def __getitem__(self, name):
         if name in self._data: return self._data.__getitem__(name)
         try:
-            return self.wrap(
+            wallet = self.wrap(
                 self.application.resource.wallet_query(dict(name=name)).get())
+            self.add(wallet)
+            return wallet
         except Exception as e:
             logger.debug(e)
             raise KeyError(name)
