@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from setuptools import setup, find_packages
 
 setup(name = 'round',
-      version = '0.9.6',
+      version = '0.9.7',
       description = 'Python client for Gem.co',
       url = 'http://github.com/GemHQ/round-py',
       author = 'Matt Smith <matt@gem.co>, Dustin Laurence <dustin@gem.co>',

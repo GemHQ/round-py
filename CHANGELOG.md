@@ -1,5 +1,10 @@
 
-n.n.n / 2015-08-20
+0.9.7 / 2015-08-25
+==================
+
+  * Do not populate collections by default - populate them on repr, iter, refresh, or if populate is supplied on creation
+
+0.9.5 / 2015-08-20
 ==================
 
   * Added BalanceError
