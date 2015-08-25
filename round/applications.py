@@ -104,7 +104,7 @@ class Application(Wrapper, Updatable):
         """Returned the cached Wallets associated with this application."""
         return self.get_wallets()
 
-    def get_wallets(self, fetch=True):
+    def get_wallets(self, fetch=False):
         """Return this Applications's wallets object, populating it if fetch
         is True."""
         return Wallets(
@@ -132,7 +132,7 @@ class Application(Wrapper, Updatable):
         Application."""
         return self.get_netki_domains()
 
-    def get_netki_domains(self, fetch=True):
+    def get_netki_domains(self, fetch=False):
         """Return the Applications NetkiDomains object, populating it if fetch
         is True."""
         return NetkiDomains(

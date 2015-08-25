@@ -58,7 +58,7 @@ def generate(passphrase, trees=['primary']):
 class Wallets(DictWrapper):
     """A collection of round.Wallets objects."""
 
-    def __init__(self, resource, client, populate=True, application=False):
+    def __init__(self, resource, client, populate=False, application=False):
         # This is less than awesome. Ideally a PB resource can learn whether it's
         # an application_wallets or user_wallets object.
         self.application = application
@@ -231,7 +231,7 @@ class Wallet(Wrapper, Updatable):
         """Return the cached Accounts object for this Wallet."""
         return self.get_accounts()
 
-    def get_accounts(self, fetch=True):
+    def get_accounts(self, fetch=False):
         """Return this Wallet's accounts object, populating it if fetch is True."""
         return Accounts(self.resource.accounts, self.client, wallet=self, populate=fetch)
 
@@ -261,7 +261,7 @@ class Wallet(Wrapper, Updatable):
         """Return the cached Subscriptions object for this Wallet."""
         return self.get_subscriptions()
 
-    def get_subscriptions(self, fetch=True):
+    def get_subscriptions(self, fetch=False):
         """Return this Wallet's subscriptions object, populating it if fetch is True."""
         return Subscriptions(
             self.resource.subscriptions, self.client, populate=fetch)

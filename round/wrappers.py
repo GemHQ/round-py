@@ -94,31 +94,35 @@ class Wrapper(MFAable):
 
 class DictWrapper(MFAable, collections.Mapping):
 
-
-    def __init__(self, resource, client, populate=True):
+    def __init__(self, resource, client, populate=False):
         self.resource = resource
         self.client = client
         self._data = {}
+        self._populated = False
         if populate: self.populate()
 
     def __getitem__(self, name):
         return self._data.__getitem__(name)
 
     def __iter__(self):
-        return self._data.__iter__()
+        self.populate()
+        return iter(self._data)
 
     def __len__(self):
-        return self._data.__len__()
+        return len(self._data)
 
     def __repr__(self):
+        self.populate()
         return repr(self._data.items())
 
-    def populate(self):
-        if hasattr(self.resource, 'list'):
+    def populate(self, if_populated=False):
+        if hasattr(self.resource, 'list') and (if_populated or
+                                               not self._populated):
             resources = self.resource.list()
             for resource in resources:
                 wrapper = self.wrap(resource)
                 self.add(wrapper)
+            self._populated = True
 
     def add(self, wrapper):
         key = self.key_for(wrapper)
@@ -127,7 +131,7 @@ class DictWrapper(MFAable, collections.Mapping):
 
     def refresh(self):
         self._data = {}
-        self.populate()
+        self.populate(True)
         return self
 
     def with_mfa(self, mfa_token):
@@ -147,33 +151,42 @@ class DictWrapper(MFAable, collections.Mapping):
 
 class ListWrapper(collections.Sequence):
 
-    def __init__(self, resource, client, populate=True):
+    def __init__(self, resource, client, populate=False):
         self.resource = resource
         self.client = client
         self._data = []
+        self._populated = False
         if populate: self.populate()
+
 
     def __getitem__(self, name):
         return self._data.__getitem__(name)
 
     def __len__(self):
-        return self._data.__len__()
+        return len(self._data)
+
+    def __iter__(self):
+        self.populate()
+        return iter(self._data)
 
     def __repr__(self):
+        self.populate()
         return repr(self._data)
 
     def add(self, value):
         self._data.append(value)
 
-    def populate(self):
-        if hasattr(self.resource, 'list'):
+    def populate(self, if_populated=False):
+        if hasattr(self.resource, 'list') and (if_populated or
+                                               not self._populated):
             resources = self.resource.list()
             for resource in resources:
                 self._data.append(self.wrap(resource))
+            self._populated = True
 
     def refresh(self):
         self._data = []
-        self.populate()
+        self.populate(True)
         return(self)
 
     def with_mfa(self, mfa_token):

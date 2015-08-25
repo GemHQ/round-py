@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 class Transactions(ListWrapper):
 
-    def __init__(self, resource, client, populate=True):
+    def __init__(self, resource, client, populate=False):
         self.collection_list = []
         super(Transactions, self).__init__(resource, client, populate=populate)
 

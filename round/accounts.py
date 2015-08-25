@@ -32,7 +32,7 @@ class Accounts(DictWrapper):
       The new round.Accounts object.
     """
 
-    def __init__(self, resource, client, wallet=None, populate=True):
+    def __init__(self, resource, client, wallet=None, populate=False):
         self.wallet = wallet
         super(Accounts, self).__init__(resource, client, populate)
 
@@ -226,7 +226,7 @@ class Account(Wrapper, Updatable):
         """Return the cached Subscriptions object for this Account."""
         return self.get_subscriptions()
 
-    def get_subscriptions(self, fetch=True):
+    def get_subscriptions(self, fetch=False):
         """Return this Account's subscriptions object, populating it if fetch is True."""
         return Subscriptions(
             self.resource.subscriptions, self.client, populate=fetch)
@@ -237,7 +237,7 @@ class Account(Wrapper, Updatable):
         """Fetch and return an updted list of Addresses inside this Account."""
         return self.get_addresses()
 
-    def get_addresses(self, fetch=True):
+    def get_addresses(self, fetch=False):
         """Return the Account's addresses object, populating it if fetch is True."""
         return Addresses(self.resource.addresses, self.client, populate=fetch)
 
@@ -247,6 +247,6 @@ class Account(Wrapper, Updatable):
         """Fetch and return an updated list of NetkiNames inside this Account."""
         return self.get_netki_names()
 
-    def get_netki_names(self, fetch=True):
+    def get_netki_names(self, fetch=False):
         """Return the Account's NetkiNames object, populating it if fetch is True."""
         return NetkiNames(self.resource.netki_names, self.client, populate=fetch)
