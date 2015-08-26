@@ -239,8 +239,18 @@ class Wallet(Wrapper, Updatable):
     def default_account(self):
         return self.accounts['default']
 
-    def account(self, key):
-        return self.client.account(key, wallet=self)
+    def account(self, key=None, address=None, name=None):
+        if key:
+            return self.client.account(key, wallet=self)
+        if address:
+            q = dict(address=address)
+        elif name:
+            q = dict(name=name)
+        else:
+            raise TypeError("Missing param: key, address, or name is required.")
+
+        return Account(
+            self.resource.account_query(q).get(), self.client, wallet=self)
 
     def dump_addresses(self, network, filename=None):
         """Return a list of address dictionaries for each address in all of the
