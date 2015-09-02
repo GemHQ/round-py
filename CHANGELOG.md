@@ -1,4 +1,11 @@
 
+0.9.8 / 2015-09-02
+==================
+
+  * Support change_account in wallet.pay and account.pay
+  * Minor improvements: normalized ListWrapper accessor behavior, etc...
+  * Optimizations: use account_query and wallet_query on collection access rather than making a list call
+
 0.9.7 / 2015-08-25
 ==================
 
