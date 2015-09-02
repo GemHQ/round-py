@@ -240,6 +240,7 @@ class Wallet(Wrapper, Updatable):
         return self.accounts['default']
 
     def account(self, key=None, address=None, name=None):
+        """Query for an account by key, address, or name."""
         if key:
             return self.client.account(key, wallet=self)
         if address:
@@ -277,8 +278,14 @@ class Wallet(Wrapper, Updatable):
             self.resource.subscriptions, self.client, populate=fetch)
 
 
-    def pay(self, payees, remainder_account, payers=None, network=None,
-            utxo_confirmations=6, mfa_token=None, redirect_uri=None):
+    def _get_account_attr(self, obj, attr='key'):
+        try:
+            return obj.resource.attributes[attr]
+        except AttributeError:
+            return self.accounts[obj].resource.attributes[attr]
+
+    def pay(self, payees, remainder_account, payers=None, change_account=None,
+            network=None, utxo_confirmations=6, mfa_token=None, redirect_uri=None):
         """Create, verify, and sign a new Transaction.
 
         This method is distinct from Account.pay in that it exposes the `payers`
@@ -330,6 +337,11 @@ class Wallet(Wrapper, Updatable):
           payers (list of dict, optional): list of input accounts in the form:
             [{'amount': 10000(satoshis),
               'account': ('accountname'||accountInstance)}, ...]
+          change_account (str or Account): if supplied, this account will
+            be used to generate a change address in the event that a change
+            output is required. Note that this does not replace the change
+            outputs that will be generated to ensure that each Account in
+            `payers` (if supplied) is deducted the precise amounts specified.
           network (str): Type of cryptocurrency.  Can be one of, 'bitcoin', '
             bitcoin_testnet', 'litecoin', 'dogecoin'.
           utxo_confirmations (int, optional): Required confirmations for UTXO
@@ -355,30 +367,30 @@ class Wallet(Wrapper, Updatable):
             raise DecryptionError("This wallet must be unlocked with "
                                   "wallet.unlock(passphrase)")
 
-        def get_account_attr(obj, attr='key'):
-            try:
-                return obj.resource.attributes[attr]
-            except AttributeError:
-                return self.accounts[obj].resource.attributes[attr]
-
         # First create the unsigned tx.
         content = dict(payees=payees,
                        utxo_confirmations=utxo_confirmations,
                        network=network)
 
         if remainder_account is not None:
-            content['network'] = get_account_attr(remainder_account, 'network')
             if payers: raise TypeError(
                     "Invalid payers: either supply a remainder_account "
                     "or omit the payers parameter")
+            content['network'] = self._get_account_attr(
+                remainder_account, 'network')
+            content['remainer_account'] = self._get_account_attr(
+                remainder_account, 'key')
 
-            content['remainer_account'] = get_account_attr(remainder_account)
         elif not payers and not network:
             raise TypeError("Missing network: network is required if "
                             "remainder_account is not specified")
 
-        if payers: content['payers'] = \
-           [ dict(p, account=get_account_attr(p['account'])) for p in payers ]
+        if change_account:
+            content['change_account'] = self._get_account_attr(change_account)
+
+        if payers: content['payers'] = [
+            dict(p, account=self._get_account_attr(p['account'])) for p in payers
+        ]
 
         try:
             unsigned = self.resource.transactions().create(content)

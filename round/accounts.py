@@ -98,7 +98,8 @@ class Account(Wrapper, Updatable):
                               self.client,
                               wallet=self.wallet)
 
-    def pay(self, payees, utxo_confirmations=6, mfa_token=None, redirect_uri=None):
+    def pay(self, payees, change_account=None, utxo_confirmations=6,
+            mfa_token=None, redirect_uri=None):
         """Create, verify, and sign a new Transaction.
 
         If this Account is owned by a User object, the user must be redirected to
@@ -120,6 +121,9 @@ class Account(Wrapper, Updatable):
           payees (list of dict): list of outputs in the form:
             [{'amount': 10000(satoshis),
               'address':'validbtcaddress'}, ...]
+          change_account (str or Account): if supplied, this account will
+            be used to generate a change address in the event that a change
+            output is required. This account must be owned by the same Wallet.
           utxo_confirmations (int, optional): Required confirmations for UTXO
             selection ( > 0)
           mfa_token (str/function, optional): TOTP token for the Application
@@ -148,6 +152,10 @@ class Account(Wrapper, Updatable):
                        utxo_confirmations=utxo_confirmations,
                        remainder_account=self.resource.attributes['key'],
                        network=self.network)
+
+        if change_account: content['change_account'] = \
+           self.wallet._get_account_attr(change_account)
+
         try:
             unsigned = self.resource.transactions().create(content)
         except ResponseError as e:
