@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+#
 # wrappers.py
 #
 # Copyright 2014 BitVault, Inc. dba Gem
@@ -14,7 +15,6 @@ import abc
 import collections
 
 from .errors import *
-
 
 def cacheable(func):
     @wraps(func)
@@ -102,6 +102,7 @@ class DictWrapper(MFAable, collections.Mapping):
         if populate: self.populate()
 
     def __getitem__(self, name):
+        if name not in self._data and not self._populated: self.populate()
         return self._data.__getitem__(name)
 
     def __iter__(self):
@@ -116,17 +117,14 @@ class DictWrapper(MFAable, collections.Mapping):
         return repr(self._data.items())
 
     def populate(self, if_populated=False):
-        if hasattr(self.resource, 'list') and (if_populated or
-                                               not self._populated):
-            resources = self.resource.list()
-            for resource in resources:
-                wrapper = self.wrap(resource)
-                self.add(wrapper)
+        if ( hasattr(self.resource, 'list') and
+             (if_populated or not self._populated) ):
+            for resource in self.resource.list():
+                self.add(self.wrap(resource))
             self._populated = True
 
     def add(self, wrapper):
-        key = self.key_for(wrapper)
-        self._data[key] = wrapper
+        self._data[self.key_for(wrapper)] = wrapper
         return wrapper
 
     def refresh(self):
@@ -158,9 +156,8 @@ class ListWrapper(collections.Sequence):
         self._populated = False
         if populate: self.populate()
 
-
-    def __getitem__(self, name):
-        return self._data.__getitem__(name)
+    def __getitem__(self, index):
+        return self._data[index]
 
     def __len__(self):
         return len(self._data)
@@ -175,10 +172,11 @@ class ListWrapper(collections.Sequence):
 
     def add(self, value):
         self._data.append(value)
+        return value
 
     def populate(self, if_populated=False):
-        if hasattr(self.resource, 'list') and (if_populated or
-                                               not self._populated):
+        if ( hasattr(self.resource, 'list') and
+             (if_populated or not self._populated) ):
             resources = self.resource.list()
             for resource in resources:
                 self._data.append(self.wrap(resource))
@@ -192,3 +190,7 @@ class ListWrapper(collections.Sequence):
     def with_mfa(self, mfa_token):
         self.context.mfa_token = mfa_token
         return self
+
+    @abc.abstractmethod
+    def wrap(self, resource):
+        pass

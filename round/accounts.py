@@ -211,6 +211,9 @@ class Account(Wrapper, Updatable):
     def transactions(self, **query):
         """Fetch and return Transactions involving any Address inside this
         Account.
+        Note that this call is not cached. If you want to store a copy, you
+        must assign it to a local variable, and call .refresh() when you need
+        updated data
 
         Args:
           status (str or list, optional): One or a list of
@@ -226,7 +229,7 @@ class Account(Wrapper, Updatable):
             query['status'] = ','.join(map(str, query['status']))
 
         transaction_resource = self.resource.transactions(query)
-        return Transactions(transaction_resource, self.client)
+        return Transactions(transaction_resource, self.client, populate=True)
 
     @property
     @cacheable
