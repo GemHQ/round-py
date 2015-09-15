@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # users.py
 #
-# Copyright 2014 BitVault, Inc. dba Gem
+# Copyright 2014-2015 BitVault, Inc. dba Gem
 
 from __future__ import unicode_literals
 from past.builtins import basestring

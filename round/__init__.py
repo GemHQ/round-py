@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # __init__.py
 #
-# Copyright 2014 BitVault, Inc. dba Gem
+# Copyright 2014-2015 BitVault, Inc. dba Gem
 
 import patchboard
 
