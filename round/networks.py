@@ -7,20 +7,21 @@ from __future__ import unicode_literals
 
 from .config import *
 
-from .wrappers import ListWrapper, Wrapper
+from .wrappers import DictWrapper, Wrapper
 
-class Networks(ListWrapper):
+class Networks(DictWrapper):
 
     def __init__(self, resource, client, populate=False):
-        super(Networks, self).__init__(resource, client, populate)
+        super(Networks, self).__init__(resource, client, populate=populate)
 
     def wrap(self, network):
         return Network(network, self.client)
 
-class Network(Wrapper):
+    def key_for(self, network):
+        return network.resource.name
 
-    def __repr__(self):
-        return repr(self.attributes)
+
+class Network(Wrapper):
 
     def current_fee(self):
         return self.recommended_fee_per_kb
