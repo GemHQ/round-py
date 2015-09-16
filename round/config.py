@@ -6,3 +6,4 @@
 from __future__ import unicode_literals
 
 SUPPORTED_NETWORKS = ['bitcoin_testnet', 'bitcoin', 'dogecoin', 'litecoin']
+GEM_URL = 'https://api.gem.co'

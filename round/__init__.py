@@ -26,7 +26,7 @@ def client(url=None):
         _patchboard = {}
 
     if not url:
-        url = 'https://api.gem.co'
+        url = GEM_URL
 
     if url not in _patchboard:
         _patchboard[url] = patchboard.discover(

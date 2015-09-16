@@ -16,6 +16,7 @@ from .users import User, Users
 from .applications import Application, Applications
 from .wallets import Wallet, Wallets
 from .accounts import Account, Accounts
+from .networks import Network
 
 class Client(MFAable):
     """The Client object holds a connection to Gem and references to root-level
@@ -134,7 +135,7 @@ class Client(MFAable):
 
     def user(self, email=None, key=None):
         if key:
-            res = self.resources.user('https://api.gem.co/users/{}'.format(key)).get()
+            res = self.resources.user('{}/users/{}'.format(GEM_URL, key)).get()
             return User(res, self)
 
         user_resource = False
@@ -165,9 +166,13 @@ class Client(MFAable):
         return self._user
 
     def wallet(self, key, application=None):
-        res = self.resources.wallet('https://api.gem.co/wallets/{}'.format(key)).get()
+        res = self.resources.wallet('{}/wallets/{}'.format(GEM_URL, key)).get()
         return Wallet(res, self, application=application)
 
+    def network(self, name='bitcoin'):
+        res = self.resources.network('{}/networks/{}'.format(GEM_URL, name)).get()
+        return Network(res, self)
+
     def account(self, key, wallet=None):
-        res = self.resources.account('https://api.gem.co/accounts/{}'.format(key)).get()
+        res = self.resources.account('{}/accounts/{}'.format(GEM_URL, key)).get()
         return Account(res, self, wallet=wallet)
