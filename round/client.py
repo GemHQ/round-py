@@ -173,6 +173,7 @@ class Client(MFAable):
         res = self.resources.network('{}/networks/{}'.format(GEM_URL, name)).get()
         return Network(res, self)
 
+    @property
     def networks(self):
         return Networks(self.resources.networks, self)
 

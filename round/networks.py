@@ -23,5 +23,6 @@ class Networks(DictWrapper):
 
 class Network(Wrapper):
 
+    @property
     def current_fee(self):
         return self.recommended_fee_per_kb
