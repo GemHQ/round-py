@@ -55,7 +55,8 @@ class Users(DictWrapper):
         """
 
         if not passphrase and u'default_wallet' not in kwargs:
-            raise ValueError("Usage: users.create(email, passphrase, device_name, api_token, redirect_uri)")
+            raise ValueError("Usage: users.create(email, passphrase, device_name"
+                             ", api_token, redirect_uri)")
         elif passphrase:
             default_wallet = generate(passphrase, ['primary'])['primary']
         else:
@@ -87,7 +88,10 @@ class Users(DictWrapper):
             resource = self.resource.create(user_data)
         except ResponseError as e:
             if "conflict" in e.message:
-                raise ConflictError("This user already exists. Use client.user(email).devices.create(name) to request authorization from the user.")
+                raise ConflictError(
+                    "This user already exists. Use "
+                    "client.user(email).devices.create(name) to request "
+                    "authorization from the user.")
             raise e
 
         return resource.attributes['metadata']['device_token']
