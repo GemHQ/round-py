@@ -5,7 +5,9 @@
 
 from __future__ import unicode_literals
 from future.utils import iteritems
+
 import logging
+from warnings import warn
 
 from .config import *
 
@@ -17,6 +19,7 @@ from coinop.transaction import Transaction as CoinopTx
 
 from .wrappers import *
 from .errors import *
+from .assets import Asset, Assets
 from .accounts import Account, Accounts
 from .subscriptions import Subscription, Subscriptions
 import round.transactions as txs
@@ -209,7 +212,7 @@ class Wallet(Wrapper, Updatable):
                     'backup': wallet.backup_public_seed})
         return self
 
-    def balances_at(self, utxo_confirmations=6, network=None):
+    def balances_at(self, utxo_confirmations=6, network=None, asset=None):
         """Return the confirmed, claimed (reserved for a pending, unsigned
         transaction), and available balances, where the threshold for
         confirmed is the value of `utxo_confirmations`.
@@ -217,6 +220,7 @@ class Wallet(Wrapper, Updatable):
         Args:
           utxo_confirmations (int): the # of confirmations to use when computing
             balances.
+          asset (str): TODO
           network (str): Type of cryptocurrency.  Can be one of, 'bitcoin', '
             bitcoin_testnet', 'litecoin', 'dogecoin'.
 
@@ -226,10 +230,19 @@ class Wallet(Wrapper, Updatable):
                            u'confirmed_balance': 0,
                            u'utxo_confirmations': 0 }
         """
-        if not network in SUPPORTED_NETWORKS:
-            raise ValueError('Network not valid!')
-        return self.resource.available({'utxo_confirmations': utxo_confirmations,
-                                        'network': network}).__dict__['data']
+        # if not network in SUPPORTED_NETWORKS:
+        #     raise ValueError('Network not valid!')
+
+        content = {'utxo_confirmations': utxo_confirmations}
+        if network:
+            content['network'] = network
+        if asset:
+            try:
+                content['asset'] = asset.key
+            except:
+                content['asset'] = asset
+
+        return self.resource.available(content).__dict__['data']
 
     @property
     @cacheable
@@ -284,6 +297,18 @@ class Wallet(Wrapper, Updatable):
         return Subscriptions(
             self.resource.subscriptions, self.client, page=page, populate=fetch)
 
+    @property
+    @cacheable
+    def assets(self):
+        """Return the cached Subscriptions object for this Wallet."""
+        return self.get_assets()
+
+    def get_assets(self, fetch=False):
+        """Return this Wallet's subscriptions object, populating it if fetch is True."""
+        return Assets(
+            self.resource.assets, self.client,
+            wallet=self, populate=fetch)
+
 
     def _get_account_attr(self, obj, attr='key'):
         try:
@@ -291,7 +316,11 @@ class Wallet(Wrapper, Updatable):
         except AttributeError:
             return self.accounts[obj].resource.attributes[attr]
 
-    def pay(self, payees, remainder_account, payers=None, change_account=None,
+    def pay(self, *args, **kwargs):
+        warn(".pay is deprecated, use .send instead", DeprecationWarning)
+        return self.send(*args, **kwargs)
+
+    def send(self, payees, remainder_account, payers=None, change_account=None,
             network=None, utxo_confirmations=6, mfa_token=None, redirect_uri=None):
         """Create, verify, and sign a new Transaction.
 

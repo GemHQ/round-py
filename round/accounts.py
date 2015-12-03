@@ -6,6 +6,8 @@
 from __future__ import unicode_literals
 
 import logging
+from warnings import warn
+
 from .config import *
 from .errors import *
 from patchboard.response import ResponseError
@@ -99,6 +101,10 @@ class Account(Wrapper, Updatable):
                               self.client,
                               wallet=self.wallet)
 
+    def pay(self, *args, **kwargs):
+        warn(".pay is deprecated, use .send instead", DeprecationWarning)
+        return self.send(*args, **kwargs)
+
     def pay(self, payees, change_account=None, utxo_confirmations=6,
             mfa_token=None, redirect_uri=None):
         """Create, verify, and sign a new Transaction.
@@ -191,7 +197,7 @@ class Account(Wrapper, Updatable):
         # `mfa_uri` attribute to approve!)
         return signed
 
-    def balances_at(self, utxo_confirmations=6):
+    def balances_at(self, utxo_confirmations=6, asset=None):
         """Return the confirmed, claimed (reserved for a pending, unsigned
         transaction), and available balances, where the threshold for
         confirmed is the value of `utxo_confirmations`.
@@ -206,8 +212,14 @@ class Account(Wrapper, Updatable):
                            u'confirmed_balance': 0,
                            u'utxo_confirmations': 0 }
         """
-        return self.resource.available(
-            {'utxo_confirmations': utxo_confirmations}).__dict__['data']
+        content = {'utxo_confirmations': utxo_confirmations}
+        if asset:
+            try:
+                content['asset'] = asset.key
+            except:
+                content['asset'] = asset
+
+        return self.resource.available(content).__dict__['data']
 
     def transactions(self, page=0, **query):
         """Fetch and return Transactions involving any Address inside this
