@@ -159,6 +159,32 @@ class Asset(Wrapper, Updatable):
         tx = self.resource.issue(content)
         return Transaction(tx, self.client)
 
+    def transfer(self, **kwargs):
+        """Short description
+
+        MORE DESCRIPTION
+
+        Args:
+          outputs (better name needed)
+          whatever (str, optional): TODO
+
+        Returns:
+          Something or other
+        """
+
+        # Check that wallet is unlocked
+        # if self.wallet.is_locked():
+        #     raise DecryptionError("This wallet must be unlocked with "
+        #                           "wallet.unlock(passphrase)")
+
+        # First create the unsigned tx.
+        content = dict(outputs=kwargs['payees'],
+                       #todo accept fee_source
+                       fee_source=self.wallet.attributes['key'])
+
+        tx = self.resource.transfer(content)
+        return Transaction(tx, self.client)
+
     def balances_at(self, utxo_confirmations=6):
         """Return the confirmed, claimed (reserved for a pending, unsigned
         transaction), and available balances, where the threshold for
