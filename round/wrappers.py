@@ -107,24 +107,49 @@ class Pageable(object):
         self._populated = False
         if populate: self.populate()
 
+    def populate(self, if_populated=False):
+        if (hasattr(self.resource, 'list') and
+            (not self._populated or if_populated)):
+
+            resp = self.resource.list()
+            resources = resp['elements'] if 'elements' in resp else resp
+
+            for resource in resources:
+                self.add(self.wrap(resource))
+
+            self._next = resp['next'] if 'next' in resp else None
+            self._previous = resp['previous'] if 'previous' in resp else None
+            self._populated = True
+
+        return self
+
     def page(self, page):
         if self.page <= 0:
             raise PageError(page)
 
-        p = self.__class__(
-            self._resource, self.client, page=page, populate=True)
+        p = self.__class__(self._resource, self.client, page=page, populate=True)
 
         if len(p) < 1:
             raise PageError(page)
         return p
 
     @property
+    def has_next(self):
+        return bool(self._next)
+
+    @property
     def next_page(self):
+        if not self.has_next:
+            raise PageError(self._page + 1)
         return self.page(self._page + 1)
 
     @property
+    def has_previous(self):
+        return bool(self._previous)
+
+    @property
     def previous_page(self):
-        if self.page <= 0:
+        if not self.has_previous:
             raise PageError(self._page - 1)
         return self.page(self._page - 1)
 
@@ -162,19 +187,14 @@ class DictWrapper(Pageable, MFAable, collections.Mapping):
         self.populate()
         return repr(self._data.items())
 
-    def populate(self, if_populated=False):
-        if ( hasattr(self.resource, 'list') and
-             (if_populated or not self._populated) ):
-            for resource in self.resource.list():
-                self.add(self.wrap(resource))
-            self._populated = True
-
     def add(self, wrapper):
         self._data[self.key_for(wrapper)] = wrapper
         return wrapper
 
     def refresh(self):
         self._data = {}
+        self._next = None
+        self._previous = None
         self.populate(True)
         return self
 
@@ -195,7 +215,7 @@ class DictWrapper(Pageable, MFAable, collections.Mapping):
 
 class ListWrapper(Pageable, MFAable, collections.Sequence):
 
-    def __init__(self, resource, client, populate=False):
+    def __init__(self, resource, client, page=0, populate=False):
         self._data = []
         super(ListWrapper, self).__init__(resource, client, page, populate)
 
@@ -216,14 +236,6 @@ class ListWrapper(Pageable, MFAable, collections.Sequence):
     def add(self, value):
         self._data.append(value)
         return value
-
-    def populate(self, if_populated=False):
-        if ( hasattr(self.resource, 'list') and
-             (if_populated or not self._populated) ):
-            resources = self.resource.list()
-            for resource in resources:
-                self._data.append(self.wrap(resource))
-            self._populated = True
 
     def refresh(self):
         self._data = []

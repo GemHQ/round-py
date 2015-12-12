@@ -20,6 +20,6 @@ class Addresses(ListWrapper):
 
     def create(self):
         address = self.resource.create()
-        if len(self) < PAGE_LIMIT:
+        if not self.has_next:
             self.add(address)
         return address

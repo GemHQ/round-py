@@ -37,7 +37,8 @@ class NetkiDomains(ListWrapper):
 
         domain = self.wrap(self.resource.create(params))
 
-        self.add(domain)
+        if not self.has_next:
+            self.add(domain)
         return domain
 
 
@@ -63,7 +64,8 @@ class NetkiNames(ListWrapper):
         name = self.wrap(self.resource.create(dict(name=name,
                                                    domain_name=domain_name)))
 
-        self.add(name)
+        if not self.has_next:
+            self.add(name)
         return name
 
 

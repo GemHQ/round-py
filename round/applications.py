@@ -34,7 +34,9 @@ class Applications(DictWrapper):
                                        api_token=resource.api_token,
                                        admin_token=kwargs['admin_token'])
         app = self.wrap(resource)
-        return self.add(app)
+        if not self.has_next:
+            self.add(app)
+        return app
 
     def wrap(self, resource):
         return Application(resource, self.client)

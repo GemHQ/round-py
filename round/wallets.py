@@ -114,8 +114,12 @@ class Wallets(DictWrapper):
 
         resource = self.resource.create(wallet)
         wallet = self.wrap(resource)
-        return (wallet_data['backup']['private_seed'], self.add(wallet)) if (
-            self.application) else self.add(wallet)
+
+        if not self.has_next:
+            self.add(wallet)
+
+        bkup = wallet_data['backup']['private_seed'] if self.application else None
+        return (bkup, wallet)
 
     def wrap(self, resource):
         return Wallet(resource, self.client, self.application)

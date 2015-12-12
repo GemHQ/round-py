@@ -61,7 +61,8 @@ class Accounts(DictWrapper):
             raise ValueError('Network not valid!')
         account = self.wrap(self.resource.create(dict(name=name,
                                                       network=network)))
-        self.add(account)
+        if not self.has_next:
+            self.add(account)
         return account
 
     def wrap(self, resource):
