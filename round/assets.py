@@ -32,9 +32,9 @@ class Assets(DictWrapper):
       The new round.Accounts object.
     """
 
-    def __init__(self, resource, client, wallet=None, populate=False):
+    def __init__(self, resource, client, wallet=None, page=0, populate=False):
         self.wallet = wallet
-        super(Assets, self).__init__(resource, client, populate)
+        super(Assets, self).__init__(resource, client, page, populate)
 
 
     # TODO true docstrings
@@ -155,6 +155,7 @@ class Asset(Wrapper, Updatable):
         content = dict(outputs=kwargs['payees'],
                        #todo accept fee_source
                        fee_source=self.wallet.attributes['key'])
+        content['metadata'] = kwargs.get('metadata', '')
 
         tx = self.resource.issue(content)
         return Transaction(tx, self.client)
@@ -181,6 +182,7 @@ class Asset(Wrapper, Updatable):
         content = dict(outputs=kwargs['payees'],
                        #todo accept fee_source
                        fee_source=self.wallet.attributes['key'])
+        content['metadata'] = kwargs.get('metadata', '')
 
         tx = self.resource.transfer(content)
         return Transaction(tx, self.client)
