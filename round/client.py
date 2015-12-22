@@ -174,6 +174,7 @@ class Client(MFAable):
         return Network(res, self)
 
     @property
+    @cacheable
     def networks(self):
         return Networks(self.resources.networks, self)
 
