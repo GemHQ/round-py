@@ -235,10 +235,12 @@ class AssetType(Wrapper, Updatable):
         """Return the cached Subscriptions object for this Account."""
         return self.get_subscriptions()
 
-    def get_subscriptions(self, fetch=False):
-        """Return this Account's subscriptions object, populating it if fetch is True."""
+    def get_subscriptions(self, page=0, fetch=False):
+        """
+        Return this Account's subscriptions object, populating it if fetch is True.
+        """
         return Subscriptions(
-            self.resource.subscriptions, self.client, populate=fetch)
+            self.resource.subscriptions, self.client, page=page, populate=fetch)
 
     @property
     @cacheable
@@ -246,16 +248,24 @@ class AssetType(Wrapper, Updatable):
         """Fetch and return an updted list of Addresses inside this Account."""
         return self.get_addresses()
 
-    def get_addresses(self, fetch=False):
-        """Return the Account's addresses object, populating it if fetch is True."""
-        return Addresses(self.resource.addresses, self.client, populate=fetch)
+    def get_addresses(self, page=0, fetch=False):
+        """
+        Return the Account's addresses object, populating it if fetch is True.
+        """
+        return Addresses(self.resource.addresses, self.client,
+                         page=page, populate=fetch)
 
     @property
     @cacheable
     def netki_names(self):
-        """Fetch and return an updated list of NetkiNames inside this Account."""
+        """
+        Fetch and return an updated list of NetkiNames inside this Account.
+        """
         return self.get_netki_names()
 
-    def get_netki_names(self, fetch=False):
-        """Return the Account's NetkiNames object, populating it if fetch is True."""
-        return NetkiNames(self.resource.netki_names, self.client, populate=fetch)
+    def get_netki_names(self, page=0, fetch=False):
+        """
+        Return the Account's NetkiNames object, populating it if fetch is True.
+        """
+        return NetkiNames(self.resource.netki_names, self.client,
+                          page=page, populate=fetch)
