@@ -97,6 +97,7 @@ class Pageable(object):
         self.client = client
         self._resource = resource
         self._page = page
+        self._next = self._previous = None
         if hasattr(resource, '__call__'):
             query.update({'limit': str(PAGE_LIMIT),
                           'offset': str(page * PAGE_LIMIT)})
