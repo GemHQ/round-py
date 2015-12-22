@@ -43,9 +43,9 @@ if __name__ == '__main__':
     rand_val = str(time.time())[-4:]
     bkup_seed, wallet = app.wallets.create(name='wallet_{}'.format(rand_val), passphrase='asdfasdf')
     wallet.unlock('asdfasdf')
-    asset = wallet.assets.create(name='asset_{}'.format(rand_val))
-    print('\n\nasset:\n')
-    pprint(asset.attributes)
+    asset_type = wallet.asset_types.create(name='asset_type_{}'.format(rand_val))
+    print('\n\nasset_type:\n')
+    pprint(asset_type.attributes)
 
     account = wallet.accounts.create('bcy', network='bcy')
 
@@ -54,17 +54,17 @@ if __name__ == '__main__':
     print('\n\naddress:\n')
     pprint(addr)
 
-    definition_tx = asset.issue(payees=[{'amount': 10, 'address': addr}], metadata=dict(look="data"))
-    print('\n\nasset definition tx:\n')
+    definition_tx = asset_type.issue(payees=[{'amount': 10, 'address': addr}], metadata=dict(look="data"))
+    print('\n\nasset_type definition tx:\n')
     pprint(definition_tx.attributes)
 
-    balances = wallet.balances_at(asset=asset)
+    balances = wallet.balances_at(asset_type=asset_type)
     while balances['available_balance'] <= 0:
         print('\n...waiting for blockcypher testnet block...\n')
         time.sleep(5)
-        balances = wallet.balances_at(asset=asset)
+        balances = wallet.balances_at(asset_type=asset_type)
 
-    print('\n\nwallet asset balance:\n')
+    print('\n\nwallet asset_type balance:\n')
     pprint(balances)
 
     new_addr = account.addresses.create()['string']
@@ -73,12 +73,12 @@ if __name__ == '__main__':
 
     while not transfer_tx:
         try:
-            transfer_tx = asset.transfer(payees=[{'amount': 10, 'address': new_addr}], metadata=dict(some=dict(meta="data")))
-            print('\n\nasset transfer:\n')
+            transfer_tx = asset_type.transfer(payees=[{'amount': 10, 'address': new_addr}], metadata=dict(some=dict(meta="data")))
+            print('\n\nasset_type transfer:\n')
             pprint(transfer_tx.attributes)
         except:
             print('\n...waiting for blockcypher testnet block...\n')
             time.sleep(5)
 
-    print('\n\n Entering interactive session.\n Interesting variables:\n  wallet, asset, account, addr, defintion_tx, new_addr, transfer_tx')
+    print('\n\n Entering interactive session.\n Interesting variables:\n  wallet, asset_type, account, addr, defintion_tx, new_addr, transfer_tx')
     pdb.set_trace()
