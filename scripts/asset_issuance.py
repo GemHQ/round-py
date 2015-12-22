@@ -54,7 +54,7 @@ if __name__ == '__main__':
     print('\n\naddress:\n')
     pprint(addr)
 
-    definition_tx = asset.issue(payees=[{'amount': 10, 'address': addr}])
+    definition_tx = asset.issue(payees=[{'amount': 10, 'address': addr}], metadata=dict(look="data"))
     print('\n\nasset definition tx:\n')
     pprint(definition_tx.attributes)
 
@@ -73,7 +73,7 @@ if __name__ == '__main__':
 
     while not transfer_tx:
         try:
-            transfer_tx = asset.transfer(payees=[{'amount': 10, 'address': new_addr}])
+            transfer_tx = asset.transfer(payees=[{'amount': 10, 'address': new_addr}], metadata=dict(some=dict(meta="data")))
             print('\n\nasset transfer:\n')
             pprint(transfer_tx.attributes)
         except:
