@@ -19,7 +19,7 @@ from coinop.transaction import Transaction as CoinopTx
 
 from .wrappers import *
 from .errors import *
-from .assets import Asset, Assets
+from .assets import AssetType, AssetTypes
 from .accounts import Account, Accounts
 from .subscriptions import Subscription, Subscriptions
 import round.transactions as txs
@@ -212,7 +212,7 @@ class Wallet(Wrapper, Updatable):
                     'backup': wallet.backup_public_seed})
         return self
 
-    def balances_at(self, utxo_confirmations=6, network=None, asset=None):
+    def balances_at(self, utxo_confirmations=6, network=None, asset_type=None):
         """Return the confirmed, claimed (reserved for a pending, unsigned
         transaction), and available balances, where the threshold for
         confirmed is the value of `utxo_confirmations`.
@@ -220,7 +220,7 @@ class Wallet(Wrapper, Updatable):
         Args:
           utxo_confirmations (int): the # of confirmations to use when computing
             balances.
-          asset (str): TODO
+          asset_type (str): TODO
           network (str): Type of cryptocurrency.  Can be one of, 'bitcoin', '
             bitcoin_testnet', 'litecoin', 'dogecoin'.
 
@@ -236,11 +236,11 @@ class Wallet(Wrapper, Updatable):
         content = {'utxo_confirmations': utxo_confirmations}
         if network:
             content['network'] = network
-        if asset:
+        if asset_type:
             try:
-                content['asset'] = asset.key
+                content['asset_type'] = asset_type.key
             except:
-                content['asset'] = asset
+                content['asset_type'] = asset_type
 
         return self.resource.available(content).__dict__['data']
 
@@ -299,14 +299,14 @@ class Wallet(Wrapper, Updatable):
 
     @property
     @cacheable
-    def assets(self):
+    def asset_types(self):
         """Return the cached Subscriptions object for this Wallet."""
-        return self.get_assets()
+        return self.get_asset_types()
 
-    def get_assets(self, fetch=False):
+    def get_asset_types(self, fetch=False):
         """Return this Wallet's subscriptions object, populating it if fetch is True."""
-        return Assets(
-            self.resource.assets, self.client,
+        return AssetTypes(
+            self.resource.asset_types, self.client,
             wallet=self, populate=fetch)
 
 

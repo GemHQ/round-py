@@ -7,7 +7,8 @@ from __future__ import unicode_literals
 
 from .config import *
 
-from .wrappers import DictWrapper, Wrapper
+from .assets import AssetTypes
+from .wrappers import *
 
 class Networks(DictWrapper):
 

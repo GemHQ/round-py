@@ -20,11 +20,11 @@ from .transactions import Transaction, Transactions
 
 logger = logging.getLogger(__name__)
 
-class Assets(DictWrapper):
+class AssetTypes(DictWrapper):
     """A collection of round.Asset objects.
 
     Args:
-      resource: Asset patchboard.Resource object
+      resource: AssetType(patchboard.Resource) object
       client: authenticated round.Client object
       wallet: round.Wallet object to which this Asset belongs.
 
@@ -34,7 +34,7 @@ class Assets(DictWrapper):
 
     def __init__(self, resource, client, wallet=None, page=0, populate=False):
         self.wallet = wallet
-        super(Assets, self).__init__(resource, client, page, populate)
+        super(AssetTypes, self).__init__(resource, client, page, populate)
 
 
     # TODO true docstrings
@@ -56,12 +56,12 @@ class Assets(DictWrapper):
           issuing_seed (str, optional): private secp256k1 key that will be
             required to issue new coins/units of unlocked assets.
 
-        Returns: The new round.Asset
+        Returns: The new round.AssetType
         """
         # if not network in SUPPORTED_NETWORKS:
         #     raise ValueError('Network not valid!')
 
-        asset = self.wrap(
+        asset_type = self.wrap(
             self.resource.create(
                 dict(name         = name,
                      network      = network,
@@ -70,14 +70,15 @@ class Assets(DictWrapper):
                      issuing_seed = issuing_seed,
                      fungible     = fungible)))
 
-        return self.add(asset)
+        return self.add(asset_type)
 
     def wrap(self, resource):
-        return Asset(resource, self.client, self.wallet)
+        return AssetType(resource, self.client, self.wallet)
 
 
-class Asset(Wrapper, Updatable):
-    """Assets are second-order objects that can be represented on a blockchain.
+class AssetType(Wrapper, Updatable):
+    """
+    AssetType are second-order objects that can be represented on a blockchain.
 
     Gem abstracts away the protocol-level details and allows you to interact with
     assets that use different protocols (e.g. OpenAssets, Elements, ColoredCoins)
@@ -110,7 +111,7 @@ class Asset(Wrapper, Updatable):
     """
 
     def __init__(self, resource, client, wallet):
-        super(Asset, self).__init__(resource, client)
+        super(AssetType, self).__init__(resource, client)
         self.wallet = wallet
 
     def is_locked(self):
@@ -118,12 +119,12 @@ class Asset(Wrapper, Updatable):
         return self.locked
 
     def update(self, **kwargs):
-        """Update the Asset resource with specified content.
+        """Update the AssetType resource with specified content.
 
         Args:
-          name (str): Human-readable name for the asset
+          name (str): Human-readable name for the asset type
           description (str): Information about the nature and purpose of this
-            Asset.
+            AssetType.
           locked (boolean): Setting the locked flag will prevent new units from
             being issued/minted. This does NOT prove that no new units of type
             asset can be created, only that Gem will reject any requests to do so
